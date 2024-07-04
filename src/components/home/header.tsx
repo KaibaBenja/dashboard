@@ -28,7 +28,7 @@ export function Header() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>{username}</DropdownMenuLabel>
+                        {username && <DropdownMenuLabel></DropdownMenuLabel>}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
                     </DropdownMenuContent>
