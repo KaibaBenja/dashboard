@@ -15,13 +15,16 @@ import { SlOptions } from "react-icons/sl";
 import { GameTypes } from '@/types/GameTypes';
 
 export function GameTable() {
-    const { games } = useAppContext();
+    const { games, deleteItem } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
 
+    const handleDelete = async (id: number) => {
+        await deleteItem('games', id);
+    };
     return (
         <div className="border shadow-sm rounded-lg p-2">
             <Table>
@@ -55,7 +58,7 @@ export function GameTable() {
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem>View</DropdownMenuItem>
                                         <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
-                                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleDelete(game._id)}>Delete</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
@@ -65,11 +68,7 @@ export function GameTable() {
             </Table>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogDescription>
-                            {/* Descripción del diálogo */}
-                        </DialogDescription>
-                    </DialogHeader>
+                    <DialogHeader />
                     <form>
                         <div className="mb-4">
                             <label className="block text-gray-700">Fecha:</label>

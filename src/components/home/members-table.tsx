@@ -15,12 +15,17 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { SlOptions } from "react-icons/sl";
 
 export function MembersTable() {
-    const { members } = useAppContext();
+    const { members, deleteItem } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
+
+
+    const handleDelete = async (id: number) => {
+        await deleteItem('members', id);
+    };
 
     return (
         <div className="border shadow-sm rounded-lg p-2">
@@ -54,7 +59,7 @@ export function MembersTable() {
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem>View</DropdownMenuItem>
                                         <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
-                                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleDelete(member._id)}>Delete</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { TbPackage, TbFileText } from "react-icons/tb";
 import { MdOutlineShield } from "react-icons/md";
@@ -14,9 +15,15 @@ import { AuthorityTable } from "./auth-table";
 import { MembersTable } from "./members-table";
 import { Header } from "./header";
 import { EventsTable } from "./events-table";
+import { AppContext } from "@/context/AppContext";
 
 export function Dashboard() {
     const [selectedView, setSelectedView] = useState("games");
+    const router = useRouter();
+
+    const { token } = useContext(AppContext)!;
+
+
 
     const renderTable = () => {
         switch (selectedView) {
