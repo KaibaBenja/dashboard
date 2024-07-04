@@ -1,5 +1,6 @@
 "use client"
-import axios from "axios";
+import axios from "../utils/axiosConfig"
+
 import {
     createContext,
     ReactNode,
@@ -77,6 +78,7 @@ interface AppContextValue {
     setAuthorities: React.Dispatch<React.SetStateAction<Authoritie[]>>;
     games: Game[];
     setGames: React.Dispatch<React.SetStateAction<Game[]>>;
+    deleteItem: (type: string, id: number) => Promise<void>;
 }
 
 interface AppContextProviderProps {
@@ -208,6 +210,34 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
         setUsername(null);
     };
 
+    const deleteItem = async (type: string, id: number) => {
+        try {
+            await axios.delete(`http://localhost:3000/api/${type}/${id}`);
+            
+            switch(type) {
+                case 'games':
+                    setGames(prevItems => prevItems.filter(item => item._id !== id));
+                    break;
+                case 'members':
+                    setMembers(prevItems => prevItems.filter(item => item._id !== id));
+                    break;
+                case 'posts':
+                    setPosts(prevItems => prevItems.filter(item => item._id !== id));
+                    break;
+                case 'authorities':
+                    setAuthorities(prevItems => prevItems.filter(item => item._id !== id));
+                    break;
+                case 'events':
+                    setEvents(prevItems => prevItems.filter(item => item._id !== id));
+                    break;
+                default:
+                    console.error('Unknown type:', type);
+            }
+        } catch (error) {
+            console.error('Error deleting item:', error);
+        }
+    };
+
     return (
         <AppContext.Provider
             value={{
@@ -225,6 +255,7 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
                 setAuthorities,
                 games,
                 setGames,
+                deleteItem
             }}
         >
             {children}

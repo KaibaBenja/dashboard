@@ -19,7 +19,7 @@ export function Header() {
             <div className="flex-1">
                 <h1 className="font-semibold text-lg">Blogs</h1>
             </div>
-            {token ? (
+            {token && username ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="rounded-full">
@@ -28,7 +28,7 @@ export function Header() {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        {username && <DropdownMenuLabel></DropdownMenuLabel>}
+                        <DropdownMenuLabel>{String(username)}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
                     </DropdownMenuContent>
