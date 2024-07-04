@@ -1,0 +1,16 @@
+export interface GameTypes {
+    _id: number,
+    titulo: string,
+    autor: string,
+    sinopsis: string,
+    aportes: string,
+    objetivo: string,
+    desarrollo: string,
+    condiciones: string,
+    controles: string,
+    caracteristicas: string,
+    tecnologias: string,
+    estilo: string,
+    genero: string,
+    game_images: string,
+}
