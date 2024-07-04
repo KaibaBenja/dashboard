@@ -1,8 +1,10 @@
 import { Dashboard } from "@/components/home/dashboard";
-import { Forms } from "@/components/home/forms";
+import { AppContextProvider } from "@/context/AppContext";
 
 export default function Home() {
     return (
-        <Dashboard />
+        <AppContextProvider>
+            <Dashboard />
+        </AppContextProvider>
     );
 }

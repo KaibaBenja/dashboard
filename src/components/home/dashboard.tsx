@@ -1,18 +1,39 @@
-import Link from "next/link"
-import { TbPackage } from "react-icons/tb";
-import { MdOutlineShield } from "react-icons/md";
-import { LuGamepad } from "react-icons/lu";
-import { TbFileText } from "react-icons/tb";
-import { LuUsers } from "react-icons/lu";
+"use client"
 
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { TableComponent } from "./table"
-import { Header } from "./header"
+import { useState } from "react";
+import Link from "next/link";
+import { TbPackage, TbFileText } from "react-icons/tb";
+import { MdOutlineShield } from "react-icons/md";
+import { LuGamepad, LuUsers } from "react-icons/lu";
+import { IoCalendarNumberOutline } from "react-icons/io5";
+
+
+import { GameTable } from "./game-table";
+import { NewsTable } from "./news-table";
+import { AuthorityTable } from "./auth-table";
+import { MembersTable } from "./members-table";
+import { Header } from "./header";
+import { EventsTable } from "./events-table";
 
 export function Dashboard() {
+    const [selectedView, setSelectedView] = useState("games");
 
+    const renderTable = () => {
+        switch (selectedView) {
+            case "blogs":
+                return <NewsTable />;
+            case "games":
+                return <GameTable />;
+            case "members":
+                return <MembersTable />;
+            case "authorities":
+                return <AuthorityTable />;
+            case "Events":
+                return <EventsTable />
+            default:
+                return <GameTable />;
+        }
+    };
 
     return (
         <div className="grid min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
@@ -26,38 +47,41 @@ export function Dashboard() {
                     </div>
                     <div className="flex-1 overflow-auto py-2">
                         <nav className="grid items-start px-4 text-sm font-medium">
-                            <Link
-                                href="#"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-primary transition-all hover:bg-accent hover:text-accent-foreground"
-                                prefetch={false}
+                            <button
+                                onClick={() => setSelectedView("blogs")}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${selectedView === "blogs" ? "text-primary" : "text-muted-foreground"} hover:bg-accent hover:text-accent-foreground`}
                             >
                                 <TbFileText className="h-4 w-4" />
                                 Blogs
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
-                                prefetch={false}
+                            </button>
+                            <button
+                                onClick={() => setSelectedView("games")}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${selectedView === "games" ? "text-primary" : "text-muted-foreground"} hover:bg-accent hover:text-accent-foreground`}
                             >
                                 <LuGamepad className="h-4 w-4" />
                                 Games
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
-                                prefetch={false}
+                            </button>
+                            <button
+                                onClick={() => setSelectedView("members")}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${selectedView === "members" ? "text-primary" : "text-muted-foreground"} hover:bg-accent hover:text-accent-foreground`}
                             >
                                 <LuUsers className="h-4 w-4" />
                                 Members
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
-                                prefetch={false}
+                            </button>
+                            <button
+                                onClick={() => setSelectedView("authorities")}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${selectedView === "authorities" ? "text-primary" : "text-muted-foreground"} hover:bg-accent hover:text-accent-foreground`}
                             >
                                 <MdOutlineShield className="h-4 w-4" />
                                 Authorities
-                            </Link>
+                            </button>
+                            <button
+                                onClick={() => setSelectedView("Events")}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${selectedView === "authorities" ? "text-primary" : "text-muted-foreground"} hover:bg-accent hover:text-accent-foreground`}
+                            >
+                                <IoCalendarNumberOutline className="h-4 w-4" />
+                                Events
+                            </button>
                         </nav>
                     </div>
                 </div>
@@ -65,11 +89,9 @@ export function Dashboard() {
             <div className="flex flex-col">
                 <Header />
                 <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-                    <TableComponent />
-                    <TableComponent />
-                    <TableComponent />
+                    {renderTable()}
                 </main>
             </div>
         </div>
-    )
+    );
 }
