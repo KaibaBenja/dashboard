@@ -12,18 +12,25 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
+import { deleteEvents } from '@/queries/Events';
 
 export function EventsTable() {
-    const { events, deleteItem } = useAppContext();
+    const { events, setEvents } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
 
-    const handleDelete = async (id: number) => {
-        await deleteItem('events', id);
-    };
+    async function handleDelete(eventId: number) {
+        try {
+            await deleteEvents(eventId);
+            setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
+        } catch (error) {
+            console.error('Failed to delete game:', error);
+        }
+    }
+
 
     return (
         <div className="border shadow-sm rounded-lg p-2">

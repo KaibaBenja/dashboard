@@ -4,7 +4,6 @@ import { useAppContext } from '@/context/AppContext';
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
 } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
@@ -12,19 +11,29 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { GameTypes } from '@/types/GameTypes';
+import { GameType } from '@/types/GameTypes';
+import { deleteGame } from '@/queries/Games';
+import { GameForm } from '../forms/game-form';
+import Link from 'next/link';
 
 export function GameTable() {
-    const { games, deleteItem } = useAppContext();
+    const { games, setGames } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
+
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
 
-    const handleDelete = async (id: number) => {
-        await deleteItem('games', id);
-    };
+    async function handleDelete(gameId: number) {
+        try {
+            await deleteGame(gameId);
+            setGames(prevGames => prevGames.filter(game => game._id !== gameId));
+        } catch (error) {
+            console.error('Failed to delete game:', error);
+        }
+    }
+
     return (
         <div className="border shadow-sm rounded-lg p-2">
             <Table>
@@ -39,7 +48,7 @@ export function GameTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {games.map((game: GameTypes) => (
+                    {games.map((game: GameType) => (
                         <TableRow key={game._id}>
                             <TableCell className="font-medium">{game._id}</TableCell>
                             <TableCell className="font-medium">{game.titulo}</TableCell>
@@ -56,7 +65,7 @@ export function GameTable() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem>View</DropdownMenuItem>
+                                        <Link className='relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50' href={`/details/${game._id}`}>View</Link>
                                         <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => handleDelete(game._id)}>Delete</DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -67,28 +76,14 @@ export function GameTable() {
                 </TableBody>
             </Table>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader />
-                    <form>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Fecha:</label>
-                            <input type="date" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Hora:</label>
-                            <input type="time" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Titulo:</label>
-                            <input type="text" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Descripcion:</label>
-                            <input type="text" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                    </form>
+                <DialogContent>
+                    <DialogHeader>
+                        <h3 className="whitespace-nowrap tracking-tight text-3xl font-bold">Formulario de Juego</h3>
+                        <p className="text-sm text-muted-foreground">Ingresa los detalles de tu juego</p>
+                    </DialogHeader>
+                    <GameForm />
                 </DialogContent>
             </Dialog>
         </div>
-    )
+    );
 }

@@ -13,9 +13,10 @@ import { MemberType } from '@/types/MemberTypes';
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
+import { deleteMember } from '@/queries/deleteMember';
 
 export function MembersTable() {
-    const { members, deleteItem } = useAppContext();
+    const { members, setMembers } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
@@ -23,9 +24,14 @@ export function MembersTable() {
     }
 
 
-    const handleDelete = async (id: number) => {
-        await deleteItem('members', id);
-    };
+    async function handleDelete(memberId: number) {
+        try {
+            await deleteMember(memberId);
+            setMembers(prevMembers => prevMembers.filter(member => member._id !== memberId));
+        } catch (error) {
+            console.error('Failed to delete game:', error);
+        }
+    }
 
     return (
         <div className="border shadow-sm rounded-lg p-2">
