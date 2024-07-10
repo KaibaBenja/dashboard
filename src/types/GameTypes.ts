@@ -1,9 +1,12 @@
-export interface GameTypes {
+export interface GameType {
     _id: number,
     titulo: string,
     autor: string,
     sinopsis: string,
-    aportes: string,
+    aporte_turismo: string,
+    aporte_cultura: string,
+    aporte_juventud: string,
+    aporte_educacion: string,
     objetivo: string,
     desarrollo: string,
     condiciones: string,

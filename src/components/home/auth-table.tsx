@@ -4,7 +4,6 @@ import { useAppContext } from '@/context/AppContext';
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
 } from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
@@ -12,18 +11,24 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
+import { deleteAuthority } from '@/queries/Authority';
 
 export function AuthorityTable() {
-    const { authorities, deleteItem } = useAppContext();
+    const { authorities, setAuthorities } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
 
-    const handleDelete = async (id: number) => {
-        await deleteItem('authorities', id);
-    };
+    async function handleDelete(authoritieId: number) {
+        try {
+            await deleteAuthority(authoritieId);
+            setAuthorities(prevAuthorities => prevAuthorities.filter(authoritie => authoritie._id !== authoritieId));
+        } catch (error) {
+            console.error('Failed to delete game:', error);
+        }
+    }
 
 
     return (
@@ -63,11 +68,7 @@ export function AuthorityTable() {
             </Table>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogDescription>
-                            {/* Descripción del diálogo */}
-                        </DialogDescription>
-                    </DialogHeader>
+                    <DialogHeader />
                     <form>
                         <div className="mb-4">
                             <label className="block text-gray-700">Fecha:</label>

@@ -7,7 +7,7 @@ import { RxAvatar } from "react-icons/rx";
 import { AppContext } from '@/context/AppContext';
 
 export function Header() {
-    const { token, username, logout } = useContext(AppContext)!;
+    const { token, username, logout  } = useContext(AppContext)!;
 
 
     return (

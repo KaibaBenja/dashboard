@@ -15,15 +15,13 @@ import { AuthorityTable } from "./auth-table";
 import { MembersTable } from "./members-table";
 import { Header } from "./header";
 import { EventsTable } from "./events-table";
-import { AppContext } from "@/context/AppContext";
+import { useAppContext } from "@/context/AppContext";
 
 export function Dashboard() {
     const [selectedView, setSelectedView] = useState("games");
-    const router = useRouter();
-
-    const { token } = useContext(AppContext)!;
-
-
+    const {token} = useAppContext();
+    console.log(token);
+    
 
     const renderTable = () => {
         switch (selectedView) {

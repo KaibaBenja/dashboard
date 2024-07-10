@@ -13,18 +13,24 @@ import { PostType } from '@/types/NewsTypes';
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
+import { deletePost } from '@/queries/deletePost';
 
 export function NewsTable() {
-    const { posts, deleteItem } = useAppContext();
+    const { posts, setPosts } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
 
-    const handleDelete = async (id: number) => {
-        await deleteItem('posts', id);
-    };
+    async function handleDelete(postId: number) {
+        try {
+            await deletePost(postId);
+            setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
+        } catch (error) {
+            console.error('Failed to delete post:', error);
+        }
+    }
 
     return (
         <div className="border shadow-sm rounded-lg p-2">
