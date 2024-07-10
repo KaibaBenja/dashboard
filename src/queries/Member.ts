@@ -2,7 +2,7 @@ import axios from '@/utils/axiosConfig';
 
 export async function deleteMember(memberId: number) {
     try {
-        await axios.delete(`http://localhost:3000/api/members/${memberId}`);
+        await axios.delete(`https://gamecenter-backend.vercel.app/api/members/${memberId}`);
         console.log(`Member with ID ${memberId} deleted successfully`);
     } catch (error) {
         console.error(`Failed to delete member with ID ${memberId}:`, error);
@@ -12,7 +12,7 @@ export async function deleteMember(memberId: number) {
 
 export const fetchMembers = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/members');
+        const response = await axios.get('https://gamecenter-backend.vercel.app/api/members');
         return response.data;
     } catch (error) {
         console.error('Error fetching members', error);
@@ -22,7 +22,7 @@ export const fetchMembers = async () => {
 
 export const UpdateMembers = async () => {
     try {
-        const response = await axios.put('http://localhost:3000/api/members');
+        const response = await axios.put('https://gamecenter-backend.vercel.app/api/members');
         return response.data;
     } catch (error) {
         console.error('Error fetching members', error);
@@ -32,7 +32,7 @@ export const UpdateMembers = async () => {
 
 export const AddMembers = async () => {
     try {
-        const response = await axios.post('http://localhost:3000/api/members');
+        const response = await axios.post('https://gamecenter-backend.vercel.app/api/members');
         return response.data;
     } catch (error) {
         console.error('Error fetching members', error);

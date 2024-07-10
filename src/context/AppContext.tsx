@@ -20,8 +20,8 @@ import { AuthoritieType } from "@/types/AuthTypes";
 import { fetchEvents } from "@/queries/Events";
 import { fetchGames } from "@/queries/Games";
 import { fetchAuthorities } from "@/queries/Authority";
-import { fetchPosts } from "@/queries/deletePost";
-import { fetchMembers } from "@/queries/deleteMember";
+import { fetchPosts } from "@/queries/Post";
+import { fetchMembers } from "@/queries/Member";
 
 interface Username {
     id: number;
@@ -114,7 +114,7 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
 
     const login = async (data: any) => {
         try {
-            const response = await axios.post("http://localhost:3000/api/users/login", data);
+            const response = await axios.post("https://gamecenter-backend.vercel.app/api/users/login", data);
             console.log(response);
             const { token, username } = response.data;
 
