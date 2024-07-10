@@ -13,7 +13,7 @@ import { MemberType } from '@/types/MemberTypes';
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { deleteMember } from '@/queries/deleteMember';
+import { deleteMember } from '@/queries/Member';
 
 export function MembersTable() {
     const { members, setMembers } = useAppContext();

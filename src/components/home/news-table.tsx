@@ -13,7 +13,7 @@ import { PostType } from '@/types/NewsTypes';
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { deletePost } from '@/queries/deletePost';
+import { deletePost } from '@/queries/Post';
 
 export function NewsTable() {
     const { posts, setPosts } = useAppContext();
