@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import { TbPackage, TbFileText } from "react-icons/tb";
@@ -11,7 +11,7 @@ import { IoCalendarNumberOutline } from "react-icons/io5";
 
 import { GameTable } from "./game-table";
 import { NewsTable } from "./news-table";
-import { AuthorityTable } from "./auth-table";
+import { AuthorityTable } from "./authorities-table";
 import { MembersTable } from "./members-table";
 import { Header } from "./header";
 import { EventsTable } from "./events-table";
@@ -19,9 +19,17 @@ import { useAppContext } from "@/context/AppContext";
 
 export function Dashboard() {
     const [selectedView, setSelectedView] = useState("games");
-    const {token} = useAppContext();
+    const { token } = useAppContext();
     console.log(token);
-    
+    // const router = useRouter();
+
+    // useEffect(() => {
+    //     if(!token) {
+    //         router.push("/login")
+    //     } else {
+    //         router.push("/")
+    //     }
+    // }, [token])
 
     const renderTable = () => {
         switch (selectedView) {

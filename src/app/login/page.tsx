@@ -1,4 +1,3 @@
-// src/pages/login.tsx
 "use client";
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
@@ -20,11 +19,9 @@ export default function LoginPage() {
         event.preventDefault();
         try {
             await login({ username, password });
-            // Puedes redirigir a otra página después del login exitoso si es necesario
             router.push('/');
         } catch (error) {
             console.error('Error during login:', error);
-            // Maneja el error adecuadamente, por ejemplo, mostrando un mensaje de error al usuario
         }
     };
 
