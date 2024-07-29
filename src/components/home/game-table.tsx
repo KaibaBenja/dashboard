@@ -1,11 +1,7 @@
 "use client"
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-} from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
@@ -15,6 +11,7 @@ import { GameType } from '@/types/GameTypes';
 import { deleteGame } from '@/queries/Games';
 import { GameForm } from '../forms/game-form';
 import Link from 'next/link';
+import { SheetForm } from '../sheet-form';
 
 export function GameTable() {
     const { games, setGames } = useAppContext();
@@ -75,15 +72,14 @@ export function GameTable() {
                     ))}
                 </TableBody>
             </Table>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <h3 className="whitespace-nowrap tracking-tight text-3xl font-bold">Formulario de Juego</h3>
-                        <p className="text-sm text-muted-foreground">Ingresa los detalles de tu juego</p>
-                    </DialogHeader>
-                    <GameForm />
-                </DialogContent>
-            </Dialog>
+            <SheetForm
+                title='Formulario de Juego'
+                descripcion='Ingresa los detalles de tu juego'
+                isOpen={isOpen}
+                handleOpen={onChangeOpen}
+            >
+                <GameForm />
+            </SheetForm>
         </div>
     );
 }
