@@ -3,8 +3,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { GameType } from '@/types/GameTypes';
 import { LuPencil } from "react-icons/lu";
-import { Dialog, DialogContent } from "@radix-ui/react-dialog";
-import { DialogHeader } from "@/components/ui/dialog";
 import { GameForm } from "@/components/forms/game-form";
 import { useAppContext } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
