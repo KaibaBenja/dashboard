@@ -1,18 +1,16 @@
 "use client"
+
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-} from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
 import { deleteEvents } from '@/queries/Events';
+import { EventType } from '@/types/EventTypes';
+import { EventForm } from '../forms/events-form';
+import { SheetForm } from '../sheet-form';
 
 export function EventsTable() {
     const { events, setEvents } = useAppContext();
@@ -45,7 +43,7 @@ export function EventsTable() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {events.map((event: { _id: number; fecha: string; horario: string; event_name: string; descripcion: string; }) => (
+                    {events.map((event: EventType) => (
                         <TableRow key={event._id}>
                             <TableCell className="font-medium">{event._id}</TableCell>
                             <TableCell>{event.fecha}</TableCell>
@@ -71,33 +69,14 @@ export function EventsTable() {
                     ))}
                 </TableBody>
             </Table>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogDescription>
-                            {/* Descripción del diálogo */}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Fecha:</label>
-                            <input type="date" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Hora:</label>
-                            <input type="time" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Titulo:</label>
-                            <input type="text" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Descripcion:</label>
-                            <input type="text" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
+            <SheetForm
+                title='Formulario de Eventos'
+                descripcion='Ingresa los detalles del evento'
+                isOpen={isOpen}
+                handleOpen={onChangeOpen}
+            >
+                <EventForm />
+            </SheetForm>
         </div>
     )
 }

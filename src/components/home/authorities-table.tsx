@@ -1,17 +1,15 @@
 "use client"
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-} from "@/components/ui/dialog"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
 import { deleteAuthority } from '@/queries/Authority';
+import { SheetForm } from '../sheet-form';
+import { AuthorityForm } from '../forms/authorities-form';
 
 export function AuthorityTable() {
     const { authorities, setAuthorities } = useAppContext();
@@ -66,29 +64,14 @@ export function AuthorityTable() {
                     ))}
                 </TableBody>
             </Table>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader />
-                    <form>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Fecha:</label>
-                            <input type="date" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Hora:</label>
-                            <input type="time" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Titulo:</label>
-                            <input type="text" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Descripcion:</label>
-                            <input type="text" className="w-full px-4 py-2 border rounded-lg" />
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
+            <SheetForm
+                title='Formulario de Autoridades'
+                descripcion='Ingresa la autoridad pertinente'
+                isOpen={isOpen}
+                handleOpen={onChangeOpen}
+            >
+                <AuthorityForm />
+            </SheetForm>
         </div>
     )
 }
