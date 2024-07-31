@@ -57,7 +57,6 @@ export function NewsTable() {
                                                 <span className="sr-only">Actions</span>
                                             </Button>
                                         </DropdownMenuTrigger>
-
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>View</DropdownMenuItem>
                                             <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>

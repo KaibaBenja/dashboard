@@ -65,7 +65,7 @@ export function Dashboard() {
             default:
                 return <GameTable />;
         }
-    };  
+    };
 
     return (
         <div className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
@@ -101,15 +101,15 @@ export function Dashboard() {
                         </nav>
                     </div>
                 </div>
-                <div className="flex items-center justify-between px-6 h-12">
+                <div className="flex lg:hidden items-center justify-between px-6 h-12">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className="flex items-center font-mono bg-green-800 text-[#FFFFFF] px-2 py-1 rounded-lg capitalize gap-2 mr-4">
-                                Tabla de {selectedView}  <CgArrowsExchangeAlt className="h-5 w-5"/>
+                                Tabla de {selectedView}  <CgArrowsExchangeAlt className="h-5 w-5" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuRadioGroup defaultValue={selectedView} className="text-lg font-semibold">
+                            <DropdownMenuRadioGroup defaultValue={selectedView} className="text-lg font-semibold pr-4">
                                 <DropdownMenuRadioItem value="Posts" onClick={() => setSelectedView("Posts")}>Posts</DropdownMenuRadioItem>
                                 <DropdownMenuRadioItem value="Juegos" onClick={() => setSelectedView("Juegos")}>Juegos</DropdownMenuRadioItem>
                                 <DropdownMenuRadioItem value="Miembros" onClick={() => setSelectedView("Miembros")}>Miembros</DropdownMenuRadioItem>
@@ -119,20 +119,20 @@ export function Dashboard() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                     <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <button className="flex items-center text-green-800 capitalize gap-2 mr-4">
-                        <span className="hidden md:block">{userInfo.username}</span> <FaCircleUser className="h-7 w-7 mb-1" />
-                    </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuRadioGroup value="menu">
-                        <DropdownMenuRadioItem value="usuario">Usuario: {userInfo.username}</DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value="role">Rol: {userInfo.role}</DropdownMenuRadioItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuRadioItem className="cursor-pointer bg-green-800 text-[#FFFFFF] p-2 rounded-md flex justify-center" value="logout" onClick={logout}>Cerrar Sesión</DropdownMenuRadioItem>
-                    </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button className="flex items-center text-green-800 capitalize gap-2 mr-4">
+                                <span className="hidden md:block">{userInfo.username}</span> <FaCircleUser className="h-7 w-7 mb-1" />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuRadioGroup value="menu">
+                                <DropdownMenuRadioItem className="pr-4" value="usuario">Usuario: {userInfo.username}</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="role">Rol: {userInfo.role}</DropdownMenuRadioItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuRadioItem className="cursor-pointer bg-green-800 text-[#FFFFFF] p-2 rounded-md flex justify-center" value="logout" onClick={logout}>Cerrar Sesión</DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
             <div className="flex flex-col">

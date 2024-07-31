@@ -20,12 +20,11 @@ export const fetchMembers = async () => {
     }
 };
 
-export const UpdateMembers = async () => {
+export const UpdateMembers = async (memberId: number) => {
     try {
-        const response = await axios.put('https://gamecenter-backend.vercel.app/api/members');
-        return response.data;
+        await axios.put(`https://gamecenter-backend.vercel.app/api/members/${memberId}`);
     } catch (error) {
-        console.error('Error fetching members', error);
+        console.error(`Error Updating member ${memberId}`, error);
         throw error;
     }
 };
@@ -35,7 +34,7 @@ export const AddMembers = async () => {
         const response = await axios.post('https://gamecenter-backend.vercel.app/api/members');
         return response.data;
     } catch (error) {
-        console.error('Error fetching members', error);
+        console.error('Error trying to add new member', error);
         throw error;
     }
 };
