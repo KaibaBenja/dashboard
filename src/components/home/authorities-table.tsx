@@ -13,6 +13,8 @@ import { AuthorityForm } from '../forms/authorities-form';
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { IoMdSettings } from 'react-icons/io';
 
+import { AuthoritieType } from '@/types/AuthTypes';
+
 export function AuthorityTable() {
     const { authorities, setAuthorities } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +48,7 @@ export function AuthorityTable() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {authorities.map((authoritie: { _id: number; name: string; puesto: string }) => (
+                        {authorities.map((authoritie: AuthoritieType) => (
                             <TableRow key={authoritie._id} className='flex flex-col md:flex-row md:table-row'>
                                 <TableCell className="block md:hidden text-right">
                                     <DropdownMenu>

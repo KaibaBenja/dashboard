@@ -5,8 +5,8 @@ import { useAppContext } from '@/context/AppContext';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { MemberType } from '@/types/MemberTypes';
 
-import { Button } from "@/components/ui/button"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import { Button } from "@/components/ui/button";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, TableCaption } from "@/components/ui/table";
 import { SlOptions } from "react-icons/sl";
 import { deleteMember } from '@/queries/Member';
 import { SheetForm } from '../sheet-form';
@@ -17,24 +17,33 @@ import { IoMdSettings } from 'react-icons/io';
 export function MembersTable() {
     const { members, setMembers } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
+    const [actionForm, setActionForm] = useState<boolean>(false);
+    const [currentMember, setCurrentMember] = useState<MemberType | null>(null);
 
-    function onChangeOpen() {
-        setIsOpen(!isOpen);
+    function onAddClick() {
+        setIsOpen(true);
+        setActionForm(false);
+        setCurrentMember(null);
     }
 
+    function onEditClick(member: MemberType) {
+        setIsOpen(true);
+        setActionForm(true);
+        setCurrentMember(member);
+    }
 
     async function handleDelete(memberId: number) {
         try {
             await deleteMember(memberId);
             setMembers(prevMembers => prevMembers.filter(member => member._id !== memberId));
         } catch (error) {
-            console.error('Failed to delete game:', error);
+            console.error('Failed to delete member:', error);
         }
     }
 
     return (
         <div className='flex flex-col'>
-            <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onChangeOpen}>
+            <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onAddClick}>
                 <IoAddCircleSharp className="w-5 h-5" /> Agregar
             </button>
             <div className="border shadow-sm rounded-lg p-2">
@@ -48,9 +57,10 @@ export function MembersTable() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {members.map((member: MemberType) => (
+                        {members.map((member: MemberType, index: number) => (
                             <TableRow key={member._id} className='flex flex-col md:flex-row md:table-row'>
-                                <TableCell className="block md:hidden text-right">
+                                <TableCell className="flex items-center justify-between md:hidden text-right">
+                                    <TableCaption>Miembro {index + 1}</TableCaption>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="icon">
@@ -60,7 +70,7 @@ export function MembersTable() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>View</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => onEditClick(member)}>Edit</DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleDelete(member._id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -68,7 +78,7 @@ export function MembersTable() {
                                 <TableCell className="flex md:table-cell items-center gap-2 font-medium">
                                     <span className='block md:hidden'>Id: </span>{member._id}
                                 </TableCell>
-                                <TableCell className="flex md:table-cell items-center gap-2 font-medium">
+                                <TableCell className="flex md:table-cell items-center gap-2">
                                     <span className='block md:hidden'>Nombre: </span>{member.name_surname}
                                 </TableCell>
                                 <TableCell className="flex md:table-cell items-center gap-2">
@@ -77,7 +87,7 @@ export function MembersTable() {
                                 <TableCell className="flex md:table-cell items-center gap-2">
                                     <span className='block md:hidden'>LinkedIn: </span>{member.linkedIn}
                                 </TableCell>
-                                <TableCell className="hidden md:block   text-right">
+                                <TableCell className="hidden md:block text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="icon">
@@ -87,24 +97,25 @@ export function MembersTable() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>View</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => onEditClick(member)}>Edit</DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleDelete(member._id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
+                                <SheetForm
+                                    title='Formulario de Miembros'
+                                    descripcion='Ingresa los detalles del Miembro del equipo'
+                                    isOpen={isOpen}
+                                    handleOpen={() => setIsOpen(!isOpen)}
+                                >
+                                    <MemberForm formAction={actionForm} memberData={currentMember} />
+                                </SheetForm>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-                <SheetForm
-                    title='Formulario de Miembros'
-                    descripcion='Ingresa los detalles del Miembro del equipo'
-                    isOpen={isOpen}
-                    handleOpen={onChangeOpen}
-                >
-                    <MemberForm />
-                </SheetForm>
             </div>
         </div>
-    )
+    );
 }
+

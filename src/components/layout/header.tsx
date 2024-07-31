@@ -49,9 +49,9 @@ export function Header({ section }: HeaderProps) {
                         {userInfo.username} <FaCircleUser className="h-7 w-7 mb-1" />
                     </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuContent className="mr-2">
                     <DropdownMenuRadioGroup value="menu">
-                        <DropdownMenuRadioItem value="usuario">Usuario: {userInfo.username}</DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem className="pr-4" value="usuario">Usuario: {userInfo.username}</DropdownMenuRadioItem>
                         <DropdownMenuRadioItem value="role">Rol: {userInfo.role}</DropdownMenuRadioItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuRadioItem className="cursor-pointer bg-green-800 text-[#FFFFFF] p-2 rounded-md flex justify-center" value="logout" onClick={logout}>Cerrar Sesión</DropdownMenuRadioItem>

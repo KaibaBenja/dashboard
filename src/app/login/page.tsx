@@ -3,9 +3,12 @@ import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { AppContext } from '@/context/AppContext';
 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 export default function LoginPage() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const { token, login } = useContext(AppContext)!;
     const router = useRouter();
 
@@ -53,10 +56,22 @@ export default function LoginPage() {
                                     Contraseña
                                 </label>
                             </div>
+                            <div className='flex gap-2 border items-center border-gray-200'>
                             <input
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                                className="flex h-10 w-full rounded-md bg-background px-3 py-2 focus:outline-none focus:ring-0"
+                                type={showPassword ? "password" : "text"} value={password} onChange={(e) => setPassword(e.target.value)}  
                             />
+                            {showPassword 
+                                ? <FaEye 
+                                        className='text-green-800 mr-3 h-6 w-6'
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    /> 
+                                : <FaEyeSlash 
+                                        className='text-green-800 mr-3 h-6 w-6'
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    />
+                            }
+                            </div>
                         </div>
                         <button type="submit" className='w-full bg-[#0a8537] rounded-md font-semibold text-white p-2'>Iniciar Sesión</button>
                     </div>
