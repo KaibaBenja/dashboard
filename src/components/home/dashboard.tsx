@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 
 import { GameTable } from "./game-table";
-import { NewsTable } from "./news-table";
+import { NewsTable } from "./post-table";
 import { AuthorityTable } from "./authorities-table";
 import { MembersTable } from "./members-table";
 import { Header } from "../layout/header";

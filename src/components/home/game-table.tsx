@@ -24,7 +24,7 @@ export function GameTable() {
         setIsOpen(!isOpen);
     }
 
-    async function handleDelete(gameId: number) {
+    async function handleDelete(gameId: string) {
         try {
             await deleteGame(gameId);
             setGames(prevGames => prevGames.filter(game => game._id !== gameId));
@@ -64,7 +64,7 @@ export function GameTable() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>View</DropdownMenuItem>
                                             <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(game._id)}>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDelete(game?._id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

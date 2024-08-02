@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { deleteMember } from '@/queries/Member';
+
 import { MemberType } from '@/types/MemberTypes';
 
-import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, TableCaption } from "@/components/ui/table";
-import { SlOptions } from "react-icons/sl";
-import { deleteMember } from '@/queries/Member';
-import { SheetForm } from '../sheet-form';
 import { MemberForm } from '../forms/members-form';
+import { ActionCell } from '../actions-cell';
+import { SheetForm } from '../sheet-form';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { IoMdSettings } from 'react-icons/io';
 
 export function MembersTable() {
     const { members, setMembers } = useAppContext();
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [warning, setWarning] = useState<boolean>(false);
+    const [currentMemberId, setCurrentMemberId] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
     const [currentMember, setCurrentMember] = useState<MemberType | null>(null);
 
@@ -32,7 +32,17 @@ export function MembersTable() {
         setCurrentMember(member);
     }
 
-    async function handleDelete(memberId: number) {
+    function handleWarning() {
+        setWarning(!warning);
+    }
+
+    function handleCloseForm() {
+        setTimeout(() => {
+            setIsOpen(!isOpen);
+        }, 500);
+    }
+
+    async function handleDelete(memberId: string) {
         try {
             await deleteMember(memberId);
             setMembers(prevMembers => prevMembers.filter(member => member._id !== memberId));
@@ -46,76 +56,62 @@ export function MembersTable() {
             <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onAddClick}>
                 <IoAddCircleSharp className="w-5 h-5" /> Agregar
             </button>
-            <div className="border shadow-sm rounded-lg p-2">
-                <Table>
-                    <TableHeader className='border-b hidden md:table-header-group'>
-                        <TableRow>
-                            <TableHead className="w-[100px]">ID</TableHead>
-                            <TableHead className="min-w-[150px]">Nombre</TableHead>
-                            <TableHead className="hidden md:table-cell">Puesto</TableHead>
-                            <TableHead className="hidden md:table-cell">LinkedIn</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {members.map((member: MemberType, index: number) => (
-                            <TableRow key={member._id} className='flex flex-col md:flex-row md:table-row'>
-                                <TableCell className="flex items-center justify-between md:hidden text-right">
-                                    <TableCaption>Miembro {index + 1}</TableCaption>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <IoMdSettings className="w-4 h-4" />
-                                                <span className="sr-only">Actions</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem>View</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => onEditClick(member)}>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(member._id)}>Delete</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                                <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                    <span className='block md:hidden'>Id: </span>{member._id}
-                                </TableCell>
-                                <TableCell className="flex md:table-cell items-center gap-2">
-                                    <span className='block md:hidden'>Nombre: </span>{member.name_surname}
-                                </TableCell>
-                                <TableCell className="flex md:table-cell items-center gap-2">
-                                    <span className='block md:hidden'>Puesto: </span>{member.puesto}
-                                </TableCell>
-                                <TableCell className="flex md:table-cell items-center gap-2">
-                                    <span className='block md:hidden'>LinkedIn: </span>{member.linkedIn}
-                                </TableCell>
-                                <TableCell className="hidden md:block text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <SlOptions className="w-4 h-4" />
-                                                <span className="sr-only">Actions</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem>View</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => onEditClick(member)}>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(member._id)}>Delete</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                                <SheetForm
-                                    title='Formulario de Miembros'
-                                    descripcion='Ingresa los detalles del Miembro del equipo'
-                                    isOpen={isOpen}
-                                    handleOpen={() => setIsOpen(!isOpen)}
-                                >
-                                    <MemberForm formAction={actionForm} memberData={currentMember} />
-                                </SheetForm>
+            <div className='h-[650px] overflow-auto no-scrollbar'>
+                <div className="border shadow-sm rounded-lg p-2">
+                    <Table>
+                        <TableHeader className='border-b hidden md:table-header-group'>
+                            <TableRow>
+                                <TableHead className='table-cell'>ID</TableHead>
+                                <TableHead className="table-cell">Nombre</TableHead>
+                                <TableHead className="hidden md:table-cell">Puesto</TableHead>
+                                <TableHead className="hidden md:table-cell">LinkedIn</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {members.map((member: MemberType, index: number) => (
+                                <TableRow key={member?._id} className='flex flex-col md:flex-row md:table-row'>
+                                    <TableCell className="flex md:table-cell items-center gap-2 font-medium">
+                                        <span className='block md:hidden'>Id: </span>{member?._id}
+                                    </TableCell>
+                                    <TableCell className="flex md:table-cell items-center gap-2">
+                                        <span className='block md:hidden'>Nombre: </span>{member?.name_surname}
+                                    </TableCell>
+                                    <TableCell className="flex md:table-cell items-center gap-2">
+                                        <span className='block md:hidden'>Puesto: </span>{member?.puesto}
+                                    </TableCell>
+                                    <TableCell className="flex md:table-cell items-center gap-2">
+                                        <span className='block md:hidden'>LinkedIn: </span>{member?.linkedIn}
+                                    </TableCell>
+                                    <ActionCell
+                                        data={member}
+                                        index={`Miembro ${index + 1}`}
+                                        closeDialog={warning && currentMemberId === member._id}
+                                        handleCloseDialog={handleWarning}
+                                        takeCurrentId={() => setCurrentMemberId(member._id)}
+                                        currentId={currentMemberId}
+                                        deleteActionCell={handleDelete}
+                                        editActionCell={onEditClick}
+                                    />
+                                    <SheetForm
+                                        title='Formulario de Miembros'
+                                        descripcion={actionForm
+                                            ? `Editar miembro, cambiar los campos que se desea`
+                                            : "Agregar Nuevo Miembro del Equipo, todos los campos son obligatorios"
+                                        }
+                                        isOpen={isOpen}
+                                        handleOpen={handleCloseForm}
+                                    >
+                                        <MemberForm
+                                            formAction={actionForm}
+                                            memberData={currentMember}
+                                        />
+                                    </SheetForm>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         </div>
     );
 }
-

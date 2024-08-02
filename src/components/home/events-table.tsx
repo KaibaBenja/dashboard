@@ -22,7 +22,7 @@ export function EventsTable() {
         setIsOpen(!isOpen);
     }
 
-    async function handleDelete(eventId: number) {
+    async function handleDelete(eventId: string) {
         try {
             await deleteEvents(eventId);
             setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));

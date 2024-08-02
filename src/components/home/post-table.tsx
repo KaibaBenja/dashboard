@@ -3,35 +3,33 @@
 import { useState } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { PostType } from '@/types/PostTypes';
 
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { deleteAuthority } from '@/queries/Authority';
+import { deletePost } from '@/queries/Post';
 import { SheetForm } from '../sheet-form';
-import { AuthorityForm } from '../forms/authorities-form';
+import { PostForm } from '../forms/post-form';
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { IoMdSettings } from 'react-icons/io';
 
-import { AuthoritieType } from '@/types/AuthTypes';
-
-export function AuthorityTable() {
-    const { authorities, setAuthorities } = useAppContext();
+export function NewsTable() {
+    const { posts, setPosts } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
         setIsOpen(!isOpen);
     }
 
-    async function handleDelete(authoritieId: string) {
+    async function handleDelete(postId: string) {
         try {
-            await deleteAuthority(authoritieId);
-            setAuthorities(prevAuthorities => prevAuthorities.filter(authoritie => authoritie._id !== authoritieId));
+            await deletePost(postId);
+            setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
         } catch (error) {
-            console.error('Failed to delete game:', error);
+            console.error('Failed to delete post:', error);
         }
     }
-
 
     return (
         <div className='flex flex-col'>
@@ -43,13 +41,14 @@ export function AuthorityTable() {
                     <TableHeader className='border-b hidden md:table-header-group'>
                         <TableRow>
                             <TableHead className="w-[100px]">ID</TableHead>
-                            <TableHead className="min-w-[150px]">Nombre</TableHead>
-                            <TableHead className="hidden md:table-cell">Cargo</TableHead>
+                            <TableHead className="min-w-[150px]">Titulo</TableHead>
+                            <TableHead className="hidden md:table-cell">Categoría</TableHead>
+                            <TableHead className="hidden md:table-cell">Fecha</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {authorities.map((authoritie: AuthoritieType) => (
-                            <TableRow key={authoritie._id} className='flex flex-col md:flex-row md:table-row'>
+                        {posts.map((post: PostType) => (
+                            <TableRow key={post._id} className='flex flex-col md:flex-row md:table-row'>
                                 <TableCell className="block md:hidden text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -61,16 +60,22 @@ export function AuthorityTable() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>View</DropdownMenuItem>
                                             <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(authoritie._id)}>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDelete(post._id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
-                                <TableCell className="flex md:table-cell items-center gap-2font-medium">
-                                    <span className='block md:hidden'>Id: </span>{authoritie._id}</TableCell>
-                                <TableCell className='flex md:table-cell items-center gap-2'>
-                                    <span className='block md:hidden'>Nombre: </span>{authoritie.name}</TableCell>
+                                <TableCell className="flex md:table-cell items-center gap-2 font-medium">
+                                    <span className='block md:hidden'>Id: </span>{post._id}
+                                </TableCell>
                                 <TableCell className="flex md:table-cell items-center gap-2">
-                                    <span className='block md:hidden'>Puesto: </span>{authoritie.puesto}</TableCell>
+                                    <span className='block md:hidden'>Titulo: </span>{post.titulo}
+                                </TableCell>
+                                <TableCell className="flex md:table-cell items-center gap-2">
+                                    <span className='block md:hidden'>Categoria: </span>{post.categoria}
+                                </TableCell>
+                                <TableCell className="flex md:table-cell items-center gap-2">
+                                    <span className='block md:hidden'>Fecha: </span>{post.fecha}
+                                </TableCell>
                                 <TableCell className="hidden md:block text-right">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -82,7 +87,7 @@ export function AuthorityTable() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem>View</DropdownMenuItem>
                                             <DropdownMenuItem onClick={onChangeOpen}>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleDelete(authoritie._id)}>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => handleDelete(post._id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -91,12 +96,12 @@ export function AuthorityTable() {
                     </TableBody>
                 </Table>
                 <SheetForm
-                    title='Formulario de Autoridades'
-                    descripcion='Ingresa la autoridad pertinente'
+                    title='Formulario de Posts'
+                    descripcion='Ingresa los detalles del Posts'
                     isOpen={isOpen}
                     handleOpen={onChangeOpen}
                 >
-                    <AuthorityForm />
+                    <PostForm />
                 </SheetForm>
             </div>
         </div>

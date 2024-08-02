@@ -1,11 +1,12 @@
-import { AddMembers, UpdateMembers } from "@/queries/Member";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
-
-import { Button } from "../ui/button";
+import { AddMembers, UpdateMembers } from "@/queries/Member";
 
 import { MemberType } from "@/types/MemberTypes";
+
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { Button } from "../ui/button";
 
 interface MemberFormProps {
     formAction: boolean;
@@ -42,13 +43,13 @@ export function MemberForm({ formAction, memberData }: MemberFormProps) {
         mode: "onChange",
     });
 
-    const onSubmit: SubmitHandler<FormValues> = (data) => {
+    const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
         try {
             if (formAction && memberData) {
-                UpdateMembers(memberData?._id);
+                await UpdateMembers(memberData?._id, data);
                 console.log("Edit");
             } else {
-                // AddMembers();
+                await AddMembers(data);
                 console.log("Add");
             }
             console.log(data);
@@ -57,30 +58,73 @@ export function MemberForm({ formAction, memberData }: MemberFormProps) {
         }
     };
 
+    function handleLoadingText() {
+        if (formAction) {
+            if (isSubmitting) {
+                return "Editar Miembro";
+            } else {
+                return "Editando Miembro";
+            }
+        } else {
+            if (isSubmitting) {
+                return "Agregar Miembro";
+            } else {
+                return "Agregando Miembro";
+            }
+        }
+    }
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} onDragEnter={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">
                 <label className="block text-gray-700">Nombre:</label>
-                <input {...register("name_surname")} type="text" className="w-full px-4 py-2 border rounded-lg focus:outline-green-800" />
-                {errors?.name_surname && <p>{errors.name_surname.message}</p>}
+                <input
+                    {...register("name_surname")}
+                    type="text"
+                    placeholder={formAction ? memberData?.name_surname : ""}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.name_surname && <p className="text-red-700 p-2 font-semibold">{errors.name_surname.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Puesto:</label>
-                <input {...register("puesto")} type="text" className="w-full px-4 py-2 border rounded-lg focus:outline-green-800" />
-                {errors?.puesto && <p>{errors.puesto.message}</p>}
+                <input
+                    {...register("puesto")}
+                    type="text"
+                    placeholder={formAction ? memberData?.puesto : ""}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.puesto && <p className="text-red-700 p-2 font-semibold">{errors.puesto.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">LinkedIn:</label>
-                <input {...register("linkedIn")} type="text" className="w-full px-4 py-2 border rounded-lg focus:outline-green-800" />
-                {errors?.linkedIn && <p>{errors.linkedIn.message}</p>}
+                <input
+                    {...register("linkedIn")}
+                    type="text"
+                    placeholder={formAction ? memberData?.linkedIn : ""}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.linkedIn && <p className="text-red-700 p-2 font-semibold">{errors.linkedIn.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Perfil:</label>
-                <input {...register("profile_pic")} type="text" className="w-full px-4 py-2 border rounded-lg focus:outline-green-800" />
-                {errors?.profile_pic && <p>{errors.profile_pic.message}</p>}
+                <input
+                    {...register("profile_pic")}
+                    type="text"
+                    placeholder={formAction ? memberData?.profile_pic : ""}
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.profile_pic && <p className="text-red-700 p-2 font-semibold">{errors.profile_pic.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
-                <Button type="submit" className="mr-2 bg-green-800 w-full">Guardar</Button>
+                <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
+                    {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
+                    {handleLoadingText()}
+                </Button>
             </div>
         </form>
     );

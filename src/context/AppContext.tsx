@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'next/navigation';
 
 import { GameType } from "@/types/GameTypes";
-import { PostType } from "@/types/NewsTypes";
+import { PostType } from "@/types/PostTypes";
 import { EventType } from "@/types/EventTypes";
 import { MemberType } from "@/types/MemberTypes";
 import { AuthoritieType } from "@/types/AuthTypes";

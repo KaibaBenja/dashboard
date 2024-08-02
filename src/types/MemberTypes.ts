@@ -1,5 +1,5 @@
 export interface MemberType {
-    _id: number;
+    _id: string ;
     name_surname: string;
     puesto: string;
     linkedIn: string;
