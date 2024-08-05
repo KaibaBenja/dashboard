@@ -82,9 +82,11 @@ export function MembersTable() {
         }
     }
 
-    const indexOfLastMember = currentPage * itemsPerPage;
-    const indexOfFirstMember = indexOfLastMember - itemsPerPage;
-    const currentMembers = members.slice(indexOfFirstMember, indexOfLastMember);
+    const indexOfLastMember: number = currentPage * itemsPerPage;
+    const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
+    const currentMembers: MemberType[] = members.slice(indexOfFirstMember, indexOfLastMember);
+
+    console.log(members.length);
 
     return (
         <div className='flex flex-col'>
@@ -137,25 +139,26 @@ export function MembersTable() {
                     </Table>
                 </div>
             </div>
-            <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
-                <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    className={Boolean(currentPage === 1) ? "text-gray-300 cursor-not-allowed" : "text-green-800"}
-                >
-                    <FaArrowCircleLeft className='w-6 h-6' />
-                </button>
-                <span className='font-semibold '>
-                    {currentPage} - {Math.ceil(members.length / itemsPerPage)}
-                </span>
-                <button
-                    disabled={currentPage === Math.ceil(members.length / itemsPerPage)}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className={Boolean(currentPage === Math.ceil(members.length / itemsPerPage)) ? "text-gray-300 cursor-not-allowed" : "text-green-800"}
-                >
-                    <FaArrowCircleRight className='w-6 h-6' />
-                </button>
-            </div>
+            {Boolean(members.length >= 5) &&
+                <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
+                    <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        className={Boolean(currentPage === 1) ? "text-gray-300 cursor-not-allowed" : "text-green-800"}
+                    >
+                        <FaArrowCircleLeft className='w-6 h-6' />
+                    </button>
+                    <span className='font-semibold '>
+                        {currentPage} - {Math.ceil(members.length / itemsPerPage)}
+                    </span>
+                    <button
+                        disabled={currentPage === Math.ceil(members.length / itemsPerPage)}
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        className={Boolean(currentPage === Math.ceil(members.length / itemsPerPage)) ? "text-gray-300 cursor-not-allowed" : "text-green-800"}
+                    >
+                        <FaArrowCircleRight className='w-6 h-6' />
+                    </button>
+                </div>}
             <SheetForm
                 title='Formulario de Miembros'
                 descripcion={actionForm
