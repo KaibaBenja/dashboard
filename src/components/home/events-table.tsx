@@ -1,21 +1,21 @@
 "use client"
 
 import { useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { useFetchEvents } from '@/hooks/useFetchEvent';
+import { deleteEvents } from '@/queries/Events';
+import { EventType } from '@/types/EventTypes';
 
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { deleteEvents } from '@/queries/Events';
-import { EventType } from '@/types/EventTypes';
 import { EventForm } from '../forms/events-form';
 import { SheetForm } from '../sheet-form';
 import { IoMdSettings } from "react-icons/io";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { IoAddCircleSharp } from 'react-icons/io5';
 
 export function EventsTable() {
-    const { events, setEvents } = useAppContext();
+    const { events, setEvents } = useFetchEvents();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {

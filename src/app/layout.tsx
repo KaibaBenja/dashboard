@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
     return (
         <AppContextProvider>
-            <html lang="en">
+            <html lang="en" className="scroll-smooth">
                 <body className={inter.className}>{children}</body>
             </html>
         </AppContextProvider>

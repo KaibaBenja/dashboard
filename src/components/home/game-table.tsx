@@ -1,22 +1,22 @@
 "use client"
 
+import Link from 'next/link';
 import { useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { useFetchGames } from '@/hooks/useFetchGames';
+import { deleteGame } from '@/queries/Games';
+import { GameType } from '@/types/GameTypes';
 
-import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { GameType } from '@/types/GameTypes';
-import { deleteGame } from '@/queries/Games';
 import { GameForm } from '../forms/game-form';
-import Link from 'next/link';
 import { SheetForm } from '../sheet-form';
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { IoMdSettings } from 'react-icons/io';
 
 export function GameTable() {
-    const { games, setGames } = useAppContext();
+    const { games, setGames } = useFetchGames();
     const [isOpen, setIsOpen] = useState(false);
 
 

@@ -1,21 +1,21 @@
 "use client"
 
 import { useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { useFetchPosts } from '@/hooks/useFetchPosts';
+import { deletePost } from '@/queries/Post';
 import { PostType } from '@/types/PostTypes';
 
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { deletePost } from '@/queries/Post';
 import { SheetForm } from '../sheet-form';
 import { PostForm } from '../forms/post-form';
 import { IoAddCircleSharp } from 'react-icons/io5';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { IoMdSettings } from 'react-icons/io';
 
 export function NewsTable() {
-    const { posts, setPosts } = useAppContext();
+    const { posts, setPosts } = useFetchPosts();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {

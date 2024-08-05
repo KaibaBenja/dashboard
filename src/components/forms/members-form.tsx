@@ -11,6 +11,8 @@ import { Button } from "../ui/button";
 interface MemberFormProps {
     formAction: boolean;
     memberData: MemberType | null;
+    onSubmitSuccess: () => void;
+    handleCloseSheet: () => void;
 }
 
 interface FormValues {
@@ -21,13 +23,24 @@ interface FormValues {
 };
 
 const schema: ObjectSchema<FormValues> = object({
-    name_surname: string().required("El nombre es requerido").defined(),
-    puesto: string().required("El puesto es requerido").defined(),
-    linkedIn: string().required("Se debe ingresar un link valido de linkedIn"),
-    profile_pic: string().required("Se debe ingresar una foto de perfil").defined(),
-});
+    name_surname: string()
+        .required("El nombre es requerido")
+        .test('is-string', 'El nombre debe ser una cadena de texto', value => typeof value === 'string')
+        .defined(),
+    puesto: string()
+        .required("El puesto es requerido")
+        .test('is-string', 'El puesto debe ser una cadena de texto', value => typeof value === 'string')
+        .defined(),
+    linkedIn: string()
+        .required("Se debe ingresar un link valido de LinkedIn")
+        .test('is-string', 'El link de LinkedIn debe ser una cadena de texto', value => typeof value === 'string'),
+    profile_pic: string()
+        .required("Se debe ingresar una foto de perfil")
+        .test('is-string', 'La foto de perfil debe ser una cadena de texto', value => typeof value === 'string')
+        .defined(),
+}); 
 
-export function MemberForm({ formAction, memberData }: MemberFormProps) {
+export function MemberForm({ formAction, memberData, onSubmitSuccess, handleCloseSheet }: MemberFormProps) {
     const {
         register,
         handleSubmit,
@@ -52,6 +65,8 @@ export function MemberForm({ formAction, memberData }: MemberFormProps) {
                 await AddMembers(data);
                 console.log("Add");
             }
+            onSubmitSuccess();
+            handleCloseSheet();
             console.log(data);
         } catch (error) {
             console.log(error);
@@ -61,15 +76,15 @@ export function MemberForm({ formAction, memberData }: MemberFormProps) {
     function handleLoadingText() {
         if (formAction) {
             if (isSubmitting) {
-                return "Editar Miembro";
-            } else {
                 return "Editando Miembro";
+            } else {
+                return "Editar Miembro";
             }
         } else {
             if (isSubmitting) {
-                return "Agregar Miembro";
-            } else {
                 return "Agregando Miembro";
+            } else {
+                return "Agregar Miembro";
             }
         }
     }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { parseCookies } from "nookies";
@@ -19,7 +19,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { TbFileText } from "react-icons/tb";
 import { MdOutlineShield } from "react-icons/md";
 import { LuGamepad, LuUsers } from "react-icons/lu";
@@ -30,14 +30,14 @@ import { FaCircleUser } from "react-icons/fa6";
 interface UserInfo {
     username: string;
     role: string;
-    token: string
+    token: string;
 }
 
 export function Dashboard() {
-    const [selectedView, setSelectedView] = useState("Juegos");
     const cookies = parseCookies();
     const { logout } = useContext(AppContext)!;
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', role: '', token: '' });
+    const [selectedView, setSelectedView] = useState<string>("Juegos");
 
     useEffect(() => {
         const userInfo: UserInfo = {
@@ -48,11 +48,21 @@ export function Dashboard() {
         setUserInfo(userInfo);
     }, []);
 
-    console.log(userInfo.token);
+    useEffect(() => {
+        const savedView = localStorage.getItem("selectedView");
+        if (savedView) {
+            setSelectedView(savedView);
+        }
+    }, []);
+
+    const handleViewChange = (view: string) => {
+        setSelectedView(view);
+        localStorage.setItem("selectedView", view);
+    };
 
     const renderTable = () => {
         switch (selectedView) {
-            case "Posts":
+            case "Posts":   
                 return <NewsTable />;
             case "Juegos":
                 return <GameTable />;
@@ -61,14 +71,14 @@ export function Dashboard() {
             case "Autoridades":
                 return <AuthorityTable />;
             case "Eventos":
-                return <EventsTable />
+                return <EventsTable />;
             default:
                 return <GameTable />;
         }
     };
 
     return (
-        <div className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
+        <div id="header" className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
             <div className="border-r bg-muted/40 lg:block">
                 <div className="hidden lg:flex bg-[#66cc00] h-full max-h-screen flex-col gap-2">
                     <div className="flex h-[80px] items-center text-[#FFFFFF] border-b px-6">
@@ -78,23 +88,23 @@ export function Dashboard() {
                     </div>
                     <div className="flex-1 overflow-auto py-2">
                         <nav className="grid items-start gap-6 px-4 text-sm font-medium">
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30  py-3 rounded-2xl" onClick={() => setSelectedView("Posts")}>
+                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Posts")}>
                                 <TbFileText className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Posts</h1>
                             </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Juegos")}>
+                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Juegos")}>
                                 <LuGamepad className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Juegos</h1>
                             </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Miembros")}>
+                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Miembros")}>
                                 <LuUsers className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Miembros</h1>
                             </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Autoridades")}>
+                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Autoridades")}>
                                 <MdOutlineShield className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Autoridades</h1>
                             </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Eventos")}>
+                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Eventos")}>
                                 <IoCalendarNumberOutline className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl mt-2">Eventos</h1>
                             </div>
@@ -105,16 +115,16 @@ export function Dashboard() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className="flex items-center font-mono bg-green-800 text-[#FFFFFF] px-2 py-1 rounded-lg capitalize gap-2 mr-4">
-                                Tabla de {selectedView}  <CgArrowsExchangeAlt className="h-5 w-5" />
+                                Tabla de {selectedView} <CgArrowsExchangeAlt className="h-5 w-5" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuRadioGroup defaultValue={selectedView} className="text-lg font-semibold pr-4">
-                                <DropdownMenuRadioItem value="Posts" onClick={() => setSelectedView("Posts")}>Posts</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Juegos" onClick={() => setSelectedView("Juegos")}>Juegos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Miembros" onClick={() => setSelectedView("Miembros")}>Miembros</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Autoridades" onClick={() => setSelectedView("Autoridades")}>Autoridades</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Eventos" onClick={() => setSelectedView("Eventos")}>Eventos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Posts" onClick={() => handleViewChange("Posts")}>Posts</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Juegos" onClick={() => handleViewChange("Juegos")}>Juegos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Miembros" onClick={() => handleViewChange("Miembros")}>Miembros</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Autoridades" onClick={() => handleViewChange("Autoridades")}>Autoridades</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Eventos" onClick={() => handleViewChange("Eventos")}>Eventos</DropdownMenuRadioItem>
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>

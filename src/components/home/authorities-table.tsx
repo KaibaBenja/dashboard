@@ -1,22 +1,21 @@
 "use client"
 
 import { useState } from 'react';
-import { useAppContext } from '@/context/AppContext';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { useFetchAuthorities } from '@/hooks/useFetchAuthorities';
+import { deleteAuthority } from '@/queries/Authority';
+import { AuthoritieType } from '@/types/AuthTypes';
 
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { deleteAuthority } from '@/queries/Authority';
 import { SheetForm } from '../sheet-form';
 import { AuthorityForm } from '../forms/authorities-form';
 import { IoAddCircleSharp } from 'react-icons/io5';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { IoMdSettings } from 'react-icons/io';
 
-import { AuthoritieType } from '@/types/AuthTypes';
-
 export function AuthorityTable() {
-    const { authorities, setAuthorities } = useAppContext();
+    const { authorities, setAuthorities } = useFetchAuthorities();
     const [isOpen, setIsOpen] = useState(false);
 
     function onChangeOpen() {
