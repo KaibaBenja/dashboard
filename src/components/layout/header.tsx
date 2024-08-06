@@ -36,7 +36,7 @@ export function Header({ section }: HeaderProps) {
             token: cookies.token || ''
         };
         setUserInfo(userInfo);
-    }, []);
+    }, [cookies.role, cookies.token, cookies.user]);
 
     return (
         <header className="hidden lg:flex h-14 lg:h-[80px] bg-[#66cc00] items-center gap-4 border-b bg-muted/40 px-6">

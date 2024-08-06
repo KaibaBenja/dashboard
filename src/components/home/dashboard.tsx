@@ -46,14 +46,12 @@ export function Dashboard() {
             token: cookies.token || ''
         };
         setUserInfo(userInfo);
-    }, []);
 
-    useEffect(() => {
         const savedView = localStorage.getItem("selectedView");
         if (savedView) {
             setSelectedView(savedView);
         }
-    }, []);
+    }, [cookies.role, cookies.token, cookies.user]);
 
     const handleViewChange = (view: string) => {
         setSelectedView(view);
@@ -62,7 +60,7 @@ export function Dashboard() {
 
     const renderTable = () => {
         switch (selectedView) {
-            case "Posts":   
+            case "Posts":
                 return <NewsTable />;
             case "Juegos":
                 return <GameTable />;
