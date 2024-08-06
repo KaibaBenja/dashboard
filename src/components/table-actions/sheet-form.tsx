@@ -1,11 +1,11 @@
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea } from "../ui/scroll-area";
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
-} from "./ui/sheet";
+} from "../ui/sheet";
 
 
 interface ModalFormProps {

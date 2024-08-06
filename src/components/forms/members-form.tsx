@@ -7,6 +7,7 @@ import { MemberType } from "@/types/MemberTypes";
 
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Button } from "../ui/button";
+import { FileUpload } from "../table-actions/file-upload";
 
 interface MemberFormProps {
     formAction: boolean;
@@ -125,14 +126,15 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
                 {errors?.linkedIn && <p className="text-red-700 p-2 font-semibold">{errors.linkedIn.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Perfil:</label>
-                <input
+                <label className="block text-gray-700">Foto de Perfil:</label>
+                {/* <input
                     {...register("profile_pic")}
                     type="text"
                     placeholder={formAction ? memberData?.profile_pic : ""}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
-                />
+                /> */}
+                <FileUpload />
                 {errors?.profile_pic && <p className="text-red-700 p-2 font-semibold">{errors.profile_pic.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">

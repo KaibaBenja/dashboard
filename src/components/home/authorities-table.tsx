@@ -8,7 +8,7 @@ import { AuthoritieType } from '@/types/AuthTypes';
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
-import { SheetForm } from '../sheet-form';
+import { SheetForm } from '../table-actions/sheet-form';
 import { AuthorityForm } from '../forms/authorities-form';
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"

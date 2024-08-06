@@ -1,16 +1,25 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import cx from "classnames";
+
 import { deleteMember, fetchMembers } from '@/queries/Member';
-import { MemberType } from '@/types/MemberTypes';
 
 import { MemberForm } from '../forms/members-form';
-import { ActionCell } from '../actions-cell';
-import { SheetForm } from '../sheet-form';
+import { ActionCell } from '../table-actions/actions-cell';
+import { SheetForm } from '../table-actions/sheet-form';
+import { InfoDialog } from '../table-actions/info-card';
+import { ListSkeleton } from '../table-actions/item-skeleton';
+
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { ListSkeleton } from '../item-skeleton';
-import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaArrowCircleRight, FaLinkedin, FaBriefcase } from 'react-icons/fa';
+import { HiIdentification } from "react-icons/hi";
+
+import { MemberType } from '@/types/MemberTypes';
+
+import ExampleImg from "../../images/logo-c.png"
 
 export function MembersTable() {
     const [members, setMembers] = useState<MemberType[]>([]);
@@ -21,6 +30,7 @@ export function MembersTable() {
     const [actionForm, setActionForm] = useState<boolean>(false);
     const [currentMember, setCurrentMember] = useState<MemberType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
     const itemsPerPage: number = 5;
 
     useEffect(() => {
@@ -49,6 +59,11 @@ export function MembersTable() {
         setIsOpen(true);
         setActionForm(true);
         setCurrentMember(member);
+    }
+
+    function onViewClick(member: MemberType) {
+        setCurrentMember(member);
+        setInfoDialogOpen(true);
     }
 
     function handleWarning() {
@@ -125,12 +140,13 @@ export function MembersTable() {
                                         <ActionCell
                                             data={member}
                                             index={`Miembro ${index + 1}`}
-                                            closeDialog={warning && currentMemberId === member._id}
-                                            handleCloseDialog={handleWarning}
+                                            closeWarning={warning && currentMemberId === member._id}
+                                            handleCloseWarning={handleWarning}
                                             takeCurrentId={() => setCurrentMemberId(member._id)}
                                             currentId={currentMemberId}
                                             deleteActionCell={handleDelete}
                                             editActionCell={onEditClick}
+                                            viewActionCell={onViewClick}
                                         />
                                     </TableRow>
                                 ))}
@@ -144,7 +160,10 @@ export function MembersTable() {
                     <button
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(currentPage - 1)}
-                        className={Boolean(currentPage === 1) ? "text-gray-300 cursor-not-allowed" : "text-green-800"}
+                        className={cx({
+                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === 1),
+                            "text-green-800": !Boolean(currentPage === 1)
+                        })}
                     >
                         <FaArrowCircleLeft className='w-6 h-6' />
                     </button>
@@ -154,7 +173,10 @@ export function MembersTable() {
                     <button
                         disabled={currentPage === Math.ceil(members.length / itemsPerPage)}
                         onClick={() => setCurrentPage(currentPage + 1)}
-                        className={Boolean(currentPage === Math.ceil(members.length / itemsPerPage)) ? "text-gray-300 cursor-not-allowed" : "text-green-800"}
+                        className={cx({
+                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(members.length / itemsPerPage)),
+                            "text-green-800": !Boolean(currentPage === Math.ceil(members.length / itemsPerPage))
+                        })}
                     >
                         <FaArrowCircleRight className='w-6 h-6' />
                     </button>
@@ -175,6 +197,33 @@ export function MembersTable() {
                     onSubmitSuccess={refreshMembers}
                 />
             </SheetForm>
+            <InfoDialog
+                isOpen={infoDialogOpen}
+                handleOpen={() => setInfoDialogOpen(false)}
+            >
+                <Image
+                    src={ExampleImg}
+                    alt="example"
+                    width={80}
+                    height={80}
+                    className='rounded-full object-cover self-center my-4'
+                />
+                <h1 className='text-center font-bold text-xl'>{currentMember?.name_surname}</h1>
+                <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center gap-4 font-semibold'>
+                    <div className='flex items-center gap-2'>
+                        <HiIdentification className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentMember?._id}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <FaBriefcase className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentMember?.puesto}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <FaLinkedin className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentMember?.linkedIn}</span>
+                    </div>
+                </div>
+            </InfoDialog>
         </div>
     );
 }

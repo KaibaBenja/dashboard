@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { TableBody, TableCell, TableRow } from "./ui/table"
+import { TableBody, TableCell, TableRow } from "../ui/table"
 
 export function ListSkeleton() {
     return (

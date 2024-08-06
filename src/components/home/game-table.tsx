@@ -9,7 +9,7 @@ import { GameType } from '@/types/GameTypes';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { SlOptions } from "react-icons/sl";
 import { GameForm } from '../forms/game-form';
-import { SheetForm } from '../sheet-form';
+import { SheetForm } from '../table-actions/sheet-form';
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { IoAddCircleSharp } from 'react-icons/io5';
