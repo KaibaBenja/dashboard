@@ -20,6 +20,7 @@ import { HiIdentification } from "react-icons/hi";
 import { MemberType } from '@/types/MemberTypes';
 
 import ExampleImg from "../../images/logo-c.png"
+import { FileUpload } from '../table-actions/custom-inputs/file-upload';
 
 export function MembersTable() {
     const [members, setMembers] = useState<MemberType[]>([]);
@@ -73,6 +74,7 @@ export function MembersTable() {
     function handleCloseForm() {
         setTimeout(() => {
             setIsOpen(!isOpen);
+            setInfoDialogOpen(false);
         }, 300);
     }
 
@@ -198,8 +200,15 @@ export function MembersTable() {
                 />
             </SheetForm>
             <InfoDialog
-                isOpen={infoDialogOpen}
-                handleOpen={() => setInfoDialogOpen(false)}
+                openCard={infoDialogOpen}
+                openWarning={warning}
+                handleOpenCard={() => setInfoDialogOpen(false)}
+                handleWarning={handleWarning}
+                data={currentMember}
+                takeCurrentId={() => setCurrentMemberId(currentMember?._id!)}
+                currentId={currentMemberId}
+                deleteActionCell={handleDelete}
+                editActionCell={onEditClick}
             >
                 <Image
                     src={ExampleImg}
@@ -224,6 +233,7 @@ export function MembersTable() {
                     </div>
                 </div>
             </InfoDialog>
+            <FileUpload />
         </div>
     );
 }
