@@ -233,7 +233,6 @@ export function MembersTable() {
                     </div>
                 </div>
             </InfoDialog>
-            <FileUpload />
         </div>
     );
 }

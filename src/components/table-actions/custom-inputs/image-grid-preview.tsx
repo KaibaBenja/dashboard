@@ -1,36 +1,35 @@
 "use client";
 
 import { useState } from "react";
-
-import { ImagePreviewModal } from "./image-preview-modal";
+import cx from "classnames";
 
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosWarning, IoIosCloseCircle } from "react-icons/io";
+import { FilePreviewModal } from "./image-preview-modal";
 
-interface ImagesPreviewProps {
-    images: Array<string>;
-    handleImageRemoved: (index: number) => void;
+interface FilesPreviewProps {
+    files: Array<string>;
+    handleFilesRemoved: (index: number) => void;
 }
 
-export function ImagesPreview({
-    images,
-    handleImageRemoved,
-}: ImagesPreviewProps) {
-    const NoImagesAddedInfo = () => (
-        <div className="flex flex-row p-3 w-full lg:w-52 xl:w-72 rounded border-2 border-info-400 bg-info-100">
-            <FaInfoCircle className="text-info-600 w-5 h-5" />
-            <p>No se ha cargado ninguna imagen.</p>
+export function FilePreview({
+    files,
+    handleFilesRemoved,
+}: FilesPreviewProps) {
+    const NoFilesAddedInfo = () => (
+        <div className="flex items-start flex-col gap-2 p-3 w-full rounded border-2 font-medium border-green-800 bg-green-100">
+            <div className="flex items-center gap-2">
+                <FaInfoCircle className="text-green-800 w-4 h-4" />
+                <p>No se ha cargado ninguna imagen</p>
+            </div>
+            <div className="flex justify-start items-center gap-2">
+                <IoIosWarning className="text-orange-500 w-5 h-5" />
+                <p>Limite de Carga 4 imagenes</p>
+            </div>
         </div>
     );
 
-    const LimitImagesExceeded = () => (
-        <div className="flex flex-row p-3 w-full lg:w-52 xl:w-72 rounded border-2 border-warning-400 bg-warning-100">
-            <IoIosWarning className="text-warning-600 w-5 h-5" />
-            <p>Has pasado las 4 imágenes permitidas</p>
-        </div>
-    );
-
-    const ImageItem = ({ image, index }: { image: string; index: number }) => {
+    const FileItem = ({ file, index }: { file: string; index: number }) => {
         const [isOpen, setIsOpen] = useState<boolean>(false);
 
         return (
@@ -39,16 +38,16 @@ export function ImagesPreview({
                     <div className="relative">
                         <img
                             key={index}
-                            src={image}
+                            src={file}
                             alt={`image ${index}`}
                             className="w-20 h-20 rounded-lg border-3 border-black"
                         />
                         <button
                             key={`button ${index}`}
-                            onClick={() => handleImageRemoved(index)}
-                            className="absolute top-0 right-0 mt-1 mr-1 bg-red-600 text-white rounded-full p-1"
+                            onClick={() => handleFilesRemoved(index)}
+                            className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 rounded-full p-1"
                         >
-                            <IoIosCloseCircle className="w-3 h-3" />
+                            <IoIosCloseCircle className="w-5 h-5" />
                         </button>
                     </div>
                     {isOpen && (
@@ -60,7 +59,7 @@ export function ImagesPreview({
                                 >
                                     <IoIosCloseCircle className="w-5 h-5" />
                                 </button>
-                                <ImagePreviewModal imageUri={image} />
+                                <FilePreviewModal fileUri={file} />
                             </div>
                         </div>
                     )}
@@ -70,15 +69,17 @@ export function ImagesPreview({
     };
 
     return (
-        <div className="w-full mt-3 flex flex-wrap space-y-3 bg-pink-500">
-            {images.length > 0 ? (
-                images.map((image, i) => (
-                    <ImageItem key={i} image={image} index={i} />
+        <div className={cx({
+            "mt-3 grid grid-col-2 gap-4 px-12": Boolean(files.length > 0),
+            "mt-3 flex flex-col items-center px-12": Boolean(files.length < 0)
+        })}>
+            {files.length > 0 ? (
+                files.map((files, i) => (
+                    <FileItem key={i} file={files} index={i} />
                 ))
             ) : (
-                <NoImagesAddedInfo />
+                <NoFilesAddedInfo />
             )}
-            {images.length > 4 && <LimitImagesExceeded />}
         </div>
     );
 }

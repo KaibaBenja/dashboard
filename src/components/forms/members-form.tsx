@@ -134,7 +134,7 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 /> */}
-                {/* <FileUpload /> */}
+                <FileUpload />
                 {errors?.profile_pic && <p className="text-red-700 p-2 font-semibold">{errors.profile_pic.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
