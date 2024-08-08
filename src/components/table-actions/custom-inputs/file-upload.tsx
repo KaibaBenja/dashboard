@@ -1,43 +1,35 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { FilePreview } from "./image-grid-preview";
 import { LuUpload } from "react-icons/lu";
 import { cx } from "class-variance-authority";
 import { IoIosWarning } from "react-icons/io";
 
 interface FileUploadProps {
+    files: string[];
+    onFilesSelected: (files: File[]) => void;
+    onFileRemoved: (index: number) => void;
     limit?: number;
 }
 
-export function FileUpload({ limit = 4 }: FileUploadProps) {
+export function FileUpload({
+    files,
+    onFilesSelected,
+    onFileRemoved,
+    limit = 4,
+}: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const [files, setFiles] = useState<string[]>([]);
-    const [uploadStatus, setUploadStatus] = useState<"select" | "uploading" | "done">("select");
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
-            const newFiles = Array.from(event.target.files);
-            setSelectedFiles(newFiles);
-            const newFileURLs = newFiles.map((file) => URL.createObjectURL(file));
-            setFiles((prevFiles) => [...prevFiles, ...newFileURLs]);
-        }
-    };
 
     const onChooseFile = () => {
         inputRef.current?.click();
     };
 
-    const clearFileInput = () => {
-        if (inputRef.current) inputRef.current.value = "";
-        setSelectedFiles([]);
-        setUploadStatus("select");
-    };
-
-    const handleImageRemoved = (index: number) => {
-        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const newFiles = Array.from(event.target.files);
+            onFilesSelected(newFiles);
+        }
     };
 
     return (
@@ -63,11 +55,12 @@ export function FileUpload({ limit = 4 }: FileUploadProps) {
                 })}>
                     {files.length < limit ? <LuUpload /> : <IoIosWarning />}
                 </span>
-                {files.length < limit ? "Cargar Archivos" : "Llegaste al limite"}
+                {files.length < limit ? "Cargar Archivos" : "Llegaste al límite"}
             </button>
             <FilePreview
                 files={files}
-                handleFilesRemoved={handleImageRemoved}
+                limit_preview={limit}
+                handleFilesRemoved={onFileRemoved}
             />
         </div>
     );

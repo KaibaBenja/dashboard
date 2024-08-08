@@ -14,7 +14,7 @@ import { IoAddCircleSharp } from 'react-icons/io5';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { IoMdSettings } from 'react-icons/io';
 
-export function AuthorityTable() {
+export function AuthoritiesTable() {
     const { authorities, setAuthorities } = useFetchAuthorities();
     const [isOpen, setIsOpen] = useState(false);
 

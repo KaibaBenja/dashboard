@@ -5,16 +5,17 @@ import cx from "classnames";
 
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosWarning, IoIosCloseCircle } from "react-icons/io";
-import { FilePreviewModal } from "./image-preview-modal";
 
 interface FilesPreviewProps {
     files: Array<string>;
     handleFilesRemoved: (index: number) => void;
+    limit_preview: number;
 }
 
 export function FilePreview({
     files,
     handleFilesRemoved,
+    limit_preview
 }: FilesPreviewProps) {
     const NoFilesAddedInfo = () => (
         <div className="flex items-start flex-col gap-2 p-3 w-full rounded border-2 font-medium border-green-800 bg-green-100">
@@ -24,7 +25,7 @@ export function FilePreview({
             </div>
             <div className="flex justify-start items-center gap-2">
                 <IoIosWarning className="text-orange-500 w-5 h-5" />
-                <p>Limite de Carga 4 imagenes</p>
+                <p>Limite de Carga {limit_preview} imagenes</p>
             </div>
         </div>
     );
@@ -50,19 +51,6 @@ export function FilePreview({
                             <IoIosCloseCircle className="w-5 h-5" />
                         </button>
                     </div>
-                    {isOpen && (
-                        <div className="fixed inset-0 flex items-center justify-center z-50">
-                            <div className="bg-white p-5 rounded shadow-lg">
-                                <button
-                                    className="absolute top-2 right-2"
-                                    onClick={() => setIsOpen(!isOpen)}
-                                >
-                                    <IoIosCloseCircle className="w-5 h-5" />
-                                </button>
-                                <FilePreviewModal fileUri={file} />
-                            </div>
-                        </div>
-                    )}
                 </div>
             </div>
         );

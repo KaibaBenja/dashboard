@@ -5,12 +5,7 @@ import { parseCookies } from "nookies";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 
-import { GameTable } from "./game-table";
-import { NewsTable } from "./post-table";
-import { AuthorityTable } from "./authorities-table";
-import { MembersTable } from "./members-table";
-import { Header } from "../layout/header";
-import { EventsTable } from "./events-table";
+import { Header } from "./header";
 
 import {
     DropdownMenu,
@@ -33,11 +28,15 @@ interface UserInfo {
     token: string;
 }
 
-export function Dashboard() {
+interface DashboardLayoutProps {
+    children: React.ReactNode;
+}
+
+export function DashboardLayout({ children }: DashboardLayoutProps) {
     const cookies = parseCookies();
     const { logout } = useContext(AppContext)!;
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', role: '', token: '' });
-    const [selectedView, setSelectedView] = useState<string>("Juegos");
+    const [selectedView, setSelectedView] = useState<string>("");
 
     useEffect(() => {
         const userInfo: UserInfo = {
@@ -46,33 +45,10 @@ export function Dashboard() {
             token: cookies.token || ''
         };
         setUserInfo(userInfo);
-
-        const savedView = localStorage.getItem("selectedView");
-        if (savedView) {
-            setSelectedView(savedView);
-        }
     }, [cookies.role, cookies.token, cookies.user]);
 
     const handleViewChange = (view: string) => {
         setSelectedView(view);
-        localStorage.setItem("selectedView", view);
-    };
-
-    const renderTable = () => {
-        switch (selectedView) {
-            case "Posts":
-                return <NewsTable />;
-            case "Juegos":
-                return <GameTable />;
-            case "Miembros":
-                return <MembersTable />;
-            case "Autoridades":
-                return <AuthorityTable />;
-            case "Eventos":
-                return <EventsTable />;
-            default:
-                return <GameTable />;
-        }
     };
 
     return (
@@ -80,32 +56,32 @@ export function Dashboard() {
             <div className="border-r bg-muted/40 lg:block">
                 <div className="hidden lg:flex bg-[#66cc00] h-full max-h-screen flex-col gap-2">
                     <div className="flex h-[80px] items-center text-[#FFFFFF] border-b px-6">
-                        <Link href="#" className="flex items-center gap-2 font-semibold">
+                        <Link href="/" className="flex items-center gap-2 font-semibold">
                             <span className="font-mono text-2xl font-bold text-center">GameCenter Dashboard</span>
                         </Link>
                     </div>
                     <div className="flex-1 overflow-auto py-2">
                         <nav className="grid items-start gap-6 px-4 text-sm font-medium">
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Posts")}>
+                            <Link href="posts" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Posts")}>
                                 <TbFileText className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Posts</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Juegos")}>
+                            </Link>
+                            <Link href="juegos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Juegos")}>
                                 <LuGamepad className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Juegos</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Miembros")}>
+                            </Link>
+                            <Link href="miembros" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Miembros")}>
                                 <LuUsers className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Miembros</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Autoridades")}>
+                            </Link>
+                            <Link href="autoridades" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Autoridades")}>
                                 <MdOutlineShield className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Autoridades</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Eventos")}>
+                            </Link>
+                            <Link href="eventos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Eventos")}>
                                 <IoCalendarNumberOutline className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl mt-2">Eventos</h1>
-                            </div>
+                            </Link>
                         </nav>
                     </div>
                 </div>
@@ -146,7 +122,7 @@ export function Dashboard() {
             <div className="flex flex-col">
                 <Header section={`${selectedView}`} />
                 <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-                    {renderTable()}
+                    {children}
                 </main>
             </div>
         </div>

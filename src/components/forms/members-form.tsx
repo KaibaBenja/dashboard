@@ -1,10 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
 import { AddMembers, UpdateMembers } from "@/queries/Member";
 
 import { MemberType } from "@/types/MemberTypes";
-
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Button } from "../ui/button";
 import { FileUpload } from "../table-actions/custom-inputs/file-upload";
@@ -20,8 +22,8 @@ interface FormValues {
     name_surname: string;
     puesto: string;
     linkedIn: string;
-    profile_pic: string;
-};
+    profile_pic: string; // Updated to handle file as a string URL or File
+}
 
 const schema: ObjectSchema<FormValues> = object({
     name_surname: string()
@@ -39,14 +41,10 @@ const schema: ObjectSchema<FormValues> = object({
         .required("Se debe ingresar una foto de perfil")
         .test('is-string', 'La foto de perfil debe ser una cadena de texto', value => typeof value === 'string')
         .defined(),
-}); 
+});
 
 export function MemberForm({ formAction, memberData, onSubmitSuccess, handleCloseSheet }: MemberFormProps) {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-    } = useForm<FormValues>({
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormValues>({
         defaultValues: {
             name_surname: formAction ? memberData?.name_surname : "",
             puesto: formAction ? memberData?.puesto : "",
@@ -57,10 +55,23 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
         mode: "onChange",
     });
 
+    const [fileURLs, setFileURLs] = useState<string[]>(formAction && memberData?.profile_pic ? [memberData.profile_pic] : []);
+
+    const handleFilesSelected = (files: File[]) => {
+        const newFileURLs = files.map((file) => URL.createObjectURL(file));
+        setFileURLs(newFileURLs);
+        setValue("profile_pic", newFileURLs[0], { shouldValidate: true });
+    };
+
+    const handleFileRemoved = () => {
+        setFileURLs([]);
+        setValue("profile_pic", "", { shouldValidate: true });
+    };
+
     const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
         try {
             if (formAction && memberData) {
-                await UpdateMembers(memberData?._id, data);
+                await UpdateMembers(memberData._id, data);
                 console.log("Edit");
             } else {
                 await AddMembers(data);
@@ -76,17 +87,9 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
 
     function handleLoadingText() {
         if (formAction) {
-            if (isSubmitting) {
-                return "Editando Miembro";
-            } else {
-                return "Editar Miembro";
-            }
+            return isSubmitting ? "Editando Miembro" : "Editar Miembro";
         } else {
-            if (isSubmitting) {
-                return "Agregando Miembro";
-            } else {
-                return "Agregar Miembro";
-            }
+            return isSubmitting ? "Agregando Miembro" : "Agregar Miembro";
         }
     }
 
@@ -97,7 +100,7 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
                 <input
                     {...register("name_surname")}
                     type="text"
-                    placeholder={formAction ? memberData?.name_surname : ""}
+                    placeholder="Nombre"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -108,7 +111,7 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
                 <input
                     {...register("puesto")}
                     type="text"
-                    placeholder={formAction ? memberData?.puesto : ""}
+                    placeholder="Puesto"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -119,7 +122,7 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
                 <input
                     {...register("linkedIn")}
                     type="text"
-                    placeholder={formAction ? memberData?.linkedIn : ""}
+                    placeholder="LinkedIn"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -127,15 +130,19 @@ export function MemberForm({ formAction, memberData, onSubmitSuccess, handleClos
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Foto de Perfil:</label>
-                {/* <input
+                <input
                     {...register("profile_pic")}
                     type="text"
                     placeholder={formAction ? memberData?.profile_pic : ""}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
-                /> */}
-                <FileUpload />
-                {errors?.profile_pic && <p className="text-red-700 p-2 font-semibold">{errors.profile_pic.message}</p>}
+                />
+                {/* <FileUpload
+                    files={fileURLs}
+                    onFilesSelected={handleFilesSelected}
+                    onFileRemoved={handleFileRemoved}
+                    limit={1}
+                />   */}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
