@@ -1,4 +1,4 @@
-import { GameTable } from "@/components/home/game-table";
+import { GameTable } from "@/components/modules/game-table";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function GamePage() {

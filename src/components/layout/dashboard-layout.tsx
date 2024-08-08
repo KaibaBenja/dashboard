@@ -4,6 +4,7 @@ import Link from "next/link";
 import { parseCookies } from "nookies";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
+import { usePathname } from "next/navigation";
 
 import { Header } from "./header";
 
@@ -33,6 +34,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
+    const pathname = usePathname();
     const cookies = parseCookies();
     const { logout } = useContext(AppContext)!;
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', role: '', token: '' });
@@ -45,8 +47,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             token: cookies.token || ''
         };
         setUserInfo(userInfo);
-    }, [cookies.role, cookies.token, cookies.user]);
 
+        const currentPath = pathname.split("/").pop();
+        if (currentPath) {
+            setSelectedView(currentPath.charAt(0).toUpperCase() + currentPath.slice(1));
+        }
+    }, [cookies.role, cookies.token, cookies.user]);
     const handleViewChange = (view: string) => {
         setSelectedView(view);
     };
