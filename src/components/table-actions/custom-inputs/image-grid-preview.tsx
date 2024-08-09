@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import Image from "next/image";
 import cx from "classnames";
 
 import { FaInfoCircle } from "react-icons/fa";
@@ -31,13 +29,11 @@ export function FilePreview({
     );
 
     const FileItem = ({ file, index }: { file: string; index: number }) => {
-        const [isOpen, setIsOpen] = useState<boolean>(false);
-
         return (
             <div className="relative m-1">
                 <div key={`${index}`} className="h-24 w-24">
                     <div className="relative">
-                        <img
+                        <Image
                             key={index}
                             src={file}
                             alt={`image ${index}`}
