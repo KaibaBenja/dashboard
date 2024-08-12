@@ -7,14 +7,14 @@ import { IoMdSettings } from "react-icons/io";
 import { DeleteWarning } from "./warning";
 
 interface ActionCellProps {
-    data: MemberType;
+    data: any;
     closeWarning: boolean;
     index: string;
     handleCloseWarning: (close: boolean) => void;
     takeCurrentId: () => void;
     currentId: string;
-    viewActionCell: (data: MemberType) => void;
-    editActionCell: (data: MemberType) => void;
+    viewActionCell: (data: any) => void;
+    editActionCell: (data: any) => void;
     deleteActionCell: (id: string) => Promise<void>;
 }
 

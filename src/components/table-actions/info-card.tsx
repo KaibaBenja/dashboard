@@ -4,12 +4,10 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-
-import { MemberType } from "@/types/MemberTypes";
 import { DeleteWarning } from "./warning";
 
 interface InfoDialogProps {
-    data: MemberType | null;
+    data: any;
     children: React.ReactNode;
     openCard: boolean;
     openWarning: boolean;
@@ -17,7 +15,7 @@ interface InfoDialogProps {
     handleWarning: (close: boolean) => void;
     currentId: string;
     takeCurrentId: () => void;
-    editActionCell: (data: MemberType) => void;
+    editActionCell: (data: any) => void;
     deleteActionCell: (id: string) => Promise<void>;
 }
 
@@ -35,7 +33,7 @@ export function InfoDialog({
 }: InfoDialogProps) {
     return (
         <Dialog open={openCard} onOpenChange={handleOpenCard}>
-            <DialogContent className="sm:max-w-[425px] flex flex-col">
+            <DialogContent className="w-full mx-4 sm:max-w-[500px] flex flex-col no-scrollbar">
                 {children}
                 <DialogFooter className="mt-4 flex justify-around w-full">
                     <Button onClick={() => editActionCell(data!)}>Editar</Button>

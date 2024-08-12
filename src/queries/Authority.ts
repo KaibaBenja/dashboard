@@ -37,12 +37,12 @@ export const fetchAuthorities = async () => {
     }
 };
 
-export const UpdateAuthorities = async (data: AuthoritieBodyData) => {
+export const UpdateAuthorities = async (AuthorityId: string, data: AuthoritieBodyData) => {
     try {
-        const response = await axios.put('https://gamecenter-backend.vercel.app/api/authorities', data);
+        const response = await axios.put(`https://gamecenter-backend.vercel.app/api/authorities/${AuthorityId}`, data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching authorities', error);
+        console.error(`Error Updating Authority ${AuthorityId}`, error);
         throw error;
     }
 };

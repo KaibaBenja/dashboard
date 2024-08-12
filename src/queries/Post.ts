@@ -39,12 +39,12 @@ export const fetchPosts = async () => {
     }
 };
 
-export const UpdatePosts = async (data: PostBodyData) => {
+export const UpdatePosts = async (postId: string, data: PostBodyData) => {
     try {
-        const response = await axios.put('https://gamecenter-backend.vercel.app/api/posts', data);
+        const response = await axios.put(`https://gamecenter-backend.vercel.app/api/posts/${postId}`, data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching posts', error);
+        console.error(`Error fetching posts ${postId}`, error);
         throw error;
     }
 };

@@ -52,10 +52,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         if (currentPath) {
             setSelectedView(currentPath.charAt(0).toUpperCase() + currentPath.slice(1));
         }
-    }, [cookies.role, cookies.token, cookies.user]);
-    const handleViewChange = (view: string) => {
-        setSelectedView(view);
-    };
+    }, [cookies.role, cookies.token, cookies.user, pathname]);
 
     return (
         <div id="header" className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
@@ -68,23 +65,23 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     </div>
                     <div className="flex-1 overflow-auto py-2">
                         <nav className="grid items-start gap-6 px-4 text-sm font-medium">
-                            <Link href="posts" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Posts")}>
+                            <Link href="posts" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <TbFileText className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Posts</h1>
                             </Link>
-                            <Link href="juegos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Juegos")}>
+                            <Link href="juegos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <LuGamepad className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Juegos</h1>
                             </Link>
-                            <Link href="miembros" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Miembros")}>
+                            <Link href="miembros" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <LuUsers className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Miembros</h1>
                             </Link>
-                            <Link href="autoridades" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Autoridades")}>
+                            <Link href="autoridades" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <MdOutlineShield className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Autoridades</h1>
                             </Link>
-                            <Link href="eventos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => handleViewChange("Eventos")}>
+                            <Link href="eventos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <IoCalendarNumberOutline className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl mt-2">Eventos</h1>
                             </Link>
@@ -100,11 +97,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuRadioGroup defaultValue={selectedView} className="text-lg font-semibold pr-4">
-                                <DropdownMenuRadioItem value="Posts" onClick={() => handleViewChange("Posts")}>Posts</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Juegos" onClick={() => handleViewChange("Juegos")}>Juegos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Miembros" onClick={() => handleViewChange("Miembros")}>Miembros</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Autoridades" onClick={() => handleViewChange("Autoridades")}>Autoridades</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Eventos" onClick={() => handleViewChange("Eventos")}>Eventos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Posts">Posts</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Juegos">Juegos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Miembros">Miembros</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Autoridades">Autoridades</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Eventos">Eventos</DropdownMenuRadioItem>
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>

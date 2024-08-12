@@ -19,8 +19,7 @@ import { HiIdentification } from "react-icons/hi";
 
 import { MemberType } from '@/types/MemberTypes';
 
-import ExampleImg from "../../images/logo-c.png"
-import { FileUpload } from '../table-actions/custom-inputs/file-upload';
+import ExampleImg from "../../images/logo-c.png";
 
 export function MembersTable() {
     const [members, setMembers] = useState<MemberType[]>([]);
@@ -102,8 +101,6 @@ export function MembersTable() {
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentMembers: MemberType[] = members.slice(indexOfFirstMember, indexOfLastMember);
-
-    console.log(members.length);
 
     return (
         <div className='flex flex-col'>
@@ -194,7 +191,7 @@ export function MembersTable() {
             >
                 <MemberForm
                     formAction={actionForm}
-                    memberData={currentMember}
+                    formData={currentMember}
                     handleCloseSheet={handleCloseForm}
                     onSubmitSuccess={refreshMembers}
                 />
