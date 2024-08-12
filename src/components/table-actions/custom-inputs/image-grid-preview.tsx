@@ -1,7 +1,5 @@
-"use client";
-
-import cx from "classnames";
 import Image from "next/image";
+import cx from "classnames";
 
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosWarning, IoIosCloseCircle } from "react-icons/io";
