@@ -7,7 +7,7 @@ interface EventBodyData {
     descripcion: string;
 }
 
-export const AddEvents = async (data: EventBodyData) => {
+export const AddEvent = async (data: EventBodyData) => {
     try {
         const response = await axios.post('https://gamecenter-backend.vercel.app/api/events', data);
         return response.data;
@@ -39,17 +39,17 @@ export const fetchEvents = async () => {
     }
 };
 
-export const UpdateEvents = async (data: EventBodyData) => {
+export const UpdateEvent = async (eventId: string, data: EventBodyData) => {
     try {
-        const response = await axios.put('https://gamecenter-backend.vercel.app/api/events', data);
+        const response = await axios.put(`https://gamecenter-backend.vercel.app/api/events/${eventId}`, data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching events', error);
+        console.error(`Error fetching event ${eventId}`, error);
         throw error;
     }
 };
 
-export async function deleteEvents(eventId: string) {
+export async function deleteEvent(eventId: string) {
     try {
         await axios.delete(`https://gamecenter-backend.vercel.app/api/events/${eventId}`);
         console.log(`Event with ID ${eventId} deleted successfully`);

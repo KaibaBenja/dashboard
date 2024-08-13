@@ -14,7 +14,7 @@ import { PostForm } from '../forms/post-form';
 
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaBriefcase } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaArrowCircleRight, FaBriefcase, FaCalendarCheck } from 'react-icons/fa';
 import { MdOutlineTextFields } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 
@@ -231,7 +231,7 @@ export function PostsTable() {
                         <span className='capitalize'>{currentPost?.fecha}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
-                        <MdOutlineTextFields className='w-5 h-5 text-green-800' />
+                        <FaCalendarCheck className='w-5 h-5 text-green-800' />
                         <h3>Pre Descripción</h3>
                     </div>
                     <span className='capitalize'>• {currentPost?.pre_descripcion}</span>

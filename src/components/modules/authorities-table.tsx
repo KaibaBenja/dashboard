@@ -32,7 +32,7 @@ export function AuthoritiesTable() {
     const itemsPerPage: number = 5;
 
     useEffect(() => {
-        async function loadPosts() {
+        async function loadAuthorities() {
             try {
                 setLoading(true);
                 const updateAuthorities = await fetchAuthorities();
@@ -44,7 +44,7 @@ export function AuthoritiesTable() {
             }
         }
 
-        loadPosts();
+        loadAuthorities();
     }, []);
 
     function onAddClick() {

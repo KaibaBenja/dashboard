@@ -19,7 +19,7 @@ interface GameBodyData {
   game_images: string;
 }
 
-export const AddGames = async (data: GameBodyData) => {
+export const AddGame = async (data: GameBodyData) => {
   try {
     const response = await axios.post(
       "https://gamecenter-backend.vercel.app/api/games",
@@ -56,15 +56,15 @@ export const fetchGames = async () => {
   }
 };
 
-export const UpdateGames = async (data: GameBodyData) => {
+export const UpdateGame = async (gameId: string, data: GameBodyData) => {
   try {
     const response = await axios.put(
-      "https://gamecenter-backend.vercel.app/api/games",
+      `https://gamecenter-backend.vercel.app/api/games/${gameId}`,
       data
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching games", error);
+    console.error(`Error fetching game ${gameId}`, error);
     throw error;
   }
 };
