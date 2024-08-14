@@ -9,7 +9,7 @@ interface MemberBodyData {
 
 export const AddMembers = async (data: MemberBodyData) => {
     try {
-        const response = await axios.post('https://gamecenter-backend.vercel.app/api/members', data);
+        const response = await axios.post(`${process.env.BACK_URI}/members`, data);
         return response.data;
     } catch (error) {
         console.error('Error trying to add new member', error);
@@ -20,7 +20,7 @@ export const AddMembers = async (data: MemberBodyData) => {
 export const fetchMember = async (memberId: string) => {
     try {
         const response = await axios.get(
-            `https://gamecenter-backend.vercel.app/api/members/${memberId}`
+            `${process.env.BACK_URI}/members/${memberId}`
         );
         return response.data;
     } catch (error) {
@@ -31,7 +31,7 @@ export const fetchMember = async (memberId: string) => {
 
 export const fetchMembers = async () => {
     try {
-        const response = await axios.get('https://gamecenter-backend.vercel.app/api/members');
+        const response = await axios.get(`${process.env.BACK_URI}/members`);
         return response.data;
     } catch (error) {
         console.error('Error fetching members', error);
@@ -41,7 +41,7 @@ export const fetchMembers = async () => {
 
 export const UpdateMembers = async (memberId: string, data: MemberBodyData) => {
     try {
-        await axios.put(`https://gamecenter-backend.vercel.app/api/members/${memberId}`, data);
+        await axios.put(`${process.env.BACK_URI}/members/${memberId}`, data);
     } catch (error) {
         console.error(`Error updating member ${memberId}`, error);
         throw error;
@@ -50,7 +50,7 @@ export const UpdateMembers = async (memberId: string, data: MemberBodyData) => {
 
 export async function deleteMember(memberId: string) {
     try {
-        await axios.delete(`https://gamecenter-backend.vercel.app/api/members/${memberId}`);
+        await axios.delete(`${process.env.BACK_URI}/members/${memberId}`);
         console.log(`Member with ID ${memberId} deleted successfully`);
     } catch (error) {
         console.error(`Failed to delete member with ID ${memberId}:`, error);

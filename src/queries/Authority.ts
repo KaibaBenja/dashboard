@@ -3,11 +3,12 @@ import axios from '@/utils/axiosConfig';
 interface AuthoritieBodyData {
     name: string;
     puesto: string;
+    profile_pic: string;
 }
 
 export const AddAuthorities = async (data: AuthoritieBodyData) => {
     try {
-        const response = await axios.post('https://gamecenter-backend.vercel.app/api/authorities', data);
+        const response = await axios.post(`${process.env.BACK_URI}/authorities`, data);
         return response.data;
     } catch (error) {
         console.error('Error fetching authorities', error);
@@ -18,7 +19,7 @@ export const AddAuthorities = async (data: AuthoritieBodyData) => {
 export const fetchAuthoritie = async (authoritieId: string) => {
     try {
         const response = await axios.get(
-            `https://gamecenter-backend.vercel.app/api/games/${authoritieId}`
+            `${process.env.BACK_URI}/games/${authoritieId}`
         );
         return response.data;
     } catch (error) {
@@ -29,7 +30,7 @@ export const fetchAuthoritie = async (authoritieId: string) => {
 
 export const fetchAuthorities = async () => {
     try {
-        const response = await axios.get('https://gamecenter-backend.vercel.app/api/authorities');
+        const response = await axios.get(`${process.env.BACK_URI}/authorities`);
         return response.data;
     } catch (error) {
         console.error('Error fetching authorities', error);
@@ -39,7 +40,7 @@ export const fetchAuthorities = async () => {
 
 export const UpdateAuthorities = async (AuthorityId: string, data: AuthoritieBodyData) => {
     try {
-        const response = await axios.put(`https://gamecenter-backend.vercel.app/api/authorities/${AuthorityId}`, data);
+        const response = await axios.put(`${process.env.BACK_URI}/authorities/${AuthorityId}`, data);
         return response.data;
     } catch (error) {
         console.error(`Error Updating Authority ${AuthorityId}`, error);
@@ -49,7 +50,7 @@ export const UpdateAuthorities = async (AuthorityId: string, data: AuthoritieBod
 
 export async function deleteAuthority(authorityId: string) {
     try {
-        await axios.delete(`https://gamecenter-backend.vercel.app/api/authorities/${authorityId}`);
+        await axios.delete(`${process.env.BACK_URI}/authorities/${authorityId}`);
         console.log(`Authority with ID ${authorityId} deleted successfully`);
     } catch (error) {
         console.error(`Failed to delete authority with ID ${authorityId}:`, error);

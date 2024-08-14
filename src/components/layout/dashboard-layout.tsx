@@ -38,7 +38,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     const cookies = parseCookies();
     const { logout } = useContext(AppContext)!;
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', role: '', token: '' });
-    const [selectedView, setSelectedView] = useState<string>("");
+    const [selectedView, setSelectedView] = useState<string>("Home");
 
     useEffect(() => {
         const userInfo: UserInfo = {
@@ -92,7 +92,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className="flex items-center font-mono bg-green-800 text-[#FFFFFF] px-2 py-1 rounded-lg capitalize gap-2 mr-4">
-                                Tabla de {selectedView} <CgArrowsExchangeAlt className="h-5 w-5" />
+                                {selectedView} <CgArrowsExchangeAlt className="h-5 w-5" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
