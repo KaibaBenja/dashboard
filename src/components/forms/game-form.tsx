@@ -28,54 +28,22 @@ interface GameFormValues {
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
-    titulo: string()
-        .required("El título es requerido")
-        .defined(),
-    autor: string()
-        .required("El autor es requerido")
-        .defined(),
-    sinopsis: string()
-        .required("La sinopsis es requerida")
-        .defined(),
-    aporte_turismo: string()
-        .required("El aporte al turismo es requerido")
-        .defined(),
-    aporte_cultura: string()
-        .required("El aporte a la cultura es requerido")
-        .defined(),
-    aporte_juventud: string()
-        .required("El aporte a la juventud es requerido")
-        .defined(),
-    aporte_educacion: string()
-        .required("El aporte a la educación es requerido")
-        .defined(),
-    objetivo: string()
-        .required("El objetivo es requerido")
-        .defined(),
-    desarrollo: string()
-        .required("El desarrollo es requerido")
-        .defined(),
-    condiciones: string()
-        .required("Las condiciones son requeridas")
-        .defined(),
-    controles: string()
-        .required("Los controles son requeridos")
-        .defined(),
-    caracteristicas: string()
-        .required("Las características son requeridas")
-        .defined(),
-    tecnologias: string()
-        .required("Las tecnologías son requeridas")
-        .defined(),
-    estilo: string()
-        .required("El estilo es requerido")
-        .defined(),
-    genero: string()
-        .required("El género es requerido")
-        .defined(),
-    game_images: string()
-        .required("Las imágenes del juego son requeridas")
-        .defined(),
+    titulo: string().required("El título es requerido").defined(),
+    autor: string().required("El autor es requerido").defined(),
+    sinopsis: string().required("La sinopsis es requerida").defined(),
+    aporte_turismo: string().required("El aporte al turismo es requerido").defined(),
+    aporte_cultura: string().required("El aporte a la cultura es requerido").defined(),
+    aporte_juventud: string().required("El aporte a la juventud es requerido").defined(),
+    aporte_educacion: string().required("El aporte a la educación es requerido").defined(),
+    objetivo: string().required("El objetivo es requerido").defined(),
+    desarrollo: string().required("El desarrollo es requerido").defined(),
+    condiciones: string().required("Las condiciones son requeridas").defined(),
+    controles: string().required("Los controles son requeridos").defined(),
+    caracteristicas: string().required("Las características son requeridas").defined(),
+    tecnologias: string().required("Las tecnologías son requeridas").defined(),
+    estilo: string().required("El estilo es requerido").defined(),
+    genero: string().required("El género es requerido").defined(),
+    game_images: string().required("Las imágenes del juego son requeridas").defined(),
 });
 
 export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<GameType>) {
@@ -159,7 +127,6 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 />
                 {errors?.sinopsis && <p className="text-red-700 p-2 font-semibold">{errors?.sinopsis?.message}</p>}
             </div>
-            {/* Repetir lo anterior para los otros campos... */}
             <div className="mb-4">
                 <label className="block text-gray-700">Aporte al Turismo:</label>
                 <input
@@ -200,7 +167,96 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 />
                 {errors?.aporte_educacion && <p className="text-red-700 p-2 font-semibold">{errors?.aporte_educacion?.message}</p>}
             </div>
-            {/* Repetir para los demás campos... */}
+            <div className="mb-4">
+                <label className="block text-gray-700">Objetivo:</label>
+                <input
+                    {...register("objetivo")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.objetivo && <p className="text-red-700 p-2 font-semibold">{errors?.objetivo?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Desarrollo:</label>
+                <input
+                    {...register("desarrollo")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.desarrollo && <p className="text-red-700 p-2 font-semibold">{errors?.desarrollo?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Condiciones:</label>
+                <input
+                    {...register("condiciones")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.condiciones && <p className="text-red-700 p-2 font-semibold">{errors?.condiciones?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Controles:</label>
+                <input
+                    {...register("controles")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.controles && <p className="text-red-700 p-2 font-semibold">{errors?.controles?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Características:</label>
+                <input
+                    {...register("caracteristicas")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.caracteristicas && <p className="text-red-700 p-2 font-semibold">{errors?.caracteristicas?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Tecnologías:</label>
+                <input
+                    {...register("tecnologias")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.tecnologias && <p className="text-red-700 p-2 font-semibold">{errors?.tecnologias?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Estilo:</label>
+                <input
+                    {...register("estilo")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.estilo && <p className="text-red-700 p-2 font-semibold">{errors?.estilo?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Género:</label>
+                <input
+                    {...register("genero")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.genero && <p className="text-red-700 p-2 font-semibold">{errors?.genero?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Imágenes del Juego:</label>
+                <input
+                    {...register("game_images")}
+                    type="text"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {errors?.game_images && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
+            </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
                     {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}

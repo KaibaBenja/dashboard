@@ -27,8 +27,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className='w'>
                 <div className="mx-auto max-w-sm space-y-6">
                     <div className="space-y-2 text-center">
-                        <h1 className="text-3xl font-bold">Inicio de Sesión</h1>
-                        <p className="text-muted-foreground">Ingrese su Nombre de Usuario, seguido de su contraseña</p>
+                        <h1 className="text-4xl text-[#66cc00] font-bold">Dashboard Login</h1>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
