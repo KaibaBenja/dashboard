@@ -36,14 +36,14 @@ export function Header({ section }: HeaderProps) {
             token: cookies.token || ''
         };
         setUserInfo(userInfo);
-    }, []);
+    }, [cookies.role, cookies.token, cookies.user]);
 
     return (
         <header className="hidden lg:flex h-14 lg:h-[80px] bg-[#66cc00] items-center gap-4 border-b bg-muted/40 px-6">
             <div className="flex-1">
                 <h1 className="font-bold font-mono text-2xl">{section}</h1>
             </div>
-            <DropdownMenu>
+            {Boolean(userInfo.token) && <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <button className="flex items-center text-green-800 capitalize gap-2 mr-4">
                         {userInfo.username} <FaCircleUser className="h-7 w-7 mb-1" />
@@ -57,7 +57,7 @@ export function Header({ section }: HeaderProps) {
                         <DropdownMenuRadioItem className="cursor-pointer bg-green-800 text-[#FFFFFF] p-2 rounded-md flex justify-center" value="logout" onClick={logout}>Cerrar Sesión</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu>}
         </header>
     )
 }

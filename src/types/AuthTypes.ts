@@ -1,5 +1,6 @@
 export interface AuthoritieType {
-    _id: number;
+    _id: string;
     name: string;
     puesto: string;
+    profile_pic: string;
 }

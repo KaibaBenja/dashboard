@@ -1,11 +1,11 @@
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea } from "../ui/scroll-area";
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
-} from "./ui/sheet";
+} from "../ui/sheet";
 
 
 interface ModalFormProps {
@@ -23,7 +23,7 @@ export function SheetForm({ isOpen, handleOpen, title, descripcion, children }: 
             onOpenChange={handleOpen}
         >
             <SheetContent >
-                <SheetHeader className="flex flex-col items-center">
+                <SheetHeader>
                     <SheetTitle>{title}</SheetTitle>
                     <SheetDescription>
                         {descripcion}

@@ -1,16 +1,48 @@
 import axios from "@/utils/axiosConfig";
 
-export async function deleteGame(gameId: number) {
+interface GameBodyData {
+  titulo: string;
+  autor: string;
+  sinopsis: string;
+  aporte_turismo: string;
+  aporte_cultura: string;
+  aporte_juventud: string;
+  aporte_educacion: string;
+  objetivo: string;
+  desarrollo: string;
+  condiciones: string;
+  controles: string;
+  caracteristicas: string;
+  tecnologias: string;
+  estilo: string;
+  genero: string;
+  game_images: string;
+}
+
+export const AddGame = async (data: GameBodyData) => {
   try {
-    await axios.delete(
-      `https://gamecenter-backend.vercel.app/api/games/${gameId}`
+    const response = await axios.post(
+      "https://gamecenter-backend.vercel.app/api/games",
+      data
     );
-    console.log(`Game with ID ${gameId} deleted successfully`);
+    return response.data;
   } catch (error) {
-    console.error(`Failed to delete game with ID ${gameId}:`, error);
+    console.error("Error fetching games", error);
     throw error;
   }
-}
+};
+
+export const fetchGame = async (gameId: string) => {
+  try {
+    const response = await axios.get(
+      `https://gamecenter-backend.vercel.app/api/games/${gameId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching games ${gameId}`, error);
+    throw error;
+  }
+};
 
 export const fetchGames = async () => {
   try {
@@ -24,38 +56,27 @@ export const fetchGames = async () => {
   }
 };
 
-export const fetchGame = async (id: string) => {
-  try {
-    const response = await axios.get(
-      `https://gamecenter-backend.vercel.app/api/games/${id}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching games", error);
-    throw error;
-  }
-};
-
-export const UpdateGames = async () => {
+export const UpdateGame = async (gameId: string, data: GameBodyData) => {
   try {
     const response = await axios.put(
-      "https://gamecenter-backend.vercel.app/api/games"
+      `https://gamecenter-backend.vercel.app/api/games/${gameId}`,
+      data
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching games", error);
+    console.error(`Error fetching game ${gameId}`, error);
     throw error;
   }
 };
 
-export const AddGames = async () => {
+export async function deleteGame(gameId: string) {
   try {
-    const response = await axios.post(
-      "https://gamecenter-backend.vercel.app/api/games"
+    await axios.delete(
+      `https://gamecenter-backend.vercel.app/api/games/${gameId}`
     );
-    return response.data;
+    console.log(`Game with ID ${gameId} deleted successfully`);
   } catch (error) {
-    console.error("Error fetching games", error);
+    console.error(`Failed to delete game with ID ${gameId}:`, error);
     throw error;
   }
-};
+}

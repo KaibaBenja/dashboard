@@ -1,16 +1,12 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import { parseCookies } from "nookies";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
+import { usePathname } from "next/navigation";
 
-import { GameTable } from "./game-table";
-import { NewsTable } from "./news-table";
-import { AuthorityTable } from "./authorities-table";
-import { MembersTable } from "./members-table";
-import { Header } from "../layout/header";
-import { EventsTable } from "./events-table";
+import { Header } from "./header";
 
 import {
     DropdownMenu,
@@ -19,7 +15,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import { TbFileText } from "react-icons/tb";
 import { MdOutlineShield } from "react-icons/md";
 import { LuGamepad, LuUsers } from "react-icons/lu";
@@ -30,14 +26,19 @@ import { FaCircleUser } from "react-icons/fa6";
 interface UserInfo {
     username: string;
     role: string;
-    token: string
+    token: string;
 }
 
-export function Dashboard() {
-    const [selectedView, setSelectedView] = useState("Juegos");
+interface DashboardLayoutProps {
+    children: React.ReactNode;
+}
+
+export function DashboardLayout({ children }: DashboardLayoutProps) {
+    const pathname = usePathname();
     const cookies = parseCookies();
     const { logout } = useContext(AppContext)!;
     const [userInfo, setUserInfo] = useState<UserInfo>({ username: '', role: '', token: '' });
+    const [selectedView, setSelectedView] = useState<string>("");
 
     useEffect(() => {
         const userInfo: UserInfo = {
@@ -46,58 +47,44 @@ export function Dashboard() {
             token: cookies.token || ''
         };
         setUserInfo(userInfo);
-    }, []);
 
-    console.log(userInfo.token);
-
-    const renderTable = () => {
-        switch (selectedView) {
-            case "Posts":
-                return <NewsTable />;
-            case "Juegos":
-                return <GameTable />;
-            case "Miembros":
-                return <MembersTable />;
-            case "Autoridades":
-                return <AuthorityTable />;
-            case "Eventos":
-                return <EventsTable />
-            default:
-                return <GameTable />;
+        const currentPath = pathname.split("/").pop();
+        if (currentPath) {
+            setSelectedView(currentPath.charAt(0).toUpperCase() + currentPath.slice(1));
         }
-    };
+    }, [cookies.role, cookies.token, cookies.user, pathname]);
 
     return (
-        <div className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
+        <div id="header" className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
             <div className="border-r bg-muted/40 lg:block">
                 <div className="hidden lg:flex bg-[#66cc00] h-full max-h-screen flex-col gap-2">
                     <div className="flex h-[80px] items-center text-[#FFFFFF] border-b px-6">
-                        <Link href="#" className="flex items-center gap-2 font-semibold">
+                        <Link href="/" className="flex items-center gap-2 font-semibold">
                             <span className="font-mono text-2xl font-bold text-center">GameCenter Dashboard</span>
                         </Link>
                     </div>
                     <div className="flex-1 overflow-auto py-2">
                         <nav className="grid items-start gap-6 px-4 text-sm font-medium">
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30  py-3 rounded-2xl" onClick={() => setSelectedView("Posts")}>
+                            <Link href="posts" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <TbFileText className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Posts</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Juegos")}>
+                            </Link>
+                            <Link href="juegos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <LuGamepad className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Juegos</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Miembros")}>
+                            </Link>
+                            <Link href="miembros" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <LuUsers className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Miembros</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Autoridades")}>
+                            </Link>
+                            <Link href="autoridades" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <MdOutlineShield className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl">Autoridades</h1>
-                            </div>
-                            <div className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl" onClick={() => setSelectedView("Eventos")}>
+                            </Link>
+                            <Link href="eventos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
                                 <IoCalendarNumberOutline className="h-12 lg:w-8 w-12 lg:h-8" />
                                 <h1 className="font-semibold text-xl mt-2">Eventos</h1>
-                            </div>
+                            </Link>
                         </nav>
                     </div>
                 </div>
@@ -105,16 +92,16 @@ export function Dashboard() {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className="flex items-center font-mono bg-green-800 text-[#FFFFFF] px-2 py-1 rounded-lg capitalize gap-2 mr-4">
-                                Tabla de {selectedView}  <CgArrowsExchangeAlt className="h-5 w-5" />
+                                Tabla de {selectedView} <CgArrowsExchangeAlt className="h-5 w-5" />
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuRadioGroup defaultValue={selectedView} className="text-lg font-semibold pr-4">
-                                <DropdownMenuRadioItem value="Posts" onClick={() => setSelectedView("Posts")}>Posts</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Juegos" onClick={() => setSelectedView("Juegos")}>Juegos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Miembros" onClick={() => setSelectedView("Miembros")}>Miembros</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Autoridades" onClick={() => setSelectedView("Autoridades")}>Autoridades</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Eventos" onClick={() => setSelectedView("Eventos")}>Eventos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Posts">Posts</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Juegos">Juegos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Miembros">Miembros</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Autoridades">Autoridades</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Eventos">Eventos</DropdownMenuRadioItem>
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -138,7 +125,7 @@ export function Dashboard() {
             <div className="flex flex-col">
                 <Header section={`${selectedView}`} />
                 <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
-                    {renderTable()}
+                    {children}
                 </main>
             </div>
         </div>
