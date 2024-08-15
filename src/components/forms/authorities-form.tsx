@@ -79,14 +79,14 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
                 <label className="block text-gray-700">Puesto:</label>
                 <input
                     {...register("puesto")}
-                    type="date"
+                    type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {errors?.puesto && <p className="text-red-700 p-2 font-semibold">{errors?.puesto?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Categoria:</label>
+                <label className="block text-gray-700">Foto de Perfil:</label>
                 <input
                     {...register("profile_pic")}
                     type="text"

@@ -66,7 +66,7 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
 
     const login = async (data: any) => {
         try {
-            const response = await axios.post("https://gamecenter-backend.vercel.app/api/users/login", data);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_URI}/users/login`, data);
             console.log(response);
             const { token, username, role } = response.data;
     
@@ -82,7 +82,6 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
             throw error;
         }
     };
-    
 
     const logout = () => {
         destroyCookie(null, "token");
