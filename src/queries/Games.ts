@@ -22,7 +22,7 @@ interface GameBodyData {
 export const AddGame = async (data: GameBodyData) => {
   try {
     const response = await axios.post(
-      `${process.env.BACK_URI}/games`,
+      `${process.env.NEXT_PUBLIC_BACK_URI}/games`,
       data
     );
     return response.data;
@@ -35,7 +35,7 @@ export const AddGame = async (data: GameBodyData) => {
 export const fetchGame = async (gameId: string) => {
   try {
     const response = await axios.get(
-      `${process.env.BACK_URI}/games/${gameId}`
+      `${process.env.NEXT_PUBLIC_BACK_URI}/games/${gameId}`
     );
     return response.data;
   } catch (error) {
@@ -46,7 +46,7 @@ export const fetchGame = async (gameId: string) => {
 
 export const fetchGames = async () => {
   try {
-    const response = await axios.get(`${process.env.BACK_URI}/games`);
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_URI}/games`);
     return response.data;
   } catch (error) {
     console.error("Error fetching games", error);
@@ -57,7 +57,7 @@ export const fetchGames = async () => {
 export const UpdateGame = async (gameId: string, data: GameBodyData) => {
   try {
     const response = await axios.put(
-      `${process.env.BACK_URI}/games/${gameId}`,
+      `${process.env.NEXT_PUBLIC_BACK_URI}/games/${gameId}`,
       data
     );
     return response.data;
@@ -70,7 +70,7 @@ export const UpdateGame = async (gameId: string, data: GameBodyData) => {
 export async function deleteGame(gameId: string) {
   try {
     await axios.delete(
-      `${process.env.BACK_URI}/games/${gameId}`
+      `${process.env.NEXT_PUBLIC_BACK_URI}/games/${gameId}`
     );
     console.log(`Game with ID ${gameId} deleted successfully`);
   } catch (error) {

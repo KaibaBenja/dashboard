@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 
 const schema = yup.object().shape({
@@ -24,12 +25,13 @@ export default function LoginPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [loginError, setLoginError] = useState<string | null>(null);
-
+    const [loading, setLoading] = useState<boolean>(false);
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
         resolver: yupResolver(schema),
     });
 
     const onSubmit = async (data: LoginFormInputs) => {
+        setLoading(true);
         try {
             setLoginError(null);
             await login(data);
@@ -37,6 +39,7 @@ export default function LoginPage() {
         } catch (error: any) {
             console.error('Error during login:', error);
             setLoginError('Credenciales incorrectas o hubo un problema con el servidor.');
+            setLoading(false);
         }
     };
 
@@ -83,7 +86,14 @@ export default function LoginPage() {
                         {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                     </div>
                     {loginError && <p className="text-red-500 text-center">{loginError}</p>}
-                    <button type="submit" className='w-full bg-[#0a8537] rounded-md font-semibold text-white p-2'>Iniciar Sesión</button>
+                    <button type="submit" className='w-full bg-[#0a8537] rounded-md font-semibold text-white p-2'>
+                        {loading 
+                            ? <span className='flex justify-center items-center gap-2'>
+                                <AiOutlineLoading3Quarters className='w-5 h-5 animate-spin'/> Ingresando...
+                            </span>
+                            : <span>Iniciar Sesión</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>
