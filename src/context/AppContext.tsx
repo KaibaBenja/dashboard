@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import axios from "../utils/axiosConfig"
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
@@ -46,6 +46,7 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
     const [token, setToken] = useState<string | null>(null);
     const [username, setUsername] = useState<Username | null>(null);
     const [role, setRole] = useState<string | null>(null);
+    const [inactivityTimeout, setInactivityTimeout] = useState<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const cookies = parseCookies();
@@ -62,21 +63,50 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
                 console.error("Failed to parse stored user:", error);
             }
         }
-    }, []);
+
+        const resetInactivityTimeout = () => {
+            if (inactivityTimeout) {
+                clearTimeout(inactivityTimeout);
+            }
+            const timeout = setTimeout(() => {
+                logout();
+            }, 10 * 60 * 1000);
+
+            setInactivityTimeout(timeout);
+        };
+
+        window.addEventListener('mousemove', resetInactivityTimeout);
+        window.addEventListener('keydown', resetInactivityTimeout);
+        window.addEventListener('click', resetInactivityTimeout);
+
+        return () => {
+            if (inactivityTimeout) clearTimeout(inactivityTimeout);
+            window.removeEventListener('mousemove', resetInactivityTimeout);
+            window.removeEventListener('keydown', resetInactivityTimeout);
+            window.removeEventListener('click', resetInactivityTimeout);
+        };
+    }, [inactivityTimeout]);
 
     const login = async (data: any) => {
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_URI}/users/login`, data);
             console.log(response);
             const { token, username, role } = response.data;
-    
+
             setCookie(null, "token", token, { path: '/' });
             setCookie(null, "user", JSON.stringify(username), { path: '/' });
             setCookie(null, "role", JSON.stringify(role), { path: '/' });
-    
+
             setToken(token);
             setUsername(username);
             setRole(role);
+
+            if (inactivityTimeout) clearTimeout(inactivityTimeout);
+            const timeout = setTimeout(() => {
+                logout();
+            }, 10 * 60 * 1000);
+
+            setInactivityTimeout(timeout);
         } catch (error) {
             console.error("Login error:", error);
             throw error;
@@ -88,11 +118,13 @@ export function AppContextProvider({ children }: AppContextProviderProps) {
         destroyCookie(null, "user");
         destroyCookie(null, "role");
 
-        router.push("/login")
+        router.push("/login");
 
         setToken(null);
         setUsername(null);
         setRole(null);
+
+        if (inactivityTimeout) clearTimeout(inactivityTimeout);
     };
 
     return (
