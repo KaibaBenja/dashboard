@@ -9,7 +9,7 @@ interface EventBodyData {
 
 export const AddEvent = async (data: EventBodyData) => {
     try {
-        const response = await axios.post('https://gamecenter-backend.vercel.app/api/events', data);
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_URI}/events`, data);
         return response.data;
     } catch (error) {
         console.error('Error fetching events', error);
@@ -20,7 +20,7 @@ export const AddEvent = async (data: EventBodyData) => {
 export const fetchEvent = async (eventId: string) => {
     try {
         const response = await axios.get(
-            `https://gamecenter-backend.vercel.app/api/games/${eventId}`
+            `${process.env.NEXT_PUBLIC_BACK_URI}/games/${eventId}`
         );
         return response.data;
     } catch (error) {
@@ -31,7 +31,7 @@ export const fetchEvent = async (eventId: string) => {
 
 export const fetchEvents = async () => {
     try {
-        const response = await axios.get('https://gamecenter-backend.vercel.app/api/events');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_URI}/events`);
         return response.data;
     } catch (error) {
         console.error('Error fetching events', error);
@@ -41,7 +41,7 @@ export const fetchEvents = async () => {
 
 export const UpdateEvent = async (eventId: string, data: EventBodyData) => {
     try {
-        const response = await axios.put(`https://gamecenter-backend.vercel.app/api/events/${eventId}`, data);
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_BACK_URI}/events/${eventId}`, data);
         return response.data;
     } catch (error) {
         console.error(`Error fetching event ${eventId}`, error);
@@ -51,7 +51,7 @@ export const UpdateEvent = async (eventId: string, data: EventBodyData) => {
 
 export async function deleteEvent(eventId: string) {
     try {
-        await axios.delete(`https://gamecenter-backend.vercel.app/api/events/${eventId}`);
+        await axios.delete(`${process.env.NEXT_PUBLIC_BACK_URI}/events/${eventId}`);
         console.log(`Event with ID ${eventId} deleted successfully`);
     } catch (error) {
         console.error(`Failed to delete event with ID ${eventId}:`, error);

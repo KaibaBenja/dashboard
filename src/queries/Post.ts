@@ -9,7 +9,7 @@ interface PostBodyData {
 
 export const AddPosts = async (data: PostBodyData) => {
     try {
-        const response = await axios.post('https://gamecenter-backend.vercel.app/api/posts', data);
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BACK_URI}/posts`, data);
         return response.data;
     } catch (error) {
         console.error('Error fetching posts', error);
@@ -20,7 +20,7 @@ export const AddPosts = async (data: PostBodyData) => {
 export const fetchPost = async (postId: string) => {
     try {
         const response = await axios.get(
-            `https://gamecenter-backend.vercel.app/api/members/${postId}`
+            `${process.env.NEXT_PUBLIC_BACK_URI}/members/${postId}`
         );
         return response.data;
     } catch (error) {
@@ -31,7 +31,7 @@ export const fetchPost = async (postId: string) => {
 
 export const fetchPosts = async () => {
     try {
-        const response = await axios.get('https://gamecenter-backend.vercel.app/api/posts');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACK_URI}/posts`);
         return response.data;
     } catch (error) {
         console.error('Error fetching posts', error);
@@ -41,7 +41,7 @@ export const fetchPosts = async () => {
 
 export const UpdatePosts = async (postId: string, data: PostBodyData) => {
     try {
-        const response = await axios.put(`https://gamecenter-backend.vercel.app/api/posts/${postId}`, data);
+        const response = await axios.put(`${process.env.NEXT_PUBLIC_BACK_URI}/posts/${postId}`, data);
         return response.data;
     } catch (error) {
         console.error(`Error fetching posts ${postId}`, error);
@@ -52,7 +52,7 @@ export const UpdatePosts = async (postId: string, data: PostBodyData) => {
 
 export async function deletePost(postId: string) {
     try {
-        await axios.delete(`https://gamecenter-backend.vercel.app/api/posts/${postId}`);
+        await axios.delete(`${process.env.NEXT_PUBLIC_BACK_URI}/posts/${postId}`);
         console.log(`Post with ID ${postId} deleted successfully`);
     } catch (error) {
         console.error(`Failed to delete post with ID ${postId}:`, error);
