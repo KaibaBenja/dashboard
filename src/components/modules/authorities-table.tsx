@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import cx from "classnames";
+import { FetchAllData } from '@/queries/FetchAllData';
+import { DeleteData } from '@/queries/DeleteData';
 import { AuthoritieType } from '@/types/AuthTypes';
-import { deleteAuthority, fetchAuthorities } from '@/queries/Authority';
 
 import { ActionCell } from '../table-actions/actions-cell';
 import { SheetForm } from '../table-actions/sheet-form';
@@ -35,7 +36,7 @@ export function AuthoritiesTable() {
         async function loadAuthorities() {
             try {
                 setLoading(true);
-                const updateAuthorities = await fetchAuthorities();
+                const updateAuthorities = await FetchAllData("authorities");
                 setAuthorities(updateAuthorities);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
@@ -77,7 +78,7 @@ export function AuthoritiesTable() {
 
     async function handleDelete(authorityId: string) {
         try {
-            await deleteAuthority(authorityId);
+            await DeleteData("authorities", authorityId);
             setAuthorities(prevAuthority => prevAuthority.filter(authority => authority._id !== authorityId));
         } catch (error) {
             console.error('Failed to delete authority:', error);
@@ -87,7 +88,7 @@ export function AuthoritiesTable() {
     async function refreshAuthorities() {
         try {
             setLoading(true);
-            const updatedAuthorities = await fetchAuthorities();
+            const updatedAuthorities = await FetchAllData("authorities");
             setAuthorities(updatedAuthorities);
         } catch (error) {
             console.error('Failed to fetch authority:', error);

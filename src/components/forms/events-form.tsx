@@ -1,8 +1,9 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
+import { UpdateData } from "@/queries/UpdateData";
+import { AddData } from "@/queries/AddData";
 import { EventType } from "@/types/EventTypes";
-import { AddEvent, UpdateEvent } from "@/queries/Events";
 
 import { Button } from "../ui/button";
 
@@ -46,10 +47,10 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
     const onSubmit: SubmitHandler<EventFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateEvent(formData?._id, data);
+                await UpdateData({path: "events", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddEvent(data);
+                await AddData({path: "events", data });
                 console.log("Add");
             }
             onSubmitSuccess();

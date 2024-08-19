@@ -1,8 +1,9 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
+import { UpdateData } from "@/queries/UpdateData";
+import { AddData } from "@/queries/AddData";
 import { GameType } from "@/types/GameTypes";
-import { AddGame, UpdateGame } from "@/queries/Games";
 import { FormProps } from "@/types/formProps";
 
 import { Button } from "../ui/button";
@@ -73,10 +74,10 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
     const onSubmit: SubmitHandler<GameFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateGame(formData?._id, data);
+                await UpdateData({path: "games", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddGame(data);
+                await AddData({path: "games", data });
                 console.log("Add");
             }
             onSubmitSuccess();

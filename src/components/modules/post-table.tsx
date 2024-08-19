@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { deletePost, fetchPosts } from '@/queries/Post';
 import Image from 'next/image';
 import cx from "classnames";
+import { FetchAllData } from '@/queries/FetchAllData';
+import { DeleteData } from '@/queries/DeleteData';
 import { PostType } from '@/types/PostTypes';
 
 import { ActionCell } from '../table-actions/actions-cell';
@@ -36,7 +37,7 @@ export function PostsTable() {
         async function loadPosts() {
             try {
                 setLoading(true);
-                const updatedPosts = await fetchPosts();
+                const updatedPosts = await FetchAllData("posts");
                 setPosts(updatedPosts);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
@@ -78,7 +79,7 @@ export function PostsTable() {
 
     async function handleDelete(postId: string) {
         try {
-            await deletePost(postId);
+            await DeleteData("posts", postId);
             setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
         } catch (error) {
             console.error('Failed to delete post:', error);
@@ -88,7 +89,7 @@ export function PostsTable() {
     async function refreshPosts() {
         try {
             setLoading(true);
-            const updatedPosts = await fetchPosts();
+            const updatedPosts = await FetchAllData("posts");
             setPosts(updatedPosts);
         } catch (error) {
             console.error('Failed to fetch post:', error);

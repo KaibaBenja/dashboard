@@ -1,13 +1,14 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
-import { AddAuthorities, UpdateAuthorities } from "@/queries/Authority";
 
 import { Button } from "../ui/button";
 
 import { FormProps } from "@/types/formProps";
 import { AuthoritieType } from "@/types/AuthTypes";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { UpdateData } from "@/queries/UpdateData";
+import { AddData } from "@/queries/AddData";
 
 interface AuthorityFormValues {
     name: string;
@@ -41,10 +42,10 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
     const onSubmit: SubmitHandler<AuthorityFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateAuthorities(formData?._id, data);
+                await UpdateData({path: "authorities", data },formData?._id);
                 console.log("Edit");
             } else {
-                await AddAuthorities(data);
+                await AddData({path: "authorities", data });
                 console.log("Add");
             }
             onSubmitSuccess();

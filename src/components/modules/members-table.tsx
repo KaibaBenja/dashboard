@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import cx from "classnames";
-
-import { deleteMember, fetchMembers } from '@/queries/Member';
+import { FetchAllData } from '@/queries/FetchAllData';
+import { DeleteData } from '@/queries/DeleteData';
 
 import { MemberForm } from '../forms/members-form';
 import { ActionCell } from '../table-actions/actions-cell';
@@ -37,7 +37,7 @@ export function MembersTable() {
         async function loadMembers() {
             try {
                 setLoading(true);
-                const updatedMembers = await fetchMembers();
+                const updatedMembers = await FetchAllData("members");
                 setMembers(updatedMembers);
             } catch (error) {
                 console.error('Failed to fetch members:', error);
@@ -79,7 +79,7 @@ export function MembersTable() {
 
     async function handleDelete(memberId: string) {
         try {
-            await deleteMember(memberId);
+            await DeleteData("members", memberId);
             setMembers(prevMembers => prevMembers.filter(member => member._id !== memberId));
         } catch (error) {
             console.error('Failed to delete member:', error);
@@ -89,7 +89,7 @@ export function MembersTable() {
     async function refreshMembers() {
         try {
             setLoading(true);
-            const updatedMembers = await fetchMembers();
+            const updatedMembers = await FetchAllData("members");
             setMembers(updatedMembers);
         } catch (error) {
             console.error('Failed to fetch members:', error);

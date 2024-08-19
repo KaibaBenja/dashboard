@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppContextProvider } from "@/context/AppContext";
 
+import { Toaster } from "@/components/ui/toaster"
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,6 +21,7 @@ export default function RootLayout({
         <AppContextProvider>
             <html lang="en" className="scroll-smooth">
                 <body className={inter.className}>{children}</body>
+                <Toaster />
             </html>
         </AppContextProvider>
     );
