@@ -1,12 +1,14 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
+import { UpdateData } from "@/queries/UpdateData";
+import { AddData } from "@/queries/AddData";
 import { GameType } from "@/types/GameTypes";
-import { AddGame, UpdateGame } from "@/queries/Games";
 import { FormProps } from "@/types/formProps";
 
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { toast, useToast } from "../ui/use-toast";
 
 interface GameFormValues {
     titulo: string;
@@ -69,21 +71,32 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateGame(formData?._id, data);
+                await UpdateData({path: "games", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddGame(data);
+                await AddData({path: "games", data });
                 console.log("Add");
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El Juego ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            });
         }
     };
 

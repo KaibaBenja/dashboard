@@ -1,13 +1,15 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
-import { AddPosts, UpdatePosts } from "@/queries/Post";
 
 import { Button } from "../ui/button";
 
 import { PostType } from "@/types/PostTypes";
 import { FormProps } from "@/types/formProps";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { UpdateData } from "@/queries/UpdateData";
+import { AddData } from "@/queries/AddData";
+import { useToast } from "../ui/use-toast";
 
 interface PostFormValues {
     fecha: string;
@@ -52,21 +54,32 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdatePosts(formData?._id, data);
+                await UpdateData({path: "posts", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddPosts(data);
+                await AddData({path: "posts", data });
                 console.log("Add");
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El Post ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            });
         }
     };
 

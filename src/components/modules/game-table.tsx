@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import cx from "classnames";
-import { fetchGames, deleteGame } from '@/queries/Games';
 import { GameType } from '@/types/GameTypes';
+import { FetchAllData } from '@/queries/FetchAllData';
+import { DeleteData } from '@/queries/DeleteData';
 
 import { GameForm } from '../forms/game-form';
 import { ActionCell } from '../table-actions/actions-cell';
@@ -31,7 +32,7 @@ export function GameTable() {
         async function loadGames() {
             try {
                 setLoading(true);
-                const updatedGames = await fetchGames();
+                const updatedGames = await FetchAllData("games");
                 setGames(updatedGames);
             } catch (error) {
                 console.error('Failed to fetch games:', error);
@@ -73,7 +74,7 @@ export function GameTable() {
 
     async function handleDelete(gameId: string) {
         try {
-            await deleteGame(gameId);
+            await DeleteData("games", gameId);
             setGames(prevGames => prevGames.filter(game => game._id !== gameId));
         } catch (error) {
             console.error('Failed to delete game:', error);
@@ -83,7 +84,7 @@ export function GameTable() {
     async function refreshGames() {
         try {
             setLoading(true);
-            const updatedGames = await fetchGames();
+            const updatedGames = await FetchAllData("games");
             setGames(updatedGames);
         } catch (error) {
             console.error('Failed to fetch games:', error);

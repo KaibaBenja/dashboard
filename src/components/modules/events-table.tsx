@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import cx from "classnames";
-import { deleteEvent, fetchEvents } from '@/queries/Events';
+import { FetchAllData } from '@/queries/FetchAllData';
+import { DeleteData } from "@/queries/DeleteData";
 import { EventType } from '@/types/EventTypes';
 
 import { ActionCell } from '../table-actions/actions-cell';
@@ -34,7 +35,7 @@ export function EventsTable() {
         async function loadEvents() {
             try {
                 setLoading(true);
-                const updateEvents = await fetchEvents();
+                const updateEvents = await FetchAllData("events");
                 setEvents(updateEvents);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
@@ -76,7 +77,7 @@ export function EventsTable() {
 
     async function handleDelete(eventId: string) {
         try {
-            await deleteEvent(eventId);
+            await DeleteData("events", eventId);
             setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
         } catch (error) {
             console.error('Failed to delete event:', error);
@@ -86,7 +87,7 @@ export function EventsTable() {
     async function refreshPosts() {
         try {
             setLoading(true);
-            const updateEvents = await fetchEvents();
+            const updateEvents = await FetchAllData("events");
             setEvents(updateEvents);
         } catch (error) {
             console.error('Failed to fetch event:', error);

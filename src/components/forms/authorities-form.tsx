@@ -1,13 +1,15 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
-import { AddAuthorities, UpdateAuthorities } from "@/queries/Authority";
 
 import { Button } from "../ui/button";
 
 import { FormProps } from "@/types/formProps";
 import { AuthoritieType } from "@/types/AuthTypes";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { UpdateData } from "@/queries/UpdateData";
+import { AddData } from "@/queries/AddData";
+import { useToast } from "../ui/use-toast";
 
 interface AuthorityFormValues {
     name: string;
@@ -37,21 +39,32 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<AuthorityFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateAuthorities(formData?._id, data);
+                await UpdateData({path: "authorities", data },formData?._id);
                 console.log("Edit");
             } else {
-                await AddAuthorities(data);
+                await AddData({path: "authorities", data });
                 console.log("Add");
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `La Autoridad ${data?.name} fue ${formAction ? "editada" : "agregada"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            }); 
         }
     };
 
