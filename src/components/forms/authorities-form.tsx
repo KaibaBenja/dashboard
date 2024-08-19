@@ -9,6 +9,7 @@ import { AuthoritieType } from "@/types/AuthTypes";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
+import { useToast } from "../ui/use-toast";
 
 interface AuthorityFormValues {
     name: string;
@@ -38,6 +39,7 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<AuthorityFormValues> = async (data: any) => {
         try {
@@ -50,9 +52,19 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `La Autoridad ${data?.name} fue ${formAction ? "editada" : "agregada"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            }); 
         }
     };
 

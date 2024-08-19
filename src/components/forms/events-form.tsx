@@ -9,6 +9,7 @@ import { Button } from "../ui/button";
 
 import { FormProps } from "@/types/formProps";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useToast } from "../ui/use-toast";
 
 interface EventFormValues {
     fecha: string;
@@ -43,6 +44,7 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<EventFormValues> = async (data: any) => {
         try {
@@ -55,9 +57,19 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El Evento ${data?.event_name} fue ${formAction ? "editado" : "agregado"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            });
         }
     };
 
@@ -92,7 +104,7 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
                 {errors?.horario && <p className="text-red-700 p-2 font-semibold">{errors?.horario?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Categoria:</label>
+                <label className="block text-gray-700">Nombre del Evento:</label>
                 <input
                     {...register("event_name")}
                     type="text"

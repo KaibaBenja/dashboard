@@ -9,6 +9,7 @@ import { FormProps } from "@/types/formProps";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
+import { useToast } from "../ui/use-toast";
 
 interface PostFormValues {
     fecha: string;
@@ -53,6 +54,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
         try {
@@ -65,9 +67,19 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El Post ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            });
         }
     };
 

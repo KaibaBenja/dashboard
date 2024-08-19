@@ -8,6 +8,7 @@ import { FormProps } from "@/types/formProps";
 
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { toast, useToast } from "../ui/use-toast";
 
 interface GameFormValues {
     titulo: string;
@@ -70,6 +71,7 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
         resolver: yupResolver(schema),
         mode: "onChange",
     });
+    const { toast } = useToast();
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data: any) => {
         try {
@@ -82,9 +84,19 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             }
             onSubmitSuccess();
             handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El Juego ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
+            });
             console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
+            toast({
+                variant: "destructive",
+                title: "Ocurrio un Error!",
+                description: "Fallo algo durante el proceso, pruebe de nuevo",
+            });
         }
     };
 

@@ -66,7 +66,6 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
     // };
 
     const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-        let handleText: boolean = Boolean(formAction && formData);
         try {
             if (formAction && formData) {
                 await UpdateData({ path: "members", data }, formData._id);
@@ -80,7 +79,7 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
             toast({
                 variant: "success",
                 title: `Exito!`,
-                description: `El miembro ${data?.name_surname} fue ${handleText ? "editado" : "agregado"}`,
+                description: `El miembro ${data?.name_surname} fue ${formAction ? "editado" : "agregado"}`,
             });
             console.log(data);
         } catch (error) {
