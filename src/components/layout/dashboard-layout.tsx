@@ -97,11 +97,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuRadioGroup defaultValue={selectedView} className="text-lg font-semibold pr-4">
-                                <DropdownMenuRadioItem value="Posts">Posts</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Juegos">Juegos</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Miembros">Miembros</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Autoridades">Autoridades</DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem value="Eventos">Eventos</DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Posts">
+                                    <Link href="/posts">Posts</Link>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Juegos">
+                                    <Link href="/juegos">Juegos</Link>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Miembros">
+                                    <Link href="/miembros">Miembros</Link>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Autoridades">
+                                    <Link href="/autoridades">Autoridades</Link>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem value="Eventos">
+                                    <Link href="/eventos">Eventos</Link>
+                                </DropdownMenuRadioItem>
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>
