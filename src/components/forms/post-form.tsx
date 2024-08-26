@@ -85,9 +85,9 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
 
     function handleLoadingText() {
         if (formAction) {
-            return isSubmitting ? "Editando Autoridad" : "Editar Autoridad";
+            return isSubmitting ? "Editando Post" : "Editar Post";
         } else {
-            return isSubmitting ? "Agregando Autoridad" : "Agregar Autoridad";
+            return isSubmitting ? "Agregando Post" : "Agregar Post";
         }
     }
 

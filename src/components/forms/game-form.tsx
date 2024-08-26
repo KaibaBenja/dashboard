@@ -9,6 +9,7 @@ import { FormProps } from "@/types/formProps";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast, useToast } from "../ui/use-toast";
+import { StaticImageData } from "next/image";
 
 interface GameFormValues {
     titulo: string;
@@ -26,7 +27,7 @@ interface GameFormValues {
     tecnologias: string;
     estilo: string;
     genero: string;
-    game_images: string;
+    game_images: string | string[] | StaticImageData[];
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
@@ -102,9 +103,9 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
 
     function handleLoadingText() {
         if (formAction) {
-            return isSubmitting ? "Editando Evento" : "Editar Evento";
+            return isSubmitting ? "Editando Juego" : "Editar Juego";
         } else {
-            return isSubmitting ? "Agregando Evento" : "Agregar Evento";
+            return isSubmitting ? "Agregando Juego" : "Agregar Juego";
         }
     }
 

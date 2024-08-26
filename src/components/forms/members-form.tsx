@@ -11,6 +11,7 @@ import { FormProps } from "@/types/formProps";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
+import { StaticImageData } from "next/image";
 
 // import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 
@@ -18,7 +19,7 @@ interface FormValues {
     name_surname: string;
     puesto: string;
     linkedIn: string;
-    profile_pic: string;
+    profile_pic: string | string[] | StaticImageData[];
 }
 
 const schema: ObjectSchema<FormValues> = object({
@@ -35,7 +36,6 @@ const schema: ObjectSchema<FormValues> = object({
         .test('is-string', 'El link de LinkedIn debe ser una cadena de texto', value => typeof value === 'string'),
     profile_pic: string()
         .required("Se debe ingresar una foto de perfil")
-        .test('is-string', 'La foto de perfil debe ser una cadena de texto', value => typeof value === 'string')
         .defined(),
 });
 

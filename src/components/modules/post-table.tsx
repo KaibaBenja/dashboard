@@ -102,6 +102,8 @@ export function PostsTable() {
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentPosts: PostType[] = posts.slice(indexOfFirstMember, indexOfLastMember);
 
+    console.log(currentPost?.blog_images[0]);
+
     return (
         <div className='flex flex-col'>
             <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onAddClick}>
@@ -207,20 +209,20 @@ export function PostsTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {/* {Boolean(currentPost?.blog_images)  && <Image
-                    src={currentPost?.blog_images!}
+                {Boolean(currentPost?.blog_images)  && <Image
+                    src={currentPost?.blog_images[0]!}
                     alt="example"
                     width={80}
                     height={80}
                     className='rounded-full object-cover self-center my-4'
-                />} */}
-                <Image
+                />}
+                {/* <Image
                     src={ExampleImg}
                     alt="example"
                     width={80}
                     height={80}
                     className='rounded-full object-cover self-center my-4'
-                />
+                /> */}
                 <h1 className='text-start font-bold text-xl'>{currentPost?.titulo}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>

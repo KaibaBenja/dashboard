@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export interface GameType {
     _id: string;
     titulo: string;
@@ -15,5 +17,5 @@ export interface GameType {
     tecnologias: string;
     estilo: string;
     genero: string;
-    game_images: string;
+    game_images: string[] | StaticImageData[];
 }

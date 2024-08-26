@@ -10,11 +10,12 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { useToast } from "../ui/use-toast";
+import { StaticImageData } from "next/image";
 
 interface AuthorityFormValues {
     name: string;
     puesto: string;
-    profile_pic: string;
+    profile_pic: string | string[] | StaticImageData[];
 }
 
 const schema: ObjectSchema<AuthorityFormValues> = object({
