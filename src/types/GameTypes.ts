@@ -18,4 +18,5 @@ export interface GameType {
     estilo: string;
     genero: string;
     game_images: string[] | StaticImageData[];
+    game_archive: string;
 }

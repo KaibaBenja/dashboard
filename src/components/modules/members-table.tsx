@@ -5,6 +5,7 @@ import Image from 'next/image';
 import cx from "classnames";
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
+import { MemberType } from '@/types/MemberTypes';
 
 import { MemberForm } from '../forms/members-form';
 import { ActionCell } from '../table-actions/actions-cell';
@@ -17,9 +18,6 @@ import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaArrowCircleLeft, FaArrowCircleRight, FaLinkedin, FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
 
-import { MemberType } from '@/types/MemberTypes';
-
-import ExampleImg from "../../images/logo-c.png";
 
 export function MembersTable() {
     const [members, setMembers] = useState<MemberType[]>([]);
@@ -154,7 +152,7 @@ export function MembersTable() {
                     </Table>
                 </div>
             </div>
-            {Boolean(members.length >= 5) &&
+            {Boolean(members.length > 5) &&
                 <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
                     <button
                         disabled={currentPage === 1}
@@ -207,13 +205,13 @@ export function MembersTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                <Image
-                    src={ExampleImg}
+                {Boolean(currentMember?.profile_pic) && <Image
+                    src={currentMember?.profile_pic!}
                     alt="example"
                     width={80}
                     height={80}
                     className='rounded-full object-cover self-center my-4'
-                />
+                />}
                 <h1 className='text-center font-bold text-xl'>{currentMember?.name_surname}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center gap-4 font-semibold'>
                     <div className='flex items-center gap-2'>

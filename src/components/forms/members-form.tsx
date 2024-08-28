@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -13,13 +14,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
 import { StaticImageData } from "next/image";
 
-// import { FileUpload } from "../table-actions/custom-inputs/file-upload";
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 
 interface FormValues {
     name_surname: string;
     puesto: string;
     linkedIn: string;
-    profile_pic: string | string[] | StaticImageData[];
+    profile_pic: string | StaticImageData;
 }
 
 const schema: ObjectSchema<FormValues> = object({
@@ -40,7 +41,7 @@ const schema: ObjectSchema<FormValues> = object({
 });
 
 export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<MemberType>) {
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormValues>({
         defaultValues: {
             name_surname: formAction ? formData?.name_surname : "",
             puesto: formAction ? formData?.puesto : "",
@@ -52,18 +53,18 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
     });
     const { toast } = useToast();
 
-    // const [fileURLs, setFileURLs] = useState<string[]>(formAction && formData?.profile_pic ? [formData.profile_pic] : []);
+    const [fileURLs, setFileURLs] = useState<any>([]);
 
-    // const handleFilesSelected = (files: File[]) => {
-    //     const newFileURLs = files.map((file) => URL.createObjectURL(file));
-    //     setFileURLs(newFileURLs);
-    //     setValue("profile_pic", newFileURLs[0], { shouldValidate: true });
-    // };
+    const handleFilesSelected = (files: File[]) => {
+        const newFileURLs = files.map((file) => URL.createObjectURL(file));
+        setFileURLs(newFileURLs);
+        setValue("profile_pic", newFileURLs[0], { shouldValidate: true, shouldTouch: false });
+    };
 
-    // const handleFileRemoved = () => {
-    //     setFileURLs([]);
-    //     setValue("profile_pic", "", { shouldValidate: true });
-    // };
+    const handleFileRemoved = () => {
+        setFileURLs([]);
+        setValue("profile_pic", "", { shouldValidate: true });
+    };
 
     const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
         try {
@@ -137,18 +138,13 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Foto de Perfil:</label>
-                <input
+                <FileUpload
                     {...register("profile_pic")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
+                    files={fileURLs}
+                    onFilesSelected={handleFilesSelected}
+                    onFileRemoved={handleFileRemoved}
+                    limit={1}
                 />
-                {/* <FileUpload
-                        files={fileURLs}
-                        onFilesSelected={handleFilesSelected}
-                        onFileRemoved={handleFileRemoved}
-                        limit={1}
-                    />   */}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

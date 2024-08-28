@@ -1,6 +1,6 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import cx from "classnames";
-
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosWarning, IoIosCloseCircle } from "react-icons/io";
 
@@ -13,22 +13,35 @@ interface FilesPreviewProps {
 export function FilePreview({
     files,
     handleFilesRemoved,
-    limit_preview
+    limit_preview,
 }: FilesPreviewProps) {
     const NoFilesAddedInfo = () => (
         <div className="flex items-start flex-col gap-2 p-3 w-full rounded border-2 font-medium border-green-800 bg-green-100">
             <div className="flex items-center gap-2">
                 <FaInfoCircle className="text-green-800 w-4 h-4" />
-                <p>No se ha cargado ninguna imagen</p>
+                <p>No se ha cargado ningún archivo</p>
             </div>
             <div className="flex justify-start items-center gap-2">
                 <IoIosWarning className="text-orange-500 w-5 h-5" />
-                <p>Limite de Carga {limit_preview} imagenes</p>
+                <p>Limite de carga {limit_preview} archivos</p>
             </div>
         </div>
     );
 
     const FileItem = ({ file, index }: { file: string; index: number }) => {
+        const [imageDimensions, setImageDimensions] = useState({ width: 100, height: 100 });
+
+        useEffect(() => {
+            const img = document.createElement('img');      
+            img.onload = () => {
+                setImageDimensions({
+                    width: img.width,
+                    height: img.height,
+                });
+            };
+
+        }, [file]);
+
         return (
             <div className="relative m-1">
                 <div key={`${index}`} className="h-24 w-24">
@@ -37,6 +50,8 @@ export function FilePreview({
                             key={index}
                             src={file}
                             alt={`image ${index}`}
+                            width={imageDimensions.width}
+                            height={imageDimensions.height}
                             className="w-20 h-20 rounded-lg border-3 border-black"
                         />
                         <button
@@ -53,14 +68,14 @@ export function FilePreview({
     };
 
     return (
-        <div className={cx({
-            "mt-3 grid grid-col-2 gap-4 px-12": Boolean(files.length > 0),
-            "mt-3 flex flex-col items-center px-12": Boolean(files.length < 0)
-        })}>
+        <div
+            className={cx({
+                "mt-3 grid grid-col-2 gap-4 px-12": Boolean(files.length > 0),
+                "mt-3 flex flex-col items-center px-12": Boolean(files.length < 0),
+            })}
+        >
             {files.length > 0 ? (
-                files.map((files, i) => (
-                    <FileItem key={i} file={files} index={i} />
-                ))
+                files.map((file, i) => <FileItem key={i} file={file} index={i} />)
             ) : (
                 <NoFilesAddedInfo />
             )}

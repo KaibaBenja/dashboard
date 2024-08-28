@@ -1,15 +1,18 @@
+"use client";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
-
-import { Button } from "../ui/button";
-
-import { PostType } from "@/types/PostTypes";
-import { FormProps } from "@/types/formProps";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useState } from "react";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
+import { PostType } from "@/types/PostTypes";
+import { FormProps } from "@/types/formProps";
+
+import { Button } from "../ui/button";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 
 interface PostFormValues {
     fecha: string;
@@ -37,12 +40,12 @@ const schema: ObjectSchema<PostFormValues> = object({
         .required("La descripción es requerida")
         .defined(),
     blog_images: string()
-        .required("La descripción es requerida")
+        .required("La imagen de portada es requerida")
         .defined(),
 });
 
 export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
             fecha: formAction ? formData?.fecha : "",
@@ -55,6 +58,19 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
         mode: "onChange",
     });
     const { toast } = useToast();
+
+    const [imageURLs, setImageURLs] = useState<any>([]);
+
+    const handleImagesSelected = (files: File[]) => {
+        const newImageURLs = files.map((file) => URL.createObjectURL(file));
+        setImageURLs(newImageURLs);
+        setValue("blog_images", newImageURLs[0], { shouldValidate: true });
+    };
+
+    const handleImageRemoved = () => {
+        setImageURLs([]);
+        setValue("blog_images", "", { shouldValidate: true });
+    };
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
         try {
@@ -125,9 +141,9 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Pre Descripción:</label>
-                <input
+                <textarea
                     {...register("pre_descripcion")}
-                    type="text"
+                    rows={4}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -137,7 +153,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 <label className="block text-gray-700">Descripción:</label>
                 <textarea
                     {...register("descripcion")}
-                    rows={6}
+                    rows={4}
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -145,11 +161,11 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Imagen de Portada:</label>
-                <input
-                    {...register("blog_images")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
+                <FileUpload
+                    files={imageURLs}
+                    onFilesSelected={handleImagesSelected}
+                    onFileRemoved={handleImageRemoved}
+                    limit={1}
                 />
                 {errors.blog_images && <p className="text-red-700 p-2 font-semibold">{errors.blog_images.message}</p>}
             </div>
