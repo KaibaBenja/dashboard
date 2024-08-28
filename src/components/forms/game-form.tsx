@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { StaticImageData } from "next/image";
 import { object, string, ObjectSchema } from 'yup';
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -8,8 +12,8 @@ import { FormProps } from "@/types/formProps";
 
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { toast, useToast } from "../ui/use-toast";
-import { StaticImageData } from "next/image";
+import { useToast } from "../ui/use-toast";
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 
 interface GameFormValues {
     titulo: string;
@@ -28,6 +32,7 @@ interface GameFormValues {
     estilo: string;
     genero: string;
     game_images: string | string[] | StaticImageData[];
+    game_archive: string;
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
@@ -47,10 +52,11 @@ const schema: ObjectSchema<GameFormValues> = object({
     estilo: string().required("El estilo es requerido").defined(),
     genero: string().required("El género es requerido").defined(),
     game_images: string().required("Las imágenes del juego son requeridas").defined(),
+    game_archive: string().required("Los archivos de los juegos son requeridos").defined(),
 });
 
 export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<GameType>) {
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<GameFormValues>({
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<GameFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
             autor: formAction ? formData?.autor : "",
@@ -68,19 +74,47 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             estilo: formAction ? formData?.estilo : "",
             genero: formAction ? formData?.genero : "",
             game_images: formAction ? formData?.game_images : "",
+            game_archive: formAction ? formData?.game_archive : "",
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
 
+    const [imageFileURLs, setImageFileURLs] = useState<any>([]);
+    const [archiveFileURLs, setArchiveFileURLs] = useState<any>([]);
+
+    const handleImageFilesSelected = (files: File[]) => {
+        const newImageFileURLs = files.map((file) => URL.createObjectURL(file));
+        setImageFileURLs(newImageFileURLs);
+        setValue("game_images", newImageFileURLs[0], { shouldValidate: true });
+    };
+
+    const handleArchiveFilesSelected = (files: File[]) => {
+        const newArchiveFileURLs = files.map((file) => URL.createObjectURL(file));
+        setArchiveFileURLs(newArchiveFileURLs);
+        setValue("game_archive", newArchiveFileURLs[0], { shouldValidate: true });
+    };
+
+    const handleFileRemoved = (type: 'images' | 'archive') => {
+        if (type === 'images') {
+            setImageFileURLs([]);
+            setValue("game_images", "", { shouldValidate: true });
+        } else {
+            setArchiveFileURLs([]);
+            setValue("game_archive", "", { shouldValidate: true });
+        }
+    };
+
+    console.log(imageFileURLs, archiveFileURLs);
+
     const onSubmit: SubmitHandler<GameFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateData({path: "games", data }, formData?._id);
+                await UpdateData({ path: "games", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddData({path: "games", data });
+                await AddData({ path: "games", data });
                 console.log("Add");
             }
             onSubmitSuccess();
@@ -262,14 +296,26 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 {errors?.genero && <p className="text-red-700 p-2 font-semibold">{errors?.genero?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Imágenes del Juego:</label>
-                <input
+                <label className="block text-gray-700">Imágenes de los juegos:</label>
+                <FileUpload
                     {...register("game_images")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
+                    files={imageFileURLs}
+                    onFilesSelected={handleImageFilesSelected}
+                    onFileRemoved={() => handleFileRemoved('images')}
+                    limit={1}
                 />
                 {errors?.game_images && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Archivo de los juegos:</label>
+                <FileUpload
+                    {...register("game_archive")}
+                    files={archiveFileURLs}
+                    onFilesSelected={handleArchiveFilesSelected}
+                    onFileRemoved={() => handleFileRemoved('archive')}
+                    limit={1}
+                />
+                {errors?.game_archive && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

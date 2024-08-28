@@ -5,5 +5,5 @@ export interface MemberType {
     name_surname: string;
     puesto: string;
     linkedIn: string;
-    profile_pic: string[] | StaticImageData[];
+    profile_pic: string | StaticImageData;
 }

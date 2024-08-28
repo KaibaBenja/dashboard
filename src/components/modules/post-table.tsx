@@ -19,8 +19,6 @@ import { FaArrowCircleLeft, FaArrowCircleRight, FaBriefcase, FaCalendarCheck } f
 import { MdOutlineTextFields } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 
-import ExampleImg from "../../images/logo-c.png"
-
 export function PostsTable() {
     const [posts, setPosts] = useState<PostType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -101,8 +99,6 @@ export function PostsTable() {
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentPosts: PostType[] = posts.slice(indexOfFirstMember, indexOfLastMember);
-
-    console.log(currentPost?.blog_images[0]);
 
     return (
         <div className='flex flex-col'>
@@ -216,13 +212,6 @@ export function PostsTable() {
                     height={80}
                     className='rounded-full object-cover self-center my-4'
                 />}
-                {/* <Image
-                    src={ExampleImg}
-                    alt="example"
-                    width={80}
-                    height={80}
-                    className='rounded-full object-cover self-center my-4'
-                /> */}
                 <h1 className='text-start font-bold text-xl'>{currentPost?.titulo}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>

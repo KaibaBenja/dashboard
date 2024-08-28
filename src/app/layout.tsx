@@ -31,8 +31,10 @@ export default function RootLayout({
                     <meta name="author" content="SusTi"></meta>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
                 </head>
-                <body className={inter.className}>{children}</body>
-                <Toaster />
+                <body className={inter.className}>
+                    {children}
+                    <Toaster />
+                </body>
             </html>
         </AppContextProvider>
     );

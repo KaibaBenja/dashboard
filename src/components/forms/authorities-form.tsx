@@ -1,9 +1,11 @@
+"use client";
+
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
+import { useState } from "react";
 
 import { Button } from "../ui/button";
-
 import { FormProps } from "@/types/formProps";
 import { AuthoritieType } from "@/types/AuthTypes";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -11,11 +13,12 @@ import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { useToast } from "../ui/use-toast";
 import { StaticImageData } from "next/image";
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 
 interface AuthorityFormValues {
     name: string;
     puesto: string;
-    profile_pic: string | string[] | StaticImageData[];
+    profile_pic: string | StaticImageData;
 }
 
 const schema: ObjectSchema<AuthorityFormValues> = object({
@@ -31,7 +34,7 @@ const schema: ObjectSchema<AuthorityFormValues> = object({
 });
 
 export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<AuthoritieType>) {
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<AuthorityFormValues>({
+    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<AuthorityFormValues>({
         defaultValues: {
             name: formAction ? formData?.name : "",
             puesto: formAction ? formData?.puesto : "",
@@ -41,6 +44,19 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
         mode: "onChange",
     });
     const { toast } = useToast();
+    
+    const [fileURLs, setFileURLs] = useState<any>([]);
+
+    const handleFilesSelected = (files: File[]) => {
+        const newFileURLs = files.map((file) => URL.createObjectURL(file));
+        setFileURLs(newFileURLs);
+        setValue("profile_pic", newFileURLs[0], { shouldValidate: true });
+    };
+
+    const handleFileRemoved = () => {
+        setFileURLs([]);
+        setValue("profile_pic", "", { shouldValidate: true });
+    };
 
     const onSubmit: SubmitHandler<AuthorityFormValues> = async (data: any) => {
         try {
@@ -101,11 +117,12 @@ export function AuthorityForm({ formAction, formData, onSubmitSuccess, handleClo
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Foto de Perfil:</label>
-                <input
+                <FileUpload
                     {...register("profile_pic")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
+                    files={fileURLs}
+                    onFilesSelected={handleFilesSelected}
+                    onFileRemoved={handleFileRemoved}
+                    limit={1}
                 />
                 {errors?.profile_pic && <p className="text-red-700 p-2 font-semibold">{errors?.profile_pic?.message}</p>}
             </div>
