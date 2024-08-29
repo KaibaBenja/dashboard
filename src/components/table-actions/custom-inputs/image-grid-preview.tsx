@@ -21,10 +21,10 @@ export function FilePreview({
                 <FaInfoCircle className="text-green-800 w-4 h-4" />
                 <p>No se ha cargado ningún archivo</p>
             </div>
-            <div className="flex justify-start items-center gap-2">
+            {limit_preview < 10 && <div className="flex justify-start items-center gap-2">
                 <IoIosWarning className="text-orange-500 w-5 h-5" />
                 <p>Limite de carga {limit_preview} archivos</p>
-            </div>
+            </div>}
         </div>
     );
 
@@ -32,7 +32,7 @@ export function FilePreview({
         const [imageDimensions, setImageDimensions] = useState({ width: 100, height: 100 });
 
         useEffect(() => {
-            const img = document.createElement('img');      
+            const img = document.createElement('img');
             img.onload = () => {
                 setImageDimensions({
                     width: img.width,
@@ -70,7 +70,7 @@ export function FilePreview({
     return (
         <div
             className={cx({
-                "mt-3 grid grid-col-2 gap-4 px-12": Boolean(files.length > 0),
+                "mt-3 grid grid-cols-2 gap-4 px-12": Boolean(files.length > 0),
                 "mt-3 flex flex-col items-center px-12": Boolean(files.length < 0),
             })}
         >

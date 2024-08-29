@@ -165,7 +165,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                     files={imageURLs}
                     onFilesSelected={handleImagesSelected}
                     onFileRemoved={handleImageRemoved}
-                    limit={1}
+                    limit={4}
                 />
                 {errors.blog_images && <p className="text-red-700 p-2 font-semibold">{errors.blog_images.message}</p>}
             </div>

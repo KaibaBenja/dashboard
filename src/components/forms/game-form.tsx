@@ -302,7 +302,7 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                     files={imageFileURLs}
                     onFilesSelected={handleImageFilesSelected}
                     onFileRemoved={() => handleFileRemoved('images')}
-                    limit={1}
+                    limit={4}
                 />
                 {errors?.game_images && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
             </div>
@@ -313,7 +313,7 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                     files={archiveFileURLs}
                     onFilesSelected={handleArchiveFilesSelected}
                     onFileRemoved={() => handleFileRemoved('archive')}
-                    limit={1}
+                    limit={10000}
                 />
                 {errors?.game_archive && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
             </div>
