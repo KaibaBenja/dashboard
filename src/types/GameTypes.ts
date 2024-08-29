@@ -17,6 +17,6 @@ export interface GameType {
     tecnologias: string;
     estilo: string;
     genero: string;
-    game_images: string[] | StaticImageData[];
+    game_images: string[];
     game_archive: string;
 }
