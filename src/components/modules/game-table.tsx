@@ -15,6 +15,7 @@ import { ListSkeleton } from '../table-actions/item-skeleton';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa';
+import Image from 'next/image';
 
 export function GameTable() {
     const [games, setGames] = useState<GameType[]>([]);
@@ -205,18 +206,19 @@ export function GameTable() {
                 <h1 className='text-center font-bold text-xl'>{currentGame?.titulo}</h1>
                 <div className="mt-4">
                     <p><strong>Autor:</strong> {currentGame?.autor}</p>
-                    <p><strong>Género:</strong> {currentGame?.sinopsis}</p>
-                    <p><strong>Género:</strong> {currentGame?.aporte_turismo}</p>
-                    <p><strong>Género:</strong> {currentGame?.aporte_cultura}</p>
-                    <p><strong>Género:</strong> {currentGame?.aporte_juventud}</p>
-                    <p><strong>Género:</strong> {currentGame?.aporte_educacion  }</p>
-                    <p><strong>Tecnologías:</strong> {currentGame?.objetivo}</p>
-                    <p><strong>Estilo:</strong> {currentGame?.desarrollo}</p>
-                    <p><strong>Género:</strong> {currentGame?.condiciones}</p>
-                    <p><strong>Género:</strong> {currentGame?.controles}</p>
-                    <p><strong>Género:</strong> {currentGame?.tecnologias}</p>
-                    <p><strong>Género:</strong> {currentGame?.estilo}</p>
+                    <p><strong>Sinopsis:</strong> {currentGame?.sinopsis}</p>
+                    <p><strong>Aporte al Turismo:</strong> {currentGame?.aporte_turismo}</p>
+                    <p><strong>Aporte a la Cultura:</strong> {currentGame?.aporte_cultura}</p>
+                    <p><strong>Aporte a la Juventud:</strong> {currentGame?.aporte_juventud}</p>
+                    <p><strong>Aporte a la Educacion:</strong> {currentGame?.aporte_educacion}</p>
+                    <p><strong>Objetivo:</strong> {currentGame?.objetivo}</p>
+                    <p><strong>Desarrollo:</strong> {currentGame?.desarrollo}</p>
+                    <p><strong>Condiciones:</strong> {currentGame?.condiciones}</p>
+                    <p><strong>Controles:</strong> {currentGame?.controles}</p>
+                    <p><strong>Tecnologias:</strong> {currentGame?.tecnologias}</p>
+                    <p><strong>Estilo:</strong> {currentGame?.estilo}</p>
                     <p><strong>Género:</strong> {currentGame?.genero}</p>
+                    <Image src={currentGame?.game_images?.[0] || ''} alt="Game Image" width={500} height={100}/>
                 </div>
             </InfoDialog>
         </div>

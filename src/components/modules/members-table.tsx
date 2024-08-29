@@ -205,13 +205,13 @@ export function MembersTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {Boolean(currentMember?.profile_pic) && <Image
-                    src={currentMember?.profile_pic!}
+                <Image
+                    src={currentMember?.profile_pic?.[0] || ''}
                     alt="example"
                     width={80}
                     height={80}
                     className='rounded-full object-cover self-center my-4'
-                />}
+                />
                 <h1 className='text-center font-bold text-xl'>{currentMember?.name_surname}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center gap-4 font-semibold'>
                     <div className='flex items-center gap-2'>
