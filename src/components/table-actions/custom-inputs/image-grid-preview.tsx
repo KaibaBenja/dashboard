@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import cx from "classnames";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaFile, FaInfoCircle } from "react-icons/fa";
 import { IoIosWarning, IoIosCloseCircle } from "react-icons/io";
 
 interface FilesPreviewProps {
@@ -21,48 +21,58 @@ export function FilePreview({
                 <FaInfoCircle className="text-green-800 w-4 h-4" />
                 <p>No se ha cargado ningún archivo</p>
             </div>
-            {limit_preview < 10 && <div className="flex justify-start items-center gap-2">
-                <IoIosWarning className="text-orange-500 w-5 h-5" />
-                <p>Limite de carga {limit_preview} archivos</p>
-            </div>}
+            {limit_preview < 10 && (
+                <div className="flex justify-start items-center gap-2">
+                    <IoIosWarning className="text-orange-500 w-5 h-5" />
+                    <p>Limite de carga {limit_preview} archivos</p>
+                </div>
+            )}
         </div>
     );
 
     const FileItem = ({ file, index }: { file: string; index: number }) => {
-        const [imageDimensions, setImageDimensions] = useState({ width: 100, height: 100 });
-
-        useEffect(() => {
-            const img = document.createElement('img');
-            img.onload = () => {
-                setImageDimensions({
-                    width: img.width,
-                    height: img.height,
-                });
-            };
-
-        }, [file]);
+        const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
 
         return (
             <div className="relative m-1">
-                <div key={`${index}`} className="h-24 w-24">
-                    <div className="relative">
-                        <Image
-                            key={index}
-                            src={file}
-                            alt={`image ${index}`}
-                            width={imageDimensions.width}
-                            height={imageDimensions.height}
-                            className="w-20 h-20 rounded-lg border-3 border-black"
-                        />
-                        <button
-                            key={`button ${index}`}
-                            onClick={() => handleFilesRemoved(index)}
-                            className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 rounded-full p-1"
-                        >
-                            <IoIosCloseCircle className="w-5 h-5" />
-                        </button>
+                {!file
+                    ? <div className="h-24 w-24">
+                        <div className="relative">
+                            <Image
+                                src={file}
+                                alt={`image ${index}`}
+                                width={imageDimensions?.width || 100}
+                                height={imageDimensions?.height || 100}
+                                className="w-20 h-20 rounded-lg border-3 border-black"
+                                onLoadingComplete={(img) => {
+                                    setImageDimensions({
+                                        width: img.naturalWidth,
+                                        height: img.naturalHeight,
+                                    });
+                                }}
+                            />
+                            <button
+                                onClick={() => handleFilesRemoved(index)}
+                                className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 rounded-full p-1"
+                            >
+                                <IoIosCloseCircle className="w-5 h-5" />
+                            </button>
+                        </div>
                     </div>
-                </div>
+                    : <div className="h-24 w-24">
+                        <div className="relative">
+                            <FaFile
+                                className="w-20 h-20 rounded-lg border-3 text-green-800"
+                            />
+                            <button
+                                onClick={() => handleFilesRemoved(index)}
+                                className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 rounded-full p-1"
+                            >
+                                <IoIosCloseCircle className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
         );
     };
@@ -70,8 +80,8 @@ export function FilePreview({
     return (
         <div
             className={cx({
-                "mt-3 grid grid-cols-2 gap-4 px-12": Boolean(files.length > 0),
-                "mt-3 flex flex-col items-center px-12": Boolean(files.length < 0),
+                "mt-3 grid grid-cols-2 gap-4 px-12": files.length > 0,
+                "mt-3 flex flex-col items-center px-12": files.length === 0,
             })}
         >
             {files.length > 0 ? (
