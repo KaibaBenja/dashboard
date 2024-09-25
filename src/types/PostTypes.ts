@@ -7,5 +7,5 @@ export interface PostType {
     categoria: string;
     pre_descripcion: string;
     descripcion: string;
-    blog_images: string[] | StaticImageData[];
+    blog_images: string | File | StaticImageData;
 }

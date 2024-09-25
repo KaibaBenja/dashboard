@@ -2,7 +2,7 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, ObjectSchema } from 'yup';
+import { object, string, array, mixed, ObjectSchema } from 'yup';
 import { useState } from "react";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
 import { FileUpload } from "../table-actions/custom-inputs/file-upload";
+import { StaticImageData } from "next/image";
 
 interface PostFormValues {
     fecha: string;
@@ -20,7 +21,7 @@ interface PostFormValues {
     categoria: string;
     pre_descripcion: string;
     descripcion: string;
-    blog_images: string;
+    blog_images: string | File | StaticImageData;
 }
 
 const schema: ObjectSchema<PostFormValues> = object({
@@ -31,17 +32,20 @@ const schema: ObjectSchema<PostFormValues> = object({
         .required("La fecha es requerida")
         .defined(),
     categoria: string()
-        .required("La categoria es requerida")
+        .required("La categoría es requerida")
         .defined(),
     pre_descripcion: string()
-        .required("La Pre descripción es requerida")
+        .required("La pre descripción es requerida")
         .defined(),
     descripcion: string()
         .required("La descripción es requerida")
         .defined(),
-    blog_images: string()
-        .required("La imagen de portada es requerida")
-        .defined(),
+    blog_images: mixed<string | File | StaticImageData>()
+    .required("Se debe ingresar una foto de perfil")
+    .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value => 
+        typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
+    )
+    .defined(),
 });
 
 export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
@@ -52,48 +56,64 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             categoria: formAction ? formData?.categoria : "",
             pre_descripcion: formAction ? formData?.pre_descripcion : "",
             descripcion: formAction ? formData?.descripcion : "",
-            blog_images: "",
+            blog_images: formAction ? formData?.blog_images : "",
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
 
-    const [imageURLs, setImageURLs] = useState<any>([]);
+    const [selectedFiles, setSelectedFiles] = useState<any>([]);
 
     const handleImagesSelected = (files: File[]) => {
-        const newImageURLs = files.map((file) => URL.createObjectURL(file));
-        setImageURLs(newImageURLs);
-        setValue("blog_images", newImageURLs[0], { shouldValidate: true });
+        setSelectedFiles(files);
+        setValue("blog_images", files[0], { shouldValidate: true });
     };
 
     const handleImageRemoved = () => {
-        setImageURLs([]);
+        setSelectedFiles([]);
         setValue("blog_images", "", { shouldValidate: true });
     };
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
+        if (!selectedFiles.length) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Debe seleccionar al menos un archivo.",
+            });
+            return; // Prevent submission if no files are selected
+        }
+
         try {
+            const formData = new FormData();
+            formData.append("titulo", data.titulo);
+            formData.append("fecha", data.fecha);
+            formData.append("categoria", data.categoria);
+            formData.append("pre_descripcion", data.pre_descripcion);
+            formData.append("descripcion", data.descripcion);
+            formData.append("blog_images", selectedFiles[0]); // Add the first selected file
+
             if (formAction && formData) {
-                await UpdateData({path: "posts", data }, formData?._id);
+                await UpdateData({ path: "posts", data: formData }, data?._id);
                 console.log("Edit");
             } else {
-                await AddData({path: "posts", data });
+                await AddData({ path: "posts", data: formData });
                 console.log("Add");
             }
+
             onSubmitSuccess();
             handleCloseSheet();
             toast({
                 variant: "success",
-                title: `Exito!`,
+                title: `Éxito!`,
                 description: `El Post ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
             });
-            console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
             toast({
                 variant: "destructive",
-                title: "Ocurrio un Error!",
+                title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
             });
         }
@@ -162,7 +182,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             <div className="mb-4">
                 <label className="block text-gray-700">Imagen de Portada:</label>
                 <FileUpload
-                    files={imageURLs}
+                    files={selectedFiles}
                     onFilesSelected={handleImagesSelected}
                     onFileRemoved={handleImageRemoved}
                     limit={4}

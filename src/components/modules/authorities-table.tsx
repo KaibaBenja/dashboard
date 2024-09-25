@@ -202,13 +202,13 @@ export function AuthoritiesTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {Boolean(currentAuthority?.profile_pic) && <Image
+                {/* {Boolean(currentAuthority?.profile_pic) && <Image
                     src={currentAuthority?.profile_pic!}
                     alt="example"
                     width={80}
                     height={80}
                     className='rounded-full object-cover self-center my-4'
-                />}
+                />} */}
                 <Image
                     src={ExampleImg}
                     alt="example"
