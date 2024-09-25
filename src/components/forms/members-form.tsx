@@ -5,7 +5,7 @@ import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
-import { object, string, ObjectSchema } from 'yup';
+import { object, string, ObjectSchema, mixed } from 'yup';
 import { MemberType } from "@/types/MemberTypes";
 import { FormProps } from "@/types/formProps";
 
@@ -20,7 +20,7 @@ interface FormValues {
     name_surname: string;
     puesto: string;
     linkedIn: string;
-    profile_pic: string | StaticImageData;
+    profile_pic: string | File | StaticImageData;
 }
 
 const schema: ObjectSchema<FormValues> = object({
@@ -35,10 +35,14 @@ const schema: ObjectSchema<FormValues> = object({
     linkedIn: string()
         .required("Se debe ingresar un link valido de LinkedIn")
         .test('is-string', 'El link de LinkedIn debe ser una cadena de texto', value => typeof value === 'string'),
-    profile_pic: string()
+    profile_pic: mixed<string | File | StaticImageData>()
         .required("Se debe ingresar una foto de perfil")
+        .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value => 
+            typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
+        )
         .defined(),
 });
+
 
 export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<MemberType>) {
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormValues>({
@@ -56,10 +60,13 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
     const [fileURLs, setFileURLs] = useState<any>([]);
 
     const handleFilesSelected = (files: File[]) => {
-        const newFileURLs = files.map((file) => URL.createObjectURL(file));
-        setFileURLs(newFileURLs);
-        setValue("profile_pic", newFileURLs[0], { shouldValidate: true, shouldTouch: false });
-    };
+        if (files.length > 0) {
+            const newFileURLs = files.map((file) => URL.createObjectURL(file));
+            setFileURLs(newFileURLs);
+            // Set the first file in the array
+            setValue("profile_pic", files[0], { shouldValidate: true, shouldTouch: true });
+        }
+    };    
 
     const handleFileRemoved = () => {
         setFileURLs([]);
@@ -68,30 +75,40 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
 
     const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
         try {
-            if (formAction && formData) {
-                await UpdateData({ path: "members", data }, formData._id);
+            const formData = new FormData();
+            formData.append("name_surname", data.name_surname);
+            formData.append("puesto", data.puesto);
+            formData.append("linkedIn", data.linkedIn);
+            
+            // Check if `profile_pic` is actually a File before appending
+            if (data.profile_pic instanceof File) {
+                formData.append("profile_pic", data.profile_pic);
+            }
+    
+            if (formAction) {
+                await UpdateData({ path: "members", data: formData }, data._id);
                 console.log("Edit");
             } else {
-                await AddData({ path: "members", data });
+                await AddData({ path: "members", data: formData });
                 console.log("Add");
             }
+    
             onSubmitSuccess();
             handleCloseSheet();
             toast({
                 variant: "success",
-                title: `Exito!`,
-                description: `El miembro ${data?.name_surname} fue ${formAction ? "editado" : "agregado"}`,
+                title: `Éxito!`,
+                description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"}`,
             });
-            console.log(data);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast({
                 variant: "destructive",
-                title: "Ocurrio un Error!",
+                title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
             });
         }
-    };
+    };       
 
     function handleLoadingText() {
         if (formAction) {

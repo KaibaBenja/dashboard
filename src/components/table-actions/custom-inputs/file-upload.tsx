@@ -17,7 +17,7 @@ export function FileUpload({
     files,
     onFilesSelected,
     onFileRemoved,
-    limit = 4,
+    limit = 5,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
