@@ -41,14 +41,14 @@ const schema: ObjectSchema<PostFormValues> = object({
         .required("La descripción es requerida")
         .defined(),
     blog_images: mixed<string | File | StaticImageData>()
-    .required("Se debe ingresar una foto de perfil")
-    .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value => 
-        typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
-    )
-    .defined(),
+        .required("Se debe ingresar una foto de perfil")
+        .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
+            typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
+        )
+        .defined(),
 });
 
-export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
+export function PostForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
@@ -62,12 +62,14 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
         mode: "onChange",
     });
     const { toast } = useToast();
+    console.log(formData?.blog_images);
 
     const [selectedFiles, setSelectedFiles] = useState<any>([]);
 
     const handleImagesSelected = (files: File[]) => {
         setSelectedFiles(files);
         setValue("blog_images", files[0], { shouldValidate: true });
+        console.log(files);
     };
 
     const handleImageRemoved = () => {
@@ -76,15 +78,6 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
     };
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
-        if (!selectedFiles.length) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Debe seleccionar al menos un archivo.",
-            });
-            return; // Prevent submission if no files are selected
-        }
-
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
@@ -95,7 +88,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             formData.append("blog_images", selectedFiles[0]); // Add the first selected file
 
             if (formAction && formData) {
-                await UpdateData({ path: "posts", data: formData }, data?._id);
+                await UpdateData({ path: "posts", data: formData }, updateID!);
                 console.log("Edit");
             } else {
                 await AddData({ path: "posts", data: formData });
@@ -143,7 +136,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 <label className="block text-gray-700">Fecha:</label>
                 <input
                     {...register("fecha")}
-                    type="date"
+                    type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -191,8 +184,8 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
-                {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
-                {handleLoadingText()}
+                    {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
+                    {handleLoadingText()}
                 </Button>
             </div>
         </form>

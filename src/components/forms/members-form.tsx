@@ -44,7 +44,7 @@ const schema: ObjectSchema<FormValues> = object({
 });
 
 
-export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<MemberType>) {
+export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<MemberType>) {
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormValues>({
         defaultValues: {
             name_surname: formAction ? formData?.name_surname : "",
@@ -63,8 +63,8 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
         if (files.length > 0) {
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
             setFileURLs(newFileURLs);
-            // Set the first file in the array
             setValue("profile_pic", files[0], { shouldValidate: true, shouldTouch: true });
+            event?.preventDefault();    
         }
     };    
 
@@ -80,19 +80,18 @@ export function MemberForm({ formAction, formData, onSubmitSuccess, handleCloseS
             formData.append("puesto", data.puesto);
             formData.append("linkedIn", data.linkedIn);
             
-            // Check if `profile_pic` is actually a File before appending
             if (data.profile_pic instanceof File) {
                 formData.append("profile_pic", data.profile_pic);
             }
-    
+
             if (formAction) {
-                await UpdateData({ path: "members", data: formData }, data._id);
+                await UpdateData({ path: "members", data: formData }, updateID!);
                 console.log("Edit");
             } else {
                 await AddData({ path: "members", data: formData });
                 console.log("Add");
             }
-    
+
             onSubmitSuccess();
             handleCloseSheet();
             toast({

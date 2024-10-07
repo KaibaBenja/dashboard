@@ -87,7 +87,7 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
                 <label className="block text-gray-700">Fecha:</label>
                 <input
                     {...register("fecha")}
-                    type="date"
+                    type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -97,7 +97,7 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
                 <label className="block text-gray-700">Horario:</label>
                 <input
                     {...register("horario")}
-                    type="time"
+                    type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
