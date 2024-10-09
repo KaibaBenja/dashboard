@@ -2,7 +2,7 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, array, mixed, ObjectSchema } from 'yup';
+import { object, string, mixed, ObjectSchema } from 'yup';
 import { useState } from "react";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -41,7 +41,7 @@ const schema: ObjectSchema<PostFormValues> = object({
         .required("La descripción es requerida")
         .defined(),
     blog_images: mixed<string | File | StaticImageData>()
-        .required("Se debe ingresar una foto de perfil")
+        .required("Se debe ingresar una imagen")
         .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
             typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
         )
@@ -62,22 +62,24 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
         mode: "onChange",
     });
     const { toast } = useToast();
-    console.log(formData?.blog_images);
 
-    const [selectedFiles, setSelectedFiles] = useState<any>([]);
+    const [fileUrls, setFileUrls] = useState<any>([]);
 
-    const handleImagesSelected = (files: File[]) => {
-        setSelectedFiles(files);
-        setValue("blog_images", files[0], { shouldValidate: true });
-        console.log(files);
+    const handleFilesSelected = (files: File[]) => {
+        if (files.length > 0) {
+            const newFileURLs = files.map((file) => URL.createObjectURL(file));
+            setFileUrls(newFileURLs);
+            setValue("blog_images", files[0], { shouldValidate: true, shouldTouch: true });
+            event?.preventDefault();    
+        }
     };
 
     const handleImageRemoved = () => {
-        setSelectedFiles([]);
+        setFileUrls([]);
         setValue("blog_images", "", { shouldValidate: true });
     };
 
-    const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
+    const onSubmit: SubmitHandler<PostFormValues> = async (data) => {
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
@@ -85,14 +87,14 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             formData.append("categoria", data.categoria);
             formData.append("pre_descripcion", data.pre_descripcion);
             formData.append("descripcion", data.descripcion);
-            formData.append("blog_images", selectedFiles[0]); // Add the first selected file
+            if (fileUrls.length > 0) {
+                formData.append("blog_images", fileUrls[0]);
+            }
 
-            if (formAction && formData) {
-                await UpdateData({ path: "posts", data: formData }, updateID!);
-                console.log("Edit");
+            if (formAction && updateID) {
+                await UpdateData({ path: "posts", data: formData }, updateID);
             } else {
                 await AddData({ path: "posts", data: formData });
-                console.log("Add");
             }
 
             onSubmitSuccess();
@@ -175,8 +177,8 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             <div className="mb-4">
                 <label className="block text-gray-700">Imagen de Portada:</label>
                 <FileUpload
-                    files={selectedFiles}
-                    onFilesSelected={handleImagesSelected}
+                    files={fileUrls}
+                    onFilesSelected={handleFilesSelected}
                     onFileRemoved={handleImageRemoved}
                     limit={4}
                 />

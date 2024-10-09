@@ -102,6 +102,8 @@ export function AuthoritiesTable() {
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentAuthorites: AuthorityType[] = authorities.slice(indexOfFirstMember, indexOfLastMember);
 
+    console.log(currentAuthority?.profile_pic[0]);
+
     return (
         <div className='flex flex-col'>
             <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onAddClick}>
@@ -206,7 +208,7 @@ export function AuthoritiesTable() {
             >
                 {Boolean(currentAuthority?.profile_pic)
                     ? <Image
-                        src={currentAuthority?.profile_pic!}
+                        src={currentAuthority?.profile_pic[0]!}
                         alt="example"
                         width={80}
                         height={80}
