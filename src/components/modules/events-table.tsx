@@ -132,7 +132,7 @@ export function EventsTable() {
                                             <span className='block md:hidden'>Fecha: </span>{event?.event_name}
                                         </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
-                                            <span className='block md:hidden'>Categoria: </span>{event?.descripcion}
+                                            <span className='block md:hidden'>Descripción: </span>{event?.descripcion}
                                         </TableCell>
                                         <ActionCell
                                             data={event}

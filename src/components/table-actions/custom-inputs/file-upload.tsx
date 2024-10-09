@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef } from "react";
 import { FilePreview } from "./image-grid-preview";
 import { LuUpload } from "react-icons/lu";
@@ -10,6 +8,7 @@ interface FileUploadProps {
     files: string[];
     onFilesSelected: (files: File[]) => void;
     onFileRemoved: (index: number) => void;
+    defaultFiles?: any;
     limit?: number;
 }
 
@@ -17,6 +16,7 @@ export function FileUpload({
     files,
     onFilesSelected,
     onFileRemoved,
+    defaultFiles = [],
     limit = 5,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -26,6 +26,7 @@ export function FileUpload({
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        event.preventDefault();
         if (event.target.files && event.target.files.length > 0) {
             const newFiles = Array.from(event.target.files);
             onFilesSelected(newFiles);
@@ -42,6 +43,7 @@ export function FileUpload({
                 className="hidden"
             />
             <button
+                type="button"
                 className={cx({
                     "w-80 h-36 text-lg font-medium flex flex-col items-center justify-center gap-2 mb-2 text-green-800 bg-white border-2 border-dashed border-green-700 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out hover:bg-gray-100": files.length < limit,
                     "w-80 h-36 text-lg font-medium flex flex-col items-center justify-center gap-2 mb-2 text-orange-800 bg-white border-2 border-orange-700 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out hover:bg-orange-100": files.length >= limit

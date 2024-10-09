@@ -5,7 +5,7 @@ import Image from 'next/image';
 import cx from "classnames";
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
-import { AuthoritieType } from '@/types/AuthTypes';
+import { AuthorityType } from '@/types/AuthTypes';
 
 import { ActionCell } from '../table-actions/actions-cell';
 import { SheetForm } from '../table-actions/sheet-form';
@@ -21,13 +21,13 @@ import { HiIdentification } from "react-icons/hi";
 import ExampleImg from "../../images/logo-c.png"
 
 export function AuthoritiesTable() {
-    const [authorities, setAuthorities] = useState<AuthoritieType[]>([]);
+    const [authorities, setAuthorities] = useState<AuthorityType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [warning, setWarning] = useState<boolean>(false);
     const [currentAuthorityId, setCurrentAuthorityId] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
-    const [currentAuthority, setCurrentAuthority] = useState<AuthoritieType | null>(null);
+    const [currentAuthority, setCurrentAuthority] = useState<AuthorityType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
     const itemsPerPage: number = 5;
@@ -54,13 +54,14 @@ export function AuthoritiesTable() {
         setCurrentAuthority(null);
     }
 
-    function onEditClick(authority: AuthoritieType) {
+    function onEditClick(authority: AuthorityType) {
         setIsOpen(true);
         setActionForm(true);
         setCurrentAuthority(authority);
+        setCurrentAuthorityId(authority?._id)
     }
 
-    function onViewClick(authority: AuthoritieType) {
+    function onViewClick(authority: AuthorityType) {
         setCurrentAuthority(authority);
         setInfoDialogOpen(true);
     }
@@ -99,7 +100,9 @@ export function AuthoritiesTable() {
 
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
-    const currentAuthorites: AuthoritieType[] = authorities.slice(indexOfFirstMember, indexOfLastMember);
+    const currentAuthorites: AuthorityType[] = authorities.slice(indexOfFirstMember, indexOfLastMember);
+
+    console.log(currentAuthority?.profile_pic[0]);
 
     return (
         <div className='flex flex-col'>
@@ -120,7 +123,7 @@ export function AuthoritiesTable() {
                             <ListSkeleton />
                         ) : (
                             <TableBody>
-                                {currentAuthorites.map((authority: AuthoritieType, index: number) => (
+                                {currentAuthorites.map((authority: AuthorityType, index: number) => (
                                     <TableRow key={authority?._id} className='flex flex-col md:flex-row md:table-row'>
                                         <TableCell className="flex md:table-cell items-center gap-2 font-medium">
                                             <span className='block md:hidden'>Id: </span>{authority?._id}
@@ -185,6 +188,7 @@ export function AuthoritiesTable() {
                 handleOpen={handleCloseForm}
             >
                 <AuthorityForm
+                    updateID={currentAuthorityId}
                     formAction={actionForm}
                     formData={currentAuthority}
                     handleCloseSheet={handleCloseForm}
@@ -202,20 +206,22 @@ export function AuthoritiesTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {/* {Boolean(currentAuthority?.profile_pic) && <Image
-                    src={currentAuthority?.profile_pic!}
-                    alt="example"
-                    width={80}
-                    height={80}
-                    className='rounded-full object-cover self-center my-4'
-                />} */}
-                <Image
-                    src={ExampleImg}
-                    alt="example"
-                    width={80}
-                    height={80}
-                    className='rounded-full object-cover self-center my-4'
-                />
+                {Boolean(currentAuthority?.profile_pic)
+                    ? <Image
+                        src={currentAuthority?.profile_pic[0]!}
+                        alt="example"
+                        width={80}
+                        height={80}
+                        className='rounded-full object-cover self-center my-4'
+                    />
+                    : <Image
+                        src={ExampleImg}
+                        alt="example"
+                        width={80}
+                        height={80}
+                        className='rounded-full object-cover self-center my-4'
+                    />
+                }
                 <h1 className='text-start font-bold text-xl'>{currentAuthority?.name}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>

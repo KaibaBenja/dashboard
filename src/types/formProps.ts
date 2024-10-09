@@ -1,5 +1,6 @@
 export interface FormProps<T> {
-    formAction: boolean;
+    updateID?: string;
+    formAction?: boolean;
     formData: T | null;
     onSubmitSuccess: () => void;
     handleCloseSheet: () => void;

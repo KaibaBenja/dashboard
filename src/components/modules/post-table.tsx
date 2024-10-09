@@ -57,6 +57,7 @@ export function PostsTable() {
         setIsOpen(true);
         setActionForm(true);
         setCurrentPost(post);
+        setCurrentPostId(post?._id);
     }
 
     function onViewClick(post: PostType) {
@@ -188,6 +189,7 @@ export function PostsTable() {
                 handleOpen={handleCloseForm}
             >
                 <PostForm
+                    updateID={currentPostId}
                     formAction={actionForm}
                     formData={currentPost}
                     handleCloseSheet={handleCloseForm}

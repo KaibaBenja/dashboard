@@ -57,6 +57,7 @@ export function MembersTable() {
         setIsOpen(true);
         setActionForm(true);
         setCurrentMember(member);
+        setCurrentMemberId(member._id);
     }
 
     function onViewClick(member: MemberType) {
@@ -99,6 +100,7 @@ export function MembersTable() {
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentMembers: MemberType[] = members.slice(indexOfFirstMember, indexOfLastMember);
+    console.log(currentMemberId);
 
     return (
         <div className='flex flex-col'>
@@ -188,6 +190,7 @@ export function MembersTable() {
                 handleOpen={handleCloseForm}
             >
                 <MemberForm
+                    updateID={currentMemberId}
                     formAction={actionForm}
                     formData={currentMember}
                     handleCloseSheet={handleCloseForm}

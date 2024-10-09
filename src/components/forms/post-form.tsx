@@ -2,7 +2,7 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, array, mixed, ObjectSchema } from 'yup';
+import { object, string, mixed, ObjectSchema } from 'yup';
 import { useState } from "react";
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -41,14 +41,14 @@ const schema: ObjectSchema<PostFormValues> = object({
         .required("La descripción es requerida")
         .defined(),
     blog_images: mixed<string | File | StaticImageData>()
-    .required("Se debe ingresar una foto de perfil")
-    .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value => 
-        typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
-    )
-    .defined(),
+        .required("Se debe ingresar una imagen")
+        .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
+            typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
+        )
+        .defined(),
 });
 
-export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
+export function PostForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
@@ -63,28 +63,23 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
     });
     const { toast } = useToast();
 
-    const [selectedFiles, setSelectedFiles] = useState<any>([]);
+    const [fileUrls, setFileUrls] = useState<any>([]);
 
-    const handleImagesSelected = (files: File[]) => {
-        setSelectedFiles(files);
-        setValue("blog_images", files[0], { shouldValidate: true });
+    const handleFilesSelected = (files: File[]) => {
+        if (files.length > 0) {
+            const newFileURLs = files.map((file) => URL.createObjectURL(file));
+            setFileUrls(newFileURLs);
+            setValue("blog_images", files[0], { shouldValidate: true, shouldTouch: true });
+            event?.preventDefault();    
+        }
     };
 
     const handleImageRemoved = () => {
-        setSelectedFiles([]);
+        setFileUrls([]);
         setValue("blog_images", "", { shouldValidate: true });
     };
 
-    const onSubmit: SubmitHandler<PostFormValues> = async (data: any) => {
-        if (!selectedFiles.length) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Debe seleccionar al menos un archivo.",
-            });
-            return; // Prevent submission if no files are selected
-        }
-
+    const onSubmit: SubmitHandler<PostFormValues> = async (data) => {
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
@@ -92,14 +87,14 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             formData.append("categoria", data.categoria);
             formData.append("pre_descripcion", data.pre_descripcion);
             formData.append("descripcion", data.descripcion);
-            formData.append("blog_images", selectedFiles[0]); // Add the first selected file
+            if (fileUrls.length > 0) {
+                formData.append("blog_images", fileUrls[0]);
+            }
 
-            if (formAction && formData) {
-                await UpdateData({ path: "posts", data: formData }, data?._id);
-                console.log("Edit");
+            if (formAction && updateID) {
+                await UpdateData({ path: "posts", data: formData }, updateID);
             } else {
                 await AddData({ path: "posts", data: formData });
-                console.log("Add");
             }
 
             onSubmitSuccess();
@@ -143,7 +138,7 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 <label className="block text-gray-700">Fecha:</label>
                 <input
                     {...register("fecha")}
-                    type="date"
+                    type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -182,8 +177,8 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             <div className="mb-4">
                 <label className="block text-gray-700">Imagen de Portada:</label>
                 <FileUpload
-                    files={selectedFiles}
-                    onFilesSelected={handleImagesSelected}
+                    files={fileUrls}
+                    onFilesSelected={handleFilesSelected}
                     onFileRemoved={handleImageRemoved}
                     limit={4}
                 />
@@ -191,8 +186,8 @@ export function PostForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
-                {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
-                {handleLoadingText()}
+                    {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
+                    {handleLoadingText()}
                 </Button>
             </div>
         </form>

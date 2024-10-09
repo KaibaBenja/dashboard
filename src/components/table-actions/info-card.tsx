@@ -33,7 +33,7 @@ export function InfoDialog({
 }: InfoDialogProps) {
     return (
         <Dialog open={openCard} onOpenChange={handleOpenCard}>
-            <DialogContent className="w-full mx-4 sm:max-w-[500px] flex flex-col no-scrollbar">
+            <DialogContent className="w-full mx-4 flex flex-col justify-center no-scrollbar">
                 {children}
                 <DialogFooter className="mt-4 flex justify-around w-full">
                     <Button onClick={() => editActionCell(data!)}>Editar</Button>
