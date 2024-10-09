@@ -19,7 +19,7 @@ import { StaticImageData } from "next/image";
 interface FormValues {
     name: string;
     puesto: string;
-    profile_pic: string | File | StaticImageData;
+    profile_pic: string | string[] | File | StaticImageData;
 }
 
 const schema: ObjectSchema<FormValues> = object({

@@ -33,9 +33,9 @@ export function InfoDialog({
 }: InfoDialogProps) {
     return (
         <Dialog open={openCard} onOpenChange={handleOpenCard}>
-            <DialogContent className="w-full mx-4 flex flex-col justify-center no-scrollbar">
+            <DialogContent className="w-full flex flex-col justify-center no-scrollbar">
                 {children}
-                <DialogFooter className="mt-4 flex justify-around w-full">
+                <DialogFooter className="mt-4 flex justify-around gap-2 w-full">
                     <Button onClick={() => editActionCell(data!)}>Editar</Button>
                     <Button className="bg-red-800 hover:bg-red-700" onClick={() => {
                         takeCurrentId();

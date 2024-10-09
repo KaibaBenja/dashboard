@@ -22,6 +22,7 @@ import { LuGamepad, LuUsers } from "react-icons/lu";
 import { CgArrowsExchangeAlt } from "react-icons/cg";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 import { FaCircleUser } from "react-icons/fa6";
+import { NavList } from "./nav-list";
 
 interface UserInfo {
     username: string;
@@ -54,6 +55,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         }
     }, [cookies.role, cookies.token, cookies.user, pathname]);
 
+    console.log(userInfo.role);
+
     return (
         <div id="header" className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
             <div className="border-r bg-muted/40 lg:block">
@@ -63,30 +66,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                             <span className="font-mono text-2xl font-bold text-center">GameCenter Dashboard</span>
                         </Link>
                     </div>
-                    <div className="flex-1 overflow-auto py-2">
-                        <nav className="grid items-start gap-6 px-4 text-sm font-medium">
-                            <Link href="posts" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
-                                <TbFileText className="h-12 lg:w-8 w-12 lg:h-8" />
-                                <h1 className="font-semibold text-xl">Posts</h1>
-                            </Link>
-                            <Link href="juegos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
-                                <LuGamepad className="h-12 lg:w-8 w-12 lg:h-8" />
-                                <h1 className="font-semibold text-xl">Juegos</h1>
-                            </Link>
-                            <Link href="miembros" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
-                                <LuUsers className="h-12 lg:w-8 w-12 lg:h-8" />
-                                <h1 className="font-semibold text-xl">Miembros</h1>
-                            </Link>
-                            <Link href="autoridades" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
-                                <MdOutlineShield className="h-12 lg:w-8 w-12 lg:h-8" />
-                                <h1 className="font-semibold text-xl">Autoridades</h1>
-                            </Link>
-                            <Link href="eventos" className="flex flex-col items-center text-[#FFFFFF] hover:cursor-pointer hover:bg-green-800 hover:bg-opacity-30 py-3 rounded-2xl">
-                                <IoCalendarNumberOutline className="h-12 lg:w-8 w-12 lg:h-8" />
-                                <h1 className="font-semibold text-xl mt-2">Eventos</h1>
-                            </Link>
-                        </nav>
-                    </div>
+                    <NavList userRole={`${userInfo?.role}`} />
                 </div>
                 <div className="flex lg:hidden items-center justify-between px-6 h-12">
                     <DropdownMenu>
