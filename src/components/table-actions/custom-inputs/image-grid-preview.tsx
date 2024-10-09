@@ -52,7 +52,7 @@ export function FilePreview({
                         />
                         <button
                             onClick={() => handleFilesRemoved(index)}
-                            className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 rounded-full p-1"
+                            className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 hover:text-red-300 border bg-red-900 border-red-900 rounded-full"
                         >
                             <IoIosCloseCircle className="w-5 h-5" />
                         </button>
