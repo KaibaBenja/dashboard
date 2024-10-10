@@ -4,6 +4,8 @@ import { parseCookies } from "nookies";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 
+import { UserInfo } from "@/types/UserInfo";
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,12 +15,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FaCircleUser } from "react-icons/fa6";
-
-interface UserInfo {
-    username: string;
-    role: string;
-    token: string
-}
 
 interface HeaderProps {
     section: string;

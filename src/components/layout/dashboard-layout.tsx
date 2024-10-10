@@ -7,6 +7,7 @@ import { AppContext } from "@/context/AppContext";
 import { usePathname } from "next/navigation";
 
 import { Header } from "./header";
+import { Navigation } from "./nav-list";
 
 import {
     DropdownMenu,
@@ -16,13 +17,10 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TbFileText } from "react-icons/tb";
-import { MdOutlineShield } from "react-icons/md";
-import { LuGamepad, LuUsers } from "react-icons/lu";
+
 import { CgArrowsExchangeAlt } from "react-icons/cg";
-import { IoCalendarNumberOutline } from "react-icons/io5";
 import { FaCircleUser } from "react-icons/fa6";
-import { NavList } from "./nav-list";
+import { MobileNavigation } from "./nav-list-mobile";
 
 interface UserInfo {
     username: string;
@@ -55,20 +53,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         }
     }, [cookies.role, cookies.token, cookies.user, pathname]);
 
-    console.log(userInfo.role);
-
     return (
         <div id="header" className="grid lg:min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
             <div className="border-r bg-muted/40 lg:block">
-                <div className="hidden lg:flex bg-[#66cc00] h-full max-h-screen flex-col gap-2">
-                    <div className="flex h-[80px] items-center text-[#FFFFFF] border-b px-6">
-                        <Link href="/" className="flex items-center gap-2 font-semibold">
-                            <span className="font-mono text-2xl font-bold text-center">GameCenter Dashboard</span>
-                        </Link>
-                    </div>
-                    <NavList userRole={`${userInfo?.role}`} />
-                </div>
-                <div className="flex lg:hidden items-center justify-between px-6 h-12">
+                <Navigation userRole={`${userInfo?.role}`} />
+                <MobileNavigation
+                    user={userInfo}
+                    selectedRoute={selectedView}
+                    logout={logout}
+                />
+                {/* <div className="flex lg:hidden items-center justify-between px-6 h-12">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className="flex items-center font-mono bg-green-800 text-[#FFFFFF] px-2 py-1 rounded-lg capitalize gap-2 mr-4">
@@ -110,7 +104,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                             </DropdownMenuRadioGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div>
+                </div> */}
             </div>
             <div className="flex flex-col">
                 <Header section={`${selectedView}`} />
