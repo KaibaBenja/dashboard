@@ -61,8 +61,6 @@ export function AuthorityForm({ updateID, formAction, formData, onSubmitSuccess,
         }
     };
 
-    console.log(fileURLs);
-
     const handleFileRemoved = () => {
         setFileURLs([]);
         setValue("profile_pic", "", { shouldValidate: true });
