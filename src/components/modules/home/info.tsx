@@ -2,7 +2,7 @@ import { FaRegDotCircle } from "react-icons/fa";
 
 export function Info() {
     return (
-        <div className="hidden lg:flex lg:flex-col px-4 py-2 pb-12 ml-1 bg-gray-100 w-full rounded-md">
+        <div className="hidden lg:flex lg:flex-col px-4 py-4 pb-12 ml-1 bg-gray-100 w-full rounded-md">
             <div className="text-xl text-[#000000]">
                 <span className="text-3xl font-bold text-green-800 pr-2">
                     4 Funcionalidades Claves
