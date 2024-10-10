@@ -128,7 +128,7 @@ export function AuthoritiesTable() {
                                             </TableCell>
                                             <ActionCell
                                                 data={authority}
-                                                index={`Miembro ${index + 1}`}
+                                                index={`Autoridad ${index + 1}`}
                                                 closeWarning={warning && currentAuthorityId === authority?._id}
                                                 handleCloseWarning={handleWarning}
                                                 takeCurrentId={() => setCurrentAuthorityId(authority?._id)}

@@ -134,7 +134,7 @@ export function PostsTable() {
                                             </TableCell>
                                             <ActionCell
                                                 data={post}
-                                                index={`Miembro ${index + 1}`}
+                                                index={`Post ${index + 1}`}
                                                 closeWarning={warning && currentPostId === post?._id}
                                                 handleCloseWarning={handleWarning}
                                                 takeCurrentId={() => setCurrentPostId(post?._id)}

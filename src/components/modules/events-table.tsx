@@ -132,7 +132,7 @@ export function EventsTable() {
                                             </TableCell>
                                             <ActionCell
                                                 data={event}
-                                                index={`Miembro ${index + 1}`}
+                                                index={`Evento ${index + 1}`}
                                                 closeWarning={warning && currentEventId === event?._id}
                                                 handleCloseWarning={handleWarning}
                                                 takeCurrentId={() => setCurrentEventId(event?._id)}
