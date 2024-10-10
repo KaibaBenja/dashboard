@@ -6,6 +6,7 @@ export interface NavigationProps {
     views?: ViewsTypes[];
     userRole?: string;
     selectedRoute?: string;
+    isHomeView?: boolean
     logout?: () => void;
 }
 

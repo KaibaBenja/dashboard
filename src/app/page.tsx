@@ -1,13 +1,13 @@
-import { Hero } from "@/components/Hero";
+import { Home } from "@/components/modules/home/home";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 import { AppContextProvider } from "@/context/AppContext";
 
-export default function Home() {
+export default function HomePage() {
     return (
         <AppContextProvider>
             <DashboardLayout>
-                <Hero />
+                <Home />
             </DashboardLayout>
         </AppContextProvider>
     );

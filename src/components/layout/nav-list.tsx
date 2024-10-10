@@ -2,25 +2,7 @@ import Link from "next/link";
 
 import { NavigationProps, ViewsTypes } from "@/types/NavTypes";
 
-import { IoCalendarNumberOutline } from "react-icons/io5";
-import { LuGamepad, LuUsers } from "react-icons/lu";
-import { MdOutlineShield } from "react-icons/md";
-import { TbFileText } from "react-icons/tb";
-
-const adminViews: ViewsTypes[] = [
-    { name: "posts", icon: TbFileText },
-    { name: "juegos", icon: LuGamepad },
-    { name: "miembros", icon: LuUsers },
-    { name: "autoridades", icon: MdOutlineShield },
-    { name: "eventos", icon: IoCalendarNumberOutline },
-];
-
-const devView: ViewsTypes[] = [{ name: "juegos", icon: LuGamepad }];
-
-const comunicationViews: ViewsTypes[] = [
-    { name: "posts", icon: TbFileText },
-    { name: "eventos", icon: IoCalendarNumberOutline },
-];
+import { adminViews, comunicationViews, devView } from "@/utils/roles";
 
 function NavList({ views }: { views: ViewsTypes[] }) {
     return (
