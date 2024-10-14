@@ -1,15 +1,16 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, ObjectSchema } from 'yup';
+
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { EventType } from "@/types/EventTypes";
+import { FormProps } from "@/types/formProps";
 
 import { Button } from "../ui/button";
-
-import { FormProps } from "@/types/formProps";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { inputMessageHelper } from "../handlers/input-helper";
 
 interface EventFormValues {
     fecha: string;
@@ -84,44 +85,56 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">
-                <label className="block text-gray-700">Fecha:</label>
+                <label className="block text-gray-700">
+                    Fecha <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("fecha")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="DD/MM/YYYY"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.fecha && <p className="text-red-700 p-2 font-semibold">{errors?.fecha?.message}</p>}
+                {inputMessageHelper("Ejemplo del Formato: DD/MM/YYYY", errors?.fecha?.message!, errors?.fecha!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Horario:</label>
+                <label className="block text-gray-700">
+                    Horario <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("horario")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="HH:MM"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.horario && <p className="text-red-700 p-2 font-semibold">{errors?.horario?.message}</p>}
+                {inputMessageHelper("Ejemplo del Formato: HH:MM", errors?.horario?.message!, errors?.horario!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Nombre del Evento:</label>
+                <label className="block text-gray-700">
+                    Nombre del Evento <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("event_name")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Nombre del evento"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.event_name && <p className="text-red-700 p-2 font-semibold">{errors?.event_name?.message}</p>}
+                {inputMessageHelper("", errors?.event_name?.message!, errors?.event_name!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Descripción:</label>
+                <label className="block text-gray-700">
+                    Descripción <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("descripcion")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Descripción del evento"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.descripcion && <p className="text-red-700 p-2 font-semibold">{errors?.descripcion?.message}</p>}
+                {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

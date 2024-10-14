@@ -8,7 +8,6 @@ interface FileUploadProps {
     files: string[];
     onFilesSelected: (files: File[]) => void;
     onFileRemoved: (index: number) => void;
-    defaultFiles?: any;
     limit?: number;
 }
 
@@ -16,7 +15,6 @@ export function FileUpload({
     files,
     onFilesSelected,
     onFileRemoved,
-    defaultFiles = [],
     limit = 5,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -34,7 +32,7 @@ export function FileUpload({
     };
 
     return (
-        <div className="flex flex-col items-center mt-2">
+        <div className="flex flex-col mt-2">
             <input
                 ref={inputRef}
                 type="file"
@@ -45,8 +43,8 @@ export function FileUpload({
             <button
                 type="button"
                 className={cx({
-                    "w-80 h-36 text-lg font-medium flex flex-col items-center justify-center gap-2 mb-2 text-green-800 bg-white border-2 border-dashed border-green-700 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out hover:bg-gray-100": files.length < limit,
-                    "w-80 h-36 text-lg font-medium flex flex-col items-center justify-center gap-2 mb-2 text-orange-800 bg-white border-2 border-orange-700 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out hover:bg-orange-100": files.length >= limit
+                    "w-full h-36 text-lg font-medium flex flex-col items-center justify-center gap-2 mb-2 text-green-800 bg-white border-2 border-dashed border-green-700 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out hover:bg-gray-100": files.length < limit,
+                    "w-full h-36 text-lg font-medium flex flex-col items-center justify-center gap-2 mb-2 text-orange-800 bg-white border-2 border-orange-700 rounded-2xl cursor-pointer transition-all duration-300 ease-in-out hover:bg-orange-100": files.length >= limit
                 })}
                 onClick={onChooseFile}
                 disabled={files.length >= limit}
