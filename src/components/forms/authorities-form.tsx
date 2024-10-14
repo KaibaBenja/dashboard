@@ -3,18 +3,19 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { StaticImageData } from "next/image";
+
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { object, string, mixed, ObjectSchema } from "yup";
 import { AuthorityType } from "@/types/AuthTypes";
 import { FormProps } from "@/types/formProps";
 
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
-
-import { FileUpload } from "../table-actions/custom-inputs/file-upload";
-import { StaticImageData } from "next/image";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { inputMessageHelper } from "../handlers/input-helper";
 
 interface FormValues {
     name: string;
@@ -108,29 +109,35 @@ export function AuthorityForm({ updateID, formAction, formData, onSubmitSuccess,
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">
-                <label className="block text-gray-700">Nombre:</label>
+                <label className="block text-gray-700">
+                    Nombre Completo <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("name")}
                     type="text"
-                    placeholder="Nombre"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Nombre Completo de la autoridad"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.name && <p className="text-red-700 p-2 font-semibold">{errors.name.message}</p>}
+                {inputMessageHelper("", errors?.name?.message!, errors?.name!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Puesto:</label>
+                <label className="block text-gray-700">
+                    Puesto <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("puesto")}
                     type="text"
-                    placeholder="Puesto"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Cargo que ocupa la autoridad"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.puesto && <p className="text-red-700 p-2 font-semibold">{errors.puesto.message}</p>}
+                {inputMessageHelper("", errors?.puesto?.message!, errors?.puesto!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Foto de Perfil:</label>
+                <label className="block text-gray-700">
+                    Foto de Perfil <span className="font-bold text-red-800">*</span>
+                </label>
                 <FileUpload
                     {...register("profile_pic")}
                     files={fileURLs}
@@ -138,7 +145,7 @@ export function AuthorityForm({ updateID, formAction, formData, onSubmitSuccess,
                     onFileRemoved={handleFileRemoved}
                     limit={1}
                 />
-                {errors?.profile_pic && <p className="text-red-700 p-2 font-semibold">{errors.profile_pic.message}</p>}
+                {inputMessageHelper("", errors?.profile_pic?.message!, errors?.profile_pic!)}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

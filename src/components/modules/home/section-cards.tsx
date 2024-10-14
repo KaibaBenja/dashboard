@@ -1,17 +1,27 @@
 import Link from "next/link";
+import cx from "classnames";
 
-import { ViewsTypes } from "@/types/NavTypes";
 import { adminViews, comunicationViews, devView } from "@/utils/roles";
+import { ViewsTypes } from "@/types/NavTypes";
 
 interface SectionViewsProps {
     userRole: string;
 }
 
-function SectionViewsList({ views }: { views: ViewsTypes[] }) {
+interface SectionViewsListProps {
+    views: ViewsTypes[];
+    alignItems?: string;
+}
+
+function SectionViewsList({ views, alignItems = "justify-between" }: SectionViewsListProps) {
     return (
-        <div className="flex flex-wrap w-full justify-between gap-4 px-2">
+        <div className={cx("flex flex-wrap w-full gap-4 px-2", alignItems)}>
             {views.map((data: ViewsTypes, index: number) => (
-                <Link key={index} href={`${data?.name}`} className="flex flex-col justify-center items-center w-full md:w-[300px] h-[300px] bg-green-200 shadow-md rounded-md hover:scale-105 transition-all ease-in-out duration-300">
+                <Link
+                    key={index}
+                    href={`${data?.name}`}
+                    className="flex flex-col justify-center items-center w-full md:w-[300px] h-[300px] bg-green-200 shadow-md rounded-md hover:scale-105 transition-all ease-in-out duration-300"
+                >
                     {data.icon && (
                         <data.icon className="h-40 w-40 text-green-800" />
                     )}
@@ -21,7 +31,7 @@ function SectionViewsList({ views }: { views: ViewsTypes[] }) {
                 </Link>
             ))}
         </div>
-    )
+    );
 }
 
 export function SectionViews({ userRole }: SectionViewsProps) {
@@ -29,9 +39,9 @@ export function SectionViews({ userRole }: SectionViewsProps) {
         case "Admin":
             return <SectionViewsList views={adminViews} />;
         case "Comunicación":
-            return <SectionViewsList views={comunicationViews} />;
+            return <SectionViewsList views={comunicationViews} alignItems="justify-around" />;
         case "Desarrollador":
-            return <SectionViewsList views={devView} />;
+            return <SectionViewsList views={devView} alignItems="justify-start" />;
         default:
             return <SectionViewsList views={adminViews} />;
     }

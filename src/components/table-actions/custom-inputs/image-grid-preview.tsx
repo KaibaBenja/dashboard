@@ -65,7 +65,7 @@ export function FilePreview({
     return (
         <div
             className={cx({
-                "mt-3 grid grid-cols-2 gap-4": files.length > 0,
+                "mt-3 flex flex-wrap gap-4": files.length > 0,
                 "mt-3 flex flex-col items-center": files.length === 0,
             })}
         >

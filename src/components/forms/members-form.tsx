@@ -3,6 +3,8 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { StaticImageData } from "next/image";
+
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { object, string, ObjectSchema, mixed } from 'yup';
@@ -12,9 +14,8 @@ import { FormProps } from "@/types/formProps";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
-import { StaticImageData } from "next/image";
-
 import { FileUpload } from "../table-actions/custom-inputs/file-upload";
+import { inputMessageHelper } from "../handlers/input-helper";
 
 interface FormValues {
     name_surname: string;
@@ -120,40 +121,48 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">
-                <label className="block text-gray-700">Nombre:</label>
+                <label className="block text-gray-700">
+                    Nombre y apellido <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("name_surname")}
                     type="text"
-                    placeholder="Nombre"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Nombre Completo"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.name_surname && <p className="text-red-700 p-2 font-semibold">{errors.name_surname.message}</p>}
+                {inputMessageHelper("", errors?.name_surname?.message!, errors?.name_surname!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Puesto:</label>
+                <label className="block text-gray-700">
+                    Puesto <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("puesto")}
                     type="text"
-                    placeholder="Puesto"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Puesto de trabajo"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.puesto && <p className="text-red-700 p-2 font-semibold">{errors.puesto.message}</p>}
+                {inputMessageHelper("", errors?.puesto?.message!, errors?.puesto!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">LinkedIn:</label>
+                <label className="block text-gray-700">
+                    LinkedIn <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("linkedIn")}
                     type="text"
-                    placeholder="LinkedIn"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Link de linkedIn del miembro"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.linkedIn && <p className="text-red-700 p-2 font-semibold">{errors.linkedIn.message}</p>}
+                {inputMessageHelper("Si el usuario no tiene linkedIn, poner null", errors?.linkedIn?.message!, errors?.linkedIn!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Foto de Perfil:</label>
+                <label className="block text-gray-700">
+                    Foto de Perfil <span className="font-bold text-red-800">*</span>
+                </label>
                 <FileUpload
                     {...register("profile_pic")}
                     files={fileURLs}

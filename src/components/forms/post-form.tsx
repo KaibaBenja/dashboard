@@ -1,19 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, mixed, ObjectSchema } from 'yup';
-import { useState } from "react";
+import { StaticImageData } from "next/image";
+
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { PostType } from "@/types/PostTypes";
 import { FormProps } from "@/types/formProps";
 
+import { inputMessageHelper } from "../handlers/input-helper";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
 import { FileUpload } from "../table-actions/custom-inputs/file-upload";
-import { StaticImageData } from "next/image";
 
 interface PostFormValues {
     fecha: string;
@@ -70,7 +72,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
             setFileUrls(newFileURLs);
             setValue("blog_images", files[0], { shouldValidate: true, shouldTouch: true });
-            event?.preventDefault();    
+            event?.preventDefault();
         }
     };
 
@@ -125,64 +127,81 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">
-                <label className="block text-gray-700">Título:</label>
+                <label className="block text-gray-700">
+                    Título <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("titulo")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="titulo de la noticia"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors.titulo && <p className="text-red-700 p-2 font-semibold">{errors.titulo.message}</p>}
+                {inputMessageHelper("", errors?.titulo?.message!, errors?.titulo!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Fecha:</label>
+                <label className="block text-gray-700">
+                    Fecha <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("fecha")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="DD-MM-YYYY"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors.fecha && <p className="text-red-700 p-2 font-semibold">{errors.fecha.message}</p>}
+                {inputMessageHelper("Formato de Ejemplo: DD-MM-YYYY", errors?.fecha?.message!, errors?.fecha!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Categoria:</label>
+                <label className="block text-gray-700">
+                    Categoria <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("categoria")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder=" Tecnologia, politica, etc..."
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors.categoria && <p className="text-red-700 p-2 font-semibold">{errors.categoria.message}</p>}
+                {inputMessageHelper("Ejemplo: Tecnologia, politica, etc...", errors?.categoria?.message!, errors?.categoria!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Pre Descripción:</label>
+                <label className="block text-gray-700">
+                    Pre Descripción <span className="font-bold text-red-800">*</span>
+                </label>
                 <textarea
                     {...register("pre_descripcion")}
                     rows={4}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="descripcion previa a la noticia completa"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors.pre_descripcion && <p className="text-red-700 p-2 font-semibold">{errors.pre_descripcion.message}</p>}
+                {inputMessageHelper("", errors?.pre_descripcion?.message!, errors?.pre_descripcion!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Descripción:</label>
+                <label className="block text-gray-700">
+                    Descripción <span className="font-bold text-red-800">*</span>
+                </label>
                 <textarea
                     {...register("descripcion")}
                     rows={4}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="noticia completa"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors.descripcion && <p className="text-red-700 p-2 font-semibold">{errors.descripcion.message}</p>}
+                {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Imagen de Portada:</label>
+                <label className="block text-gray-700">
+                    Imagen de Portada <span className="font-bold text-red-800">*</span>
+                </label>
                 <FileUpload
                     files={fileUrls}
                     onFilesSelected={handleFilesSelected}
                     onFileRemoved={handleImageRemoved}
                     limit={4}
                 />
-                {errors.blog_images && <p className="text-red-700 p-2 font-semibold">{errors.blog_images.message}</p>}
+                {inputMessageHelper("", errors?.blog_images?.message!, errors?.blog_images!)}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

@@ -1,10 +1,10 @@
+import { DeleteWarning } from "./warning";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { TableCaption, TableCell } from "../ui/table";
 import { SlOptions } from "react-icons/sl";
-import { MemberType } from "@/types/MemberTypes";
+import { FaBookOpen, FaTrashAlt, FaEdit } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-import { DeleteWarning } from "./warning";
 
 interface ActionCellProps {
     data: any;
@@ -41,13 +41,26 @@ export function ActionCell({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => viewActionCell(data)}>Ver</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => editActionCell(data)}>Editar</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => {
-                        takeCurrentId();
-                        handleCloseWarning(true);
-                    }}>
-                        Eliminar
+                    <DropdownMenuItem 
+                        onClick={() => viewActionCell(data)}
+                        className="flex items-center gap-2 text-start font-semibold text-gray-800"
+                    >
+                        <FaBookOpen className="h-4 w-4 text-green-800" /> Vista
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                        onClick={() => editActionCell(data)} 
+                        className="flex items-center gap-2 font-semibold text-gray-800"
+                    >
+                        <FaEdit className="h-4 w-4 text-green-800" /> Editar
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                        onClick={() => {
+                            takeCurrentId();
+                            handleCloseWarning(true);
+                        }}
+                        className="flex items-center gap-2 font-semibold text-gray-800"
+                    >
+                        <FaTrashAlt className="h-4 w-4 text-green-800" /> Eliminar
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
