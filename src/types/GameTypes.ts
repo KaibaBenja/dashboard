@@ -15,8 +15,7 @@ export interface GameType {
     tecnologias: string;
     estilo: string;
     genero: string;
-    game_assets: {
-        game_images: string[] | [] | undefined;
-        game_archive: string[] | [] | undefined;
-    }
+    game_images: string[];
+    game_archive: string[];
+    game_questions: string;
 }

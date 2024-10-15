@@ -3,21 +3,17 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, array, ObjectSchema } from 'yup';
+import { object, string, mixed, ObjectSchema } from 'yup';
+
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { GameType } from "@/types/GameTypes";
 import { FormProps } from "@/types/formProps";
 
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
-import { FileUpload } from "../table-actions/custom-inputs/file-upload";
-
-interface GameFiles {
-    game_images: string[];
-    game_archive: string[];
-}
 
 interface GameFormValues {
     titulo: string;
@@ -35,7 +31,9 @@ interface GameFormValues {
     tecnologias: string;
     estilo: string;
     genero: string;
-    game_assets: GameFiles;
+    game_images: string[] | File[];
+    game_archive: string[] | File[];
+    game_questions: string | File[];
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
@@ -54,21 +52,15 @@ const schema: ObjectSchema<GameFormValues> = object({
     tecnologias: string().required("Las tecnologías son requeridas").defined(),
     estilo: string().required("El estilo es requerido").defined(),
     genero: string().required("El género es requerido").defined(),
-    game_assets: object().shape({
-        game_images:
-            array()
-            .of(string().required("Cada imagen debe ser una URL válida"))
-            .required("Las imágenes del juego son obligatorias")
-            .min(1, "Debe subir al menos una imagen"),
-        game_archive:
-            array()
-            .of(string().required("Cada archivo debe ser una URL válida"))
-            .required("Los archivos del juego son obligatorios")
-            .min(1, "Debe subir al menos un archivo"),
-    }).required("Los archivos del juego son obligatorios"),
+    game_images: mixed<string[] | File[]>()
+        .required("Las imágenes del juego son obligatorias").defined(),
+    game_archive: mixed<string[] | File[]>()
+        .required("Los archivos del juego son obligatorios").defined(),
+    game_questions: mixed<string | File[]>()
+        .required("Las preguntas del juego son obligatorias").defined(),
 });
 
-export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<GameType>) {
+export function GameForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<GameType>) {
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<GameFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
@@ -86,61 +78,92 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
             tecnologias: formAction ? formData?.tecnologias : "",
             estilo: formAction ? formData?.estilo : "",
             genero: formAction ? formData?.genero : "",
-            game_assets: formAction ? {
-                    game_images: formData?.game_assets?.game_images,
-                    game_archive: formData?.game_assets?.game_archive
-            } : {
-                game_images: [],
-                game_archive: []
-            },
+            game_images: formAction ? formData?.game_images : [],
+            game_archive: formAction ? formData?.game_archive : [],
+            game_questions: formAction ? formData?.game_questions : [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
 
-    const [archiveFileURLs, setArchiveFileURLs] = useState<any>([]);
+    const [imageFiles, setImageFiles] = useState<string[] | File[]>([]);
+    const [archiveFiles, setArchiveFiles] = useState<string[] | File[]>([]);
+    const [questionFiles, setQuestionFiles] = useState<string[] | File[]>([]);
 
-    const handleArchiveFilesSelected = (files: File[]) => {
-        const newArchiveFileURLs: any = files.map((file) => URL.createObjectURL(file));
-        setArchiveFileURLs(newArchiveFileURLs);
-        setValue("game_assets", newArchiveFileURLs[0], { shouldValidate: true });
+    const handleImagesSelected = (files: File[]) => {
+        setImageFiles(files);
+        setValue("game_images", files, { shouldValidate: true });
     };
 
-    const handleFileRemoved = (fileUrl: string) => {
-        const updatedArchiveFileURLs = archiveFileURLs.filter((url: string) => url !== fileUrl);
-        setArchiveFileURLs(updatedArchiveFileURLs);
-        setValue("game_assets", {
-            game_images: updatedArchiveFileURLs,
-            game_archive: updatedArchiveFileURLs
-        }, { shouldValidate: true });
+    const handleArchiveSelected = (files: File[]) => {
+        setArchiveFiles(files);
+        setValue("game_archive", files, { shouldValidate: true });
     };
-    
 
-    const onSubmit: SubmitHandler<GameFormValues> = async (data: any) => {
+    const handleQuestionsSelected = (files: File[]) => {
+        setQuestionFiles(files);
+        setValue("game_questions", files, { shouldValidate: true });
+    };
+
+    const handleRemoveImage = (index: number) => {
+        const updatedImages = imageFiles.filter((_, i) => i !== index);
+        setImageFiles(updatedImages);
+        setValue("game_images", updatedImages, { shouldValidate: true });
+    };
+
+    const handleRemoveArchive = (index: number) => {
+        const updatedArchives = archiveFiles.filter((_, i) => i !== index);
+        setArchiveFiles(updatedArchives);
+        setValue("game_archive", updatedArchives, { shouldValidate: true });
+    };
+
+    const handleRemoveQuestion = (index: number) => {
+        const updatedQuestions = questionFiles.filter((_, i) => i !== index);
+        setQuestionFiles(updatedQuestions);
+        setValue("game_questions", updatedQuestions, { shouldValidate: true });
+    };
+
+    const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
         try {
-            if (formAction && formData) {
-                await UpdateData({ path: "games", data }, formData?._id);
-                console.log("Edit");
+            const formData = new FormData();
+            formData.append("titulo", data.titulo);
+            formData.append("autor", data.autor);
+            formData.append("sinopsis", data.sinopsis);
+            formData.append("aporte_turismo", data.aporte_turismo);
+            formData.append("aporte_cultura", data.aporte_cultura);
+            formData.append("aporte_juventud", data.aporte_juventud);
+            formData.append("aporte_educacion", data.aporte_educacion);
+            formData.append("objetivo", data.objetivo);
+            formData.append("desarrollo", data.desarrollo);
+            formData.append("condiciones", data.condiciones);
+            formData.append("controles", data.controles);
+            formData.append("caracteristicas", data.caracteristicas);
+            formData.append("tecnologias", data.tecnologias);
+            formData.append("estilo", data.estilo);
+            formData.append("genero", data.genero);
+            imageFiles.forEach((file) => formData.append("game_images", file));
+            archiveFiles.forEach((file) => formData.append("game_archive", file));
+            questionFiles.forEach((file) => formData.append("game_questions", file));
+
+            if (formAction && updateID) {
+                await UpdateData({ path: "games", data: formData }, updateID);
             } else {
-                await AddData({ path: "games", data: {
-                    game_assets: archiveFileURLs
-                } });
-                console.log("Add");
+                await AddData({ path: "games", data: formData });
             }
+
             onSubmitSuccess();
             handleCloseSheet();
             toast({
                 variant: "success",
-                title: `Exito!`,
+                title: `Éxito!`,
                 description: `El Juego ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
             });
-            console.log("Form formData:", data);
         } catch (error) {
             console.log(error);
             toast({
                 variant: "destructive",
-                title: "Ocurrio un Error!",
+                title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
             });
         }
@@ -307,15 +330,37 @@ export function GameForm({ formAction, formData, onSubmitSuccess, handleCloseShe
                 {errors?.genero && <p className="text-red-700 p-2 font-semibold">{errors?.genero?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Archivo de los juegos:</label>
+                <label className="block text-gray-700">Imágenes del juego:</label>
                 <FileUpload
-                    {...register("game_assets")}
-                    files={archiveFileURLs}
-                    onFilesSelected={handleArchiveFilesSelected}
-                    onFileRemoved={() => handleFileRemoved(archiveFileURLs)}
-                    limit={10}
+                    {...register("game_images")}
+                    files={imageFiles}
+                    onFilesSelected={handleImagesSelected}
+                    onFileRemoved={handleRemoveImage}
+                    limit={5}
                 />
-                {errors?.game_assets?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_assets?.message}</p>}
+                {errors?.game_images?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Archivos del juego:</label>
+                <FileUpload
+                    {...register("game_archive")}
+                    files={archiveFiles}
+                    onFilesSelected={handleArchiveSelected}
+                    onFileRemoved={handleRemoveArchive}
+                    limit={5}
+                />
+                {errors?.game_archive?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Preguntas del juego:</label>
+                <FileUpload
+                    {...register("game_questions")}
+                    files={questionFiles}
+                    onFilesSelected={handleQuestionsSelected}
+                    onFileRemoved={handleRemoveQuestion}
+                    limit={5}
+                />
+                {errors?.game_questions?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_questions?.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

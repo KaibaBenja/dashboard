@@ -11,11 +11,11 @@ import { AddData } from "@/queries/AddData";
 import { PostType } from "@/types/PostTypes";
 import { FormProps } from "@/types/formProps";
 
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { inputMessageHelper } from "../handlers/input-helper";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
-import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 
 interface PostFormValues {
     fecha: string;
