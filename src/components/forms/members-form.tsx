@@ -16,6 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
 import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { inputMessageHelper } from "../handlers/input-helper";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface FormValues {
     name_surname: string;
@@ -42,7 +43,7 @@ const schema: ObjectSchema<FormValues> = object({
         .test('is-string', 'El link de LinkedIn debe ser una cadena de texto', value => typeof value === 'string'),
     profile_pic: mixed<string | File | StaticImageData>()
         .required("Se debe ingresar una foto de perfil")
-        .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value => 
+        .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
             typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
         )
         .defined(),
@@ -70,9 +71,9 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
             setFileURLs(newFileURLs);
             setValue("profile_pic", files[0], { shouldValidate: true, shouldTouch: true });
-            event?.preventDefault();    
+            event?.preventDefault();
         }
-    };    
+    };
 
     const handleFileRemoved = () => {
         setFileURLs([]);
@@ -85,7 +86,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
             formData.append("name_surname", data.name_surname);
             formData.append("puesto", data.puesto);
             formData.append("linkedIn", data.linkedIn);
-            
+
             if (data.profile_pic instanceof File) {
                 formData.append("profile_pic", data.profile_pic);
             }
@@ -113,7 +114,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
             });
         }
-    };       
+    };
 
     function handleLoadingText() {
         if (formAction) {
@@ -142,14 +143,19 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                 <label className="block text-gray-700">
                     Equipo <span className="font-bold text-red-800">*</span>
                 </label>
-                
-                {/* <input
+                <Select
                     {...register("name_surname")}
-                    type="text"
-                    placeholder="Nombre Completo"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
-                /> */}
+                >
+                    <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                        <SelectValue placeholder="¿A qué equipo pertenece?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Desarrolladores">Desarrolladores</SelectItem>
+                        <SelectItem value="Comunicación">Comunicación</SelectItem>
+                        <SelectItem value="Logística y Soporte">Logística y Soporte</SelectItem>
+                    </SelectContent>
+                </Select>
                 {inputMessageHelper("", errors?.team?.message!, errors?.team!)}
             </div>
             <div className="mb-4">
