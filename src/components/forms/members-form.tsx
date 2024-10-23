@@ -19,6 +19,7 @@ import { inputMessageHelper } from "../handlers/input-helper";
 
 interface FormValues {
     name_surname: string;
+    team: string;
     puesto: string;
     linkedIn: string;
     profile_pic: string | File | StaticImageData;
@@ -28,6 +29,9 @@ const schema: ObjectSchema<FormValues> = object({
     name_surname: string()
         .required("El nombre es requerido")
         .test('is-string', 'El nombre debe ser una cadena de texto', value => typeof value === 'string')
+        .defined(),
+    team: string()
+        .required("El Team es requerido")
         .defined(),
     puesto: string()
         .required("El puesto es requerido")
@@ -49,6 +53,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
     const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormValues>({
         defaultValues: {
             name_surname: formAction ? formData?.name_surname : "",
+            team: formAction ? formData?.team : "",
             puesto: formAction ? formData?.puesto : "",
             linkedIn: formAction ? formData?.linkedIn : "",
             profile_pic: formAction ? formData?.profile_pic : "",
@@ -132,6 +137,20 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("", errors?.name_surname?.message!, errors?.name_surname!)}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Equipo <span className="font-bold text-red-800">*</span>
+                </label>
+                
+                {/* <input
+                    {...register("name_surname")}
+                    type="text"
+                    placeholder="Nombre Completo"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                /> */}
+                {inputMessageHelper("", errors?.team?.message!, errors?.team!)}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
