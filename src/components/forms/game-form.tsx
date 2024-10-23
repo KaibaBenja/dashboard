@@ -106,23 +106,23 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
         setValue("game_questions", files, { shouldValidate: true });
     };
 
-    const handleRemoveImage = (index: number) => {
-        const updatedImages = imageFiles.filter((_, i) => i !== index);
-        setImageFiles(updatedImages);
-        setValue("game_images", updatedImages, { shouldValidate: true });
-    };
+    // const handleRemoveImage = (index: number) => {
+    //     const updatedImages = imageFiles.filter((_, i) => i !== index);
+    //     setImageFiles(updatedImages);
+    //     setValue("game_images", updatedImages, { shouldValidate: true });
+    // };
 
-    const handleRemoveArchive = (index: number) => {
-        const updatedArchives = archiveFiles.filter((_, i) => i !== index);
-        setArchiveFiles(updatedArchives);
-        setValue("game_archive", updatedArchives, { shouldValidate: true });
-    };
+    // const handleRemoveArchive = (index: number) => {
+    //     const updatedArchives = archiveFiles.filter((_, i) => i !== index);
+    //     setArchiveFiles(updatedArchives);
+    //     setValue("game_archive", updatedArchives, { shouldValidate: true });
+    // };
 
-    const handleRemoveQuestion = (index: number) => {
-        const updatedQuestions = questionFiles.filter((_, i) => i !== index);
-        setQuestionFiles(updatedQuestions);
-        setValue("game_questions", updatedQuestions, { shouldValidate: true });
-    };
+    // const handleRemoveQuestion = (index: number) => {
+    //     const updatedQuestions = questionFiles.filter((_, i) => i !== index);
+    //     setQuestionFiles(updatedQuestions);
+    //     setValue("game_questions", updatedQuestions, { shouldValidate: true });
+    // };
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
         try {
@@ -331,35 +331,35 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Imágenes del juego:</label>
-                <FileUpload
+                {/* <FileUpload
                     {...register("game_images")}
                     files={imageFiles}
                     onFilesSelected={handleImagesSelected}
                     onFileRemoved={handleRemoveImage}
                     limit={5}
-                />
+                /> */}
                 {errors?.game_images?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Archivos del juego:</label>
-                <FileUpload
+                {/* <FileUpload
                     {...register("game_archive")}
                     files={archiveFiles}
                     onFilesSelected={handleArchiveSelected}
                     onFileRemoved={handleRemoveArchive}
                     limit={5}
-                />
+                /> */}
                 {errors?.game_archive?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Preguntas del juego:</label>
-                <FileUpload
+                {/* <FileUpload
                     {...register("game_questions")}
                     files={questionFiles}
                     onFilesSelected={handleQuestionsSelected}
                     onFileRemoved={handleRemoveQuestion}
                     limit={5}
-                />
+                /> */}
                 {errors?.game_questions?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_questions?.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
