@@ -13,34 +13,39 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { inputMessageHelper } from "../handlers/input-helper";
 
 interface EventFormValues {
+    event_name: string;
+    direccion: string;
+    descripcion: string;
     fecha: string;
     horario: string;
-    event_name: string;
-    descripcion: string;
 }
 
 const schema: ObjectSchema<EventFormValues> = object({
+    event_name: string()
+        .required("El nombre del evento es requerido")
+        .defined(),
+    direccion: string()
+        .required("La Dirección del evento es requerido")
+        .defined(),
+    descripcion: string()
+        .required("La descripción es requerida")
+        .defined(),
     fecha: string()
         .required("La fecha es requerida")
         .defined(),
     horario: string()
         .required("El horario es requerido")
         .defined(),
-    event_name: string()
-        .required("El nombre del evento es requerido")
-        .defined(),
-    descripcion: string()
-        .required("La descripción es requerida")
-        .defined(),
 });
 
 export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<EventType>) {
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<EventFormValues>({
         defaultValues: {
-            fecha: formAction ? formData?.fecha : "",
-            horario: formAction ? formData?.horario : "",
             event_name: formAction ? formData?.event_name : "",
             descripcion: formAction ? formData?.descripcion : "",
+            direccion: formAction ? formData?.direccion : "",
+            fecha: formAction ? formData?.fecha : "",
+            horario: formAction ? formData?.horario : "",
         },
         resolver: yupResolver(schema),
         mode: "onChange",
@@ -50,10 +55,10 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
     const onSubmit: SubmitHandler<EventFormValues> = async (data: any) => {
         try {
             if (formAction && formData) {
-                await UpdateData({path: "events", data }, formData?._id);
+                await UpdateData({ path: "events", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddData({path: "events", data });
+                await AddData({ path: "events", data });
                 console.log("Add");
             }
             onSubmitSuccess();
@@ -86,6 +91,45 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">
                 <label className="block text-gray-700">
+                    Nombre del Evento <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("event_name")}
+                    type="text"
+                    placeholder="Nombre del evento"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper("", errors?.event_name?.message!, errors?.event_name!)}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Dirección del Evento <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("direccion")}
+                    type="text"
+                    placeholder="Dirección del evento"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper("", errors?.direccion?.message!, errors?.direccion!)}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Descripción <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("descripcion")}
+                    type="text"
+                    placeholder="Descripción del evento"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
                     Fecha <span className="font-bold text-red-800">*</span>
                 </label>
                 <input
@@ -109,32 +153,6 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("Ejemplo del Formato: HH:MM", errors?.horario?.message!, errors?.horario!)}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">
-                    Nombre del Evento <span className="font-bold text-red-800">*</span>
-                </label>
-                <input
-                    {...register("event_name")}
-                    type="text"
-                    placeholder="Nombre del evento"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
-                {inputMessageHelper("", errors?.event_name?.message!, errors?.event_name!)}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">
-                    Descripción <span className="font-bold text-red-800">*</span>
-                </label>
-                <input
-                    {...register("descripcion")}
-                    type="text"
-                    placeholder="Descripción del evento"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
-                {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>

@@ -1,16 +1,12 @@
-"use client";
-
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { StaticImageData } from "next/image";
-
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
 import { object, string, ObjectSchema, mixed } from 'yup';
 import { MemberType } from "@/types/MemberTypes";
 import { FormProps } from "@/types/formProps";
-
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
@@ -49,9 +45,8 @@ const schema: ObjectSchema<FormValues> = object({
         .defined(),
 });
 
-
 export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<MemberType>) {
-    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<FormValues>({
+    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormValues>({
         defaultValues: {
             name_surname: formAction ? formData?.name_surname : "",
             team: formAction ? formData?.team : "",
@@ -84,6 +79,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
         try {
             const formData = new FormData();
             formData.append("name_surname", data.name_surname);
+            formData.append("team", data.team);
             formData.append("puesto", data.puesto);
             formData.append("linkedIn", data.linkedIn);
 
@@ -93,10 +89,8 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
 
             if (formAction) {
                 await UpdateData({ path: "members", data: formData }, updateID!);
-                console.log("Edit");
             } else {
                 await AddData({ path: "members", data: formData });
-                console.log("Add");
             }
 
             onSubmitSuccess();
@@ -116,13 +110,11 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
         }
     };
 
-    function handleLoadingText() {
-        if (formAction) {
-            return isSubmitting ? "Editando Miembro" : "Editar Miembro";
-        } else {
-            return isSubmitting ? "Agregando Miembro" : "Agregar Miembro";
-        }
-    }
+    const handleLoadingText = () => {
+        return isSubmitting 
+            ? (formAction ? "Editando Miembro" : "Agregando Miembro") 
+            : (formAction ? "Editar Miembro" : "Agregar Miembro");
+    };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -144,7 +136,8 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                     Equipo <span className="font-bold text-red-800">*</span>
                 </label>
                 <Select
-                    {...register("name_surname")}
+                    onValueChange={(value) => setValue("team", value, { shouldValidate: true })}
+                    value={watch("team")}
                     disabled={isSubmitting}
                 >
                     <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
@@ -178,11 +171,11 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                 <input
                     {...register("linkedIn")}
                     type="text"
-                    placeholder="Link de linkedIn del miembro"
+                    placeholder="Link de LinkedIn del miembro"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Si el usuario no tiene linkedIn, poner null", errors?.linkedIn?.message!, errors?.linkedIn!)}
+                {inputMessageHelper("Si el usuario no tiene LinkedIn, poner null", errors?.linkedIn?.message!, errors?.linkedIn!)}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">

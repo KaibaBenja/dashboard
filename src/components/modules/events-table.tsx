@@ -17,7 +17,7 @@ import { Loading } from '../handlers/loading';
 
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck, FaClock } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import { MdOutlineTextFields, MdOutlineEventNote } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 
@@ -110,9 +110,9 @@ export function EventsTable() {
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
                                         <TableHead className='table-cell'>ID</TableHead>
-                                        <TableHead className="table-cell">Titulo</TableHead>
+                                        <TableHead className="table-cell">Título</TableHead>
+                                        <TableHead className="hidden md:table-cell">Dirección</TableHead>
                                         <TableHead className="hidden md:table-cell">Fecha</TableHead>
-                                        <TableHead className="hidden md:table-cell">Categoria</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -122,13 +122,13 @@ export function EventsTable() {
                                                 <span className='block md:hidden'>Id: </span>{event?._id}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Titulo: </span>{event?.fecha}
+                                                <span className='block md:hidden'>Título: </span>{event?.event_name}
+                                            </TableCell>
+                                            <TableCell className="flex md:table-cell md:items-center gap-2">
+                                                <span className='block md:hidden'>Dirección: </span>{event?.direccion}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Fecha: </span>{event?.event_name}
-                                            </TableCell>
-                                            <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Descripción: </span>{event?.descripcion}
+                                                <span className='block md:hidden'>Fecha: </span>{event?.fecha}
                                             </TableCell>
                                             <ActionCell
                                                 data={event}
@@ -214,6 +214,15 @@ export function EventsTable() {
                         <span className='capitalize'>{currentEvent?._id}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
+                        <FaMapMarkerAlt className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentEvent?.direccion}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <MdOutlineTextFields className='w-5 h-5 text-green-800' />
+                        <h3>Descripción</h3>
+                    </div>
+                    <span className='capitalize'>• {currentEvent?.descripcion}</span>
+                    <div className='flex items-center gap-2 mt-2'>
                         <FaCalendarCheck className='w-5 h-5 text-green-800' />
                         <span className='capitalize'>{currentEvent?.fecha}</span>
                     </div>
@@ -221,11 +230,6 @@ export function EventsTable() {
                         <FaClock className='w-5 h-5 text-green-800' />
                         <span className='capitalize'>{currentEvent?.horario}</span>
                     </div>
-                    <div className='flex items-center gap-2 mt-2'>
-                        <MdOutlineTextFields className='w-5 h-5 text-green-800' />
-                        <h3>Descripción</h3>
-                    </div>
-                    <span className='capitalize'>• {currentEvent?.descripcion}</span>
                 </div>
             </InfoDialog>
         </div>
