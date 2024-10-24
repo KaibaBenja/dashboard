@@ -18,6 +18,7 @@ import { Loading } from '../handlers/loading';
 
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
+import { RiTeamFill } from "react-icons/ri";
 import { FaArrowCircleLeft, FaArrowCircleRight, FaLinkedin, FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
 
@@ -112,8 +113,8 @@ export function MembersTable() {
                                     <TableRow>
                                         <TableHead className='table-cell'>ID</TableHead>
                                         <TableHead className="table-cell">Nombre</TableHead>
+                                        <TableHead className="hidden md:table-cell">Equipo</TableHead>
                                         <TableHead className="hidden md:table-cell">Puesto</TableHead>
-                                        <TableHead className="hidden md:table-cell">LinkedIn</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -126,10 +127,10 @@ export function MembersTable() {
                                                 <span className='block md:hidden'>Nombre: </span>{member?.name_surname}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Puesto: </span>{member?.puesto}
+                                                <span className='block md:hidden'>Equipo: </span>{member?.team}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>LinkedIn: </span>{member?.linkedIn}
+                                                <span className='block md:hidden'>Puesto: </span>{member?.puesto}
                                             </TableCell>
                                             <ActionCell
                                                 data={member}
@@ -224,6 +225,10 @@ export function MembersTable() {
                     <div className='flex items-center gap-2'>
                         <HiIdentification className='w-5 h-5 text-green-800' />
                         <span className='capitalize'>{currentMember?._id}</span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                        <RiTeamFill className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentMember?.team}</span>
                     </div>
                     <div className='flex items-center gap-2'>
                         <FaBriefcase className='w-5 h-5 text-green-800' />

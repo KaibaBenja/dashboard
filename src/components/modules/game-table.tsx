@@ -219,7 +219,6 @@ export function GameTable() {
                     <p><strong>Tecnologias:</strong> {currentGame?.tecnologias}</p>
                     <p><strong>Estilo:</strong> {currentGame?.estilo}</p>
                     <p><strong>Género:</strong> {currentGame?.genero}</p>
-                    <Image src={currentGame?.game_assets?.game_images?.[0] || ''} alt="Game Image" width={500} height={100} />
                 </div>
             </InfoDialog>
         </div>

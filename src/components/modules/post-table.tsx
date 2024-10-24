@@ -20,6 +20,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck } from 'react-icons/fa';
 import { BsFileEarmarkPost } from "react-icons/bs";
+import { BiSolidCategory } from "react-icons/bi";
 import { MdOutlineTextFields } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 
@@ -112,9 +113,9 @@ export function PostsTable() {
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
                                         <TableHead className='table-cell'>ID</TableHead>
-                                        <TableHead className="table-cell">Titulo</TableHead>
-                                        <TableHead className="hidden md:table-cell">Fecha</TableHead>
+                                        <TableHead className="table-cell">Título</TableHead>
                                         <TableHead className="hidden md:table-cell">Categoria</TableHead>
+                                        <TableHead className="hidden md:table-cell">Fecha</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -123,14 +124,14 @@ export function PostsTable() {
                                             <TableCell className="flex md:table-cell items-center gap-2 font-medium">
                                                 <span className='block md:hidden'>Id: </span>{post?._id}
                                             </TableCell>
-                                            <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Titulo: </span>{post?.titulo}
-                                            </TableCell>
-                                            <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Fecha: </span>{post?.fecha}
+                                            <TableCell className="flex md:table-cell md:items-center gap-2">
+                                                <span className='block md:hidden'>Título: </span>{post?.titulo}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
                                                 <span className='block md:hidden'>Categoria: </span>{post?.categoria}
+                                            </TableCell>
+                                            <TableCell className="flex md:table-cell items-center gap-2">
+                                                <span className='block md:hidden'>Fecha: </span>{post?.fecha}
                                             </TableCell>
                                             <ActionCell
                                                 data={post}
@@ -222,6 +223,10 @@ export function PostsTable() {
                     <div className='flex items-center gap-2 mt-2'>
                         <HiIdentification className='w-5 h-5 text-green-800' />
                         <span className='capitalize'>{currentPost?._id}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <BiSolidCategory className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentPost?.categoria}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
                         <FaCalendarCheck className='w-5 h-5 text-green-800' />

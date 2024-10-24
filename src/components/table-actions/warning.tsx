@@ -13,7 +13,7 @@ export function DeleteWarning({ closeDialog, handleCloseDialog, currentId, delet
         <Dialog open={closeDialog} onOpenChange={() => handleCloseDialog(!closeDialog)}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Borrar Miembro</DialogTitle>
+                    <DialogTitle>Eliminar elemento</DialogTitle>
                     <DialogDescription>
                         ¿Estás seguro? Los cambios son permanentes
                     </DialogDescription>

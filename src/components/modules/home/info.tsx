@@ -2,7 +2,7 @@ import { GoDotFill } from "react-icons/go";
 
 export function Info() {
     return (
-        <div className="hidden lg:flex lg:flex-col 4 py-4 pb-12 ml-1 bg-gray-100 w-full rounded-md">
+        <div className="hidden lg:flex lg:flex-col gap-4 px-2 py-4 pb-12 ml-1 bg-gray-100 shadow-md w-full rounded-md">
             <div>
                 <div className="text-xl text-[#000000]">
                     <span className="text-3xl font-bold text-green-800 pr-2">

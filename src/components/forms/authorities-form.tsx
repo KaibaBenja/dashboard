@@ -72,7 +72,7 @@ export function AuthorityForm({ updateID, formAction, formData, onSubmitSuccess,
             const formData = new FormData();
             formData.append("name", data.name);
             formData.append("puesto", data.puesto);
-
+            
             if (data.profile_pic instanceof File) {
                 formData.append("profile_pic", data.profile_pic);
             }

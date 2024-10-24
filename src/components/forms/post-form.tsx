@@ -11,11 +11,12 @@ import { AddData } from "@/queries/AddData";
 import { PostType } from "@/types/PostTypes";
 import { FormProps } from "@/types/formProps";
 
+import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { inputMessageHelper } from "../handlers/input-helper";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
-import { FileUpload } from "../table-actions/custom-inputs/file-upload";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface PostFormValues {
     fecha: string;
@@ -23,18 +24,18 @@ interface PostFormValues {
     categoria: string;
     pre_descripcion: string;
     descripcion: string;
-    blog_images: string | File | StaticImageData;
+    blog_images: string | File;
 }
 
 const schema: ObjectSchema<PostFormValues> = object({
     titulo: string()
         .required("El título es requerido")
         .defined(),
-    fecha: string()
-        .required("La fecha es requerida")
-        .defined(),
     categoria: string()
         .required("La categoría es requerida")
+        .defined(),
+    fecha: string()
+        .required("La fecha es requerida")
         .defined(),
     pre_descripcion: string()
         .required("La pre descripción es requerida")
@@ -42,7 +43,7 @@ const schema: ObjectSchema<PostFormValues> = object({
     descripcion: string()
         .required("La descripción es requerida")
         .defined(),
-    blog_images: mixed<string | File | StaticImageData>()
+    blog_images: mixed<string | File>()
         .required("Se debe ingresar una imagen")
         .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
             typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
@@ -51,11 +52,11 @@ const schema: ObjectSchema<PostFormValues> = object({
 });
 
 export function PostForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
-    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
+    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
+            categoria: formAction ? formData?.categoria : "¿Qué Tipo de Noticia es?",
             fecha: formAction ? formData?.fecha : "",
-            categoria: formAction ? formData?.categoria : "",
             pre_descripcion: formAction ? formData?.pre_descripcion : "",
             descripcion: formAction ? formData?.descripcion : "",
             blog_images: formAction ? formData?.blog_images : "",
@@ -85,12 +86,13 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
-            formData.append("fecha", data.fecha);
             formData.append("categoria", data.categoria);
+            formData.append("fecha", data.fecha);
             formData.append("pre_descripcion", data.pre_descripcion);
             formData.append("descripcion", data.descripcion);
+
             if (fileUrls.length > 0) {
-                formData.append("blog_images", fileUrls[0]);
+                formData.append("blog_images", data.blog_images);
             }
 
             if (formAction && updateID) {
@@ -141,29 +143,36 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
+                    Equipo <span className="font-bold text-red-800">*</span>
+                </label>
+                <Select
+                    value={watch("categoria")}
+                    onValueChange={(value) => setValue("categoria", value, { shouldValidate: true })}
+                    disabled={isSubmitting}
+                >
+                    <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                        <SelectValue placeholder="¿Qué Tipo de Noticia es?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Eventos">Eventos</SelectItem>
+                        <SelectItem value="Tecnología">Tecnología</SelectItem>
+                        <SelectItem value="SuSTI">SuSTI</SelectItem>
+                    </SelectContent>
+                </Select>
+                {inputMessageHelper("", errors?.categoria?.message!, errors?.categoria!)}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
                     Fecha <span className="font-bold text-red-800">*</span>
                 </label>
                 <input
                     {...register("fecha")}
                     type="text"
-                    placeholder="DD-MM-YYYY"
+                    placeholder="DD/MM/YYYY"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Formato de Ejemplo: DD-MM-YYYY", errors?.fecha?.message!, errors?.fecha!)}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">
-                    Categoria <span className="font-bold text-red-800">*</span>
-                </label>
-                <input
-                    {...register("categoria")}
-                    type="text"
-                    placeholder=" Tecnologia, politica, etc..."
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
-                {inputMessageHelper("Ejemplo: Tecnologia, politica, etc...", errors?.categoria?.message!, errors?.categoria!)}
+                {inputMessageHelper("Formato de la Fecha: DD/MM/YYYY", errors?.fecha?.message!, errors?.fecha!)}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
@@ -172,7 +181,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 <textarea
                     {...register("pre_descripcion")}
                     rows={4}
-                    placeholder="descripcion previa a la noticia completa"
+                    placeholder="Pie de la noticia"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -185,7 +194,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 <textarea
                     {...register("descripcion")}
                     rows={4}
-                    placeholder="noticia completa"
+                    placeholder="Noticia completa"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
@@ -199,13 +208,13 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                     files={fileUrls}
                     onFilesSelected={handleFilesSelected}
                     onFileRemoved={handleImageRemoved}
-                    limit={4}
+                    limit={1}
                 />
                 {inputMessageHelper("", errors?.blog_images?.message!, errors?.blog_images!)}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
-                    {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
+                    {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-lg" />}
                     {handleLoadingText()}
                 </Button>
             </div>

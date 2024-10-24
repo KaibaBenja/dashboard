@@ -32,12 +32,13 @@ export function FilePreview({
 
     const FileItem = ({ file, index }: { file: string; index: number }) => {
         const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+        console.log(typeof file);
 
         return (
             <div className="relative m-1">
                 <div className="h-24 w-24">
                     <div className="relative">
-                        <Image
+                        {Boolean(typeof file === "string") ? <Image
                             src={file}
                             alt={`image ${index}`}
                             width={imageDimensions?.width || 100}
@@ -49,7 +50,7 @@ export function FilePreview({
                                     height: img.naturalHeight,
                                 });
                             }}
-                        />
+                        /> : <p>esto no es una imagen</p>}
                         <button
                             onClick={() => handleFilesRemoved(index)}
                             className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 hover:text-red-300 border bg-red-900 border-red-900 rounded-full"
