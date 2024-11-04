@@ -146,6 +146,8 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                     <SelectContent>
                         <SelectItem value="Desarrolladores">Desarrolladores</SelectItem>
                         <SelectItem value="Comunicación">Comunicación</SelectItem>
+                        <SelectItem value="Diseño">Diseñadores</SelectItem>
+                        <SelectItem value="Impresiones 3D">Impresiones 3D</SelectItem>
                         <SelectItem value="Logística y Soporte">Logística y Soporte</SelectItem>
                     </SelectContent>
                 </Select>
