@@ -100,21 +100,27 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
         setValue(fieldName, values, { shouldValidate: true });
     };
 
+    const [fileURLs, setFileURLs] = useState<any[]>([]);
+
     const handleFilesSelected = (files: File[], type: "game_images" | "game_archive" | "game_questions") => {
         console.log(`Archivos seleccionados para ${type}:`, files); // Log para ver qué archivos se están seleccionando
         setValue(type, files, { shouldValidate: true });
     };
 
+    const handleFileRemoved = (field:any) => {
+        setFileURLs([]);
+        setValue(field, "", { shouldValidate: true });
+    };
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
         console.log("Formulario enviado:", data);
         console.log("Errores de validación:", errors); // Verifica errores aquí
-    
+
         if (isSubmitting) {
             console.log("El formulario ya se está enviando");
             return;
         }
-    
+
         try {
             const formData = new FormData();
             for (const [key, value] of Object.entries(data)) {
@@ -124,14 +130,14 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
                     formData.append(key, value);
                 }
             }
-    
+
             if (formAction && updateID) {
                 await UpdateData({ path: "games", data: formData }, updateID);
             } else {
                 await AddData({ path: "games", data: formData });
             }
             console.log(formData);
-            
+
             onSubmitSuccess();
             handleCloseSheet();
             toast({ variant: "success", title: `Éxito!`, description: `El Juego ${data.titulo} fue ${formAction ? "editado" : "agregado"}` });
@@ -270,17 +276,17 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Imágenes del juego:</label>
-                <FileUpload files={imageFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_images")} limit={5} />
+                <FileUpload files={imageFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_images")} onFileRemoved={() => handleFileRemoved("game_images")} limit={5} />
                 {errors?.game_images?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Archivos del juego:</label>
-                <FileUpload files={archiveFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_archive")} limit={5} />
+                <FileUpload files={archiveFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_archive")} onFileRemoved={() => handleFileRemoved("game_archive")} limit={5} />
                 {errors?.game_archive?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Preguntas del juego:</label>
-                <FileUpload files={questionFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_questions")} limit={5} />
+                <FileUpload files={questionFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_questions")} onFileRemoved={() => handleFileRemoved("game_questions")} limit={5} />
                 {errors?.game_questions?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_questions?.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">

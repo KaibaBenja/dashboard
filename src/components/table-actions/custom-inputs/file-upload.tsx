@@ -5,7 +5,7 @@ import { cx } from "class-variance-authority";
 import { IoIosWarning } from "react-icons/io";
 
 interface FileUploadProps {
-    files: File[];
+    files: any[];
     onFilesSelected: (files: File[]) => void;
     onFileRemoved: (index: number) => void;
     limit?: number;
