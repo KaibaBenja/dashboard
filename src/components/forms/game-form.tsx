@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, mixed, ObjectSchema } from 'yup';
+import { object, string, mixed, ObjectSchema, array } from 'yup';
 
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -14,73 +14,77 @@ import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
+import { MultiInput } from "../table-actions/custom-inputs/multi-inputs";
 
 interface GameFormValues {
     titulo: string;
-    autor: string;
+    autores: string[];
     sinopsis: string;
     aporte_turismo: string;
     aporte_cultura: string;
     aporte_juventud: string;
     aporte_educacion: string;
     objetivo: string;
-    desarrollo: string;
-    condiciones: string;
-    controles: string;
-    caracteristicas: string;
-    tecnologias: string;
+    desarrollo_juego: string;
+    condiciones_juego: string[];
+    controles: string[];
+    tecnologias: string[];
     estilo: string;
-    genero: string;
-    game_images: string[] | File[];
-    game_archive: string[] | File[];
-    game_questions: string | File[];
+    genero: string[];
+    game_window: string;
+    game_images: File[];
+    game_archive: File[];
+    game_questions?: File | null;
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
-    titulo: string().required("El título es requerido").defined(),
-    autor: string().required("El autor es requerido").defined(),
-    sinopsis: string().required("La sinopsis es requerida").defined(),
-    aporte_turismo: string().required("El aporte al turismo es requerido").defined(),
-    aporte_cultura: string().required("El aporte a la cultura es requerido").defined(),
-    aporte_juventud: string().required("El aporte a la juventud es requerido").defined(),
-    aporte_educacion: string().required("El aporte a la educación es requerido").defined(),
-    objetivo: string().required("El objetivo es requerido").defined(),
-    desarrollo: string().required("El desarrollo es requerido").defined(),
-    condiciones: string().required("Las condiciones son requeridas").defined(),
-    controles: string().required("Los controles son requeridos").defined(),
-    caracteristicas: string().required("Las características son requeridas").defined(),
-    tecnologias: string().required("Las tecnologías son requeridas").defined(),
-    estilo: string().required("El estilo es requerido").defined(),
-    genero: string().required("El género es requerido").defined(),
-    game_images: mixed<string[] | File[]>()
-        .required("Las imágenes del juego son obligatorias").defined(),
-    game_archive: mixed<string[] | File[]>()
-        .required("Los archivos del juego son obligatorios").defined(),
-    game_questions: mixed<string | File[]>()
-        .required("Las preguntas del juego son obligatorias").defined(),
+    titulo: string().required("El título es requerido"),
+    autores: array().of(string().required("Cada autor debe ser un texto")).required("Debe especificar al menos un autor").min(1, "Debe incluir al menos un autor"),
+    sinopsis: string().required("La sinopsis es requerida"),
+    aporte_turismo: string().required("El aporte al turismo es requerido"),
+    aporte_cultura: string().required("El aporte a la cultura es requerido"),
+    aporte_juventud: string().required("El aporte a la juventud es requerido"),
+    aporte_educacion: string().required("El aporte a la educación es requerido"),
+    objetivo: string().required("El objetivo es requerido"),
+    desarrollo_juego: string().required("El desarrollo es requerido"),
+    condiciones_juego: array().of(string().required()).required("Se requiere al menos una condición").min(1, "Se requiere al menos una condición"),
+    controles: array().of(string().required()).required("Se requiere al menos un control").min(1, "Se requiere al menos un control"),
+    tecnologias: array().of(string().required()).required("Se requiere al menos una tecnología").min(1, "Se requiere al menos una tecnología"),
+    estilo: string().required("El estilo es requerido"),
+    genero: array().of(string().required("Debe especificar un género para el juego")).required("Se requiere al menos un género").min(1, "Se requiere al menos un género"),
+    game_window: string().required("Se requiere colocar la direccion del juego (Horizontal/Vertical)"),
+    game_images: mixed<File[]>()
+        .required("Se debe ingresar al menos una imagen")
+        .defined(),
+    game_archive: mixed<File[]>()
+    .required("Se debe ingresar al menos una imagen")
+    .defined(),
+    game_questions:mixed<File>()
+    .optional()
+    .defined(),
 });
 
+
 export function GameForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<GameType>) {
-    const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<GameFormValues>({
+    const { register, handleSubmit, setValue, control, formState: { errors, isSubmitting } } = useForm<GameFormValues>({
         defaultValues: {
-            titulo: formAction ? formData?.titulo : "",
-            autor: formAction ? formData?.autor : "",
-            sinopsis: formAction ? formData?.sinopsis : "",
-            aporte_turismo: formAction ? formData?.aporte_turismo : "",
-            aporte_cultura: formAction ? formData?.aporte_cultura : "",
-            aporte_juventud: formAction ? formData?.aporte_juventud : "",
-            aporte_educacion: formAction ? formData?.aporte_educacion : "",
-            objetivo: formAction ? formData?.objetivo : "",
-            desarrollo: formAction ? formData?.desarrollo : "",
-            condiciones: formAction ? formData?.condiciones : "",
-            controles: formAction ? formData?.controles : "",
-            caracteristicas: formAction ? formData?.caracteristicas : "",
-            tecnologias: formAction ? formData?.tecnologias : "",
-            estilo: formAction ? formData?.estilo : "",
-            genero: formAction ? formData?.genero : "",
-            game_images: formAction ? formData?.game_images : [],
-            game_archive: formAction ? formData?.game_archive : [],
-            game_questions: formAction ? formData?.game_questions : [],
+            titulo: formData?.titulo || "",
+            autores: formData?.autores || [],
+            sinopsis: formData?.sinopsis || "",
+            aporte_turismo: formData?.aporte_turismo || "",
+            aporte_cultura: formData?.aporte_cultura || "",
+            aporte_juventud: formData?.aporte_juventud || "",
+            aporte_educacion: formData?.aporte_educacion || "",
+            objetivo: formData?.objetivo || "",
+            desarrollo_juego: formData?.desarrollo_juego || "",
+            condiciones_juego: formData?.condiciones_juego || [],
+            controles: formData?.controles || [],
+            tecnologias: formData?.tecnologias || [],
+            estilo: formData?.estilo || "",
+            genero: formData?.genero || [],
+            game_images: [],
+            game_archive: [],
+            game_questions: null,
         },
         resolver: yupResolver(schema),
         mode: "onChange",
@@ -90,92 +94,64 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
     const [imageFiles, setImageFiles] = useState<string[] | File[]>([]);
     const [archiveFiles, setArchiveFiles] = useState<string[] | File[]>([]);
     const [questionFiles, setQuestionFiles] = useState<string[] | File[]>([]);
-
-    const handleImagesSelected = (files: File[]) => {
-        setImageFiles(files);
-        setValue("game_images", files, { shouldValidate: true });
+    const autores = useWatch({ control, name: "autores", defaultValue: [] });
+    const condiciones_juego = useWatch({ control, name: "condiciones_juego", defaultValue: [] });
+    const controles = useWatch({ control, name: "controles", defaultValue: [] });
+    const tecnologias = useWatch({ control, name: "tecnologias", defaultValue: [] });
+    const genero = useWatch({ control, name: "genero", defaultValue: [] });
+    const handleArrayChange = (fieldName: keyof GameFormValues, values: string[]) => {
+        console.log(`Actualizando ${fieldName}:`, values); // Log para ver qué se está pasando
+        setValue(fieldName, values, { shouldValidate: true });
     };
 
-    const handleArchiveSelected = (files: File[]) => {
-        setArchiveFiles(files);
-        setValue("game_archive", files, { shouldValidate: true });
+    const [fileURLs, setFileURLs] = useState<any[]>([]);
+
+    const handleFilesSelected = (files: File[], type: "game_images" | "game_archive" | "game_questions") => {
+        console.log(`Archivos seleccionados para ${type}:`, files); // Log para ver qué archivos se están seleccionando
+        setValue(type, files, { shouldValidate: true });
     };
 
-    const handleQuestionsSelected = (files: File[]) => {
-        setQuestionFiles(files);
-        setValue("game_questions", files, { shouldValidate: true });
+    const handleFileRemoved = (field: any) => {
+        setFileURLs([]);
+        setValue(field, "", { shouldValidate: true });
     };
-
-    // const handleRemoveImage = (index: number) => {
-    //     const updatedImages = imageFiles.filter((_, i) => i !== index);
-    //     setImageFiles(updatedImages);
-    //     setValue("game_images", updatedImages, { shouldValidate: true });
-    // };
-
-    // const handleRemoveArchive = (index: number) => {
-    //     const updatedArchives = archiveFiles.filter((_, i) => i !== index);
-    //     setArchiveFiles(updatedArchives);
-    //     setValue("game_archive", updatedArchives, { shouldValidate: true });
-    // };
-
-    // const handleRemoveQuestion = (index: number) => {
-    //     const updatedQuestions = questionFiles.filter((_, i) => i !== index);
-    //     setQuestionFiles(updatedQuestions);
-    //     setValue("game_questions", updatedQuestions, { shouldValidate: true });
-    // };
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
+        console.log("Formulario enviado:", data);
+        console.log("Errores de validación:", errors); // Verifica errores aquí
+
+        
+
+        if (isSubmitting) {
+            console.log("El formulario ya se está enviando");
+            return;
+        }
+
         try {
             const formData = new FormData();
-            formData.append("titulo", data.titulo);
-            formData.append("autor", data.autor);
-            formData.append("sinopsis", data.sinopsis);
-            formData.append("aporte_turismo", data.aporte_turismo);
-            formData.append("aporte_cultura", data.aporte_cultura);
-            formData.append("aporte_juventud", data.aporte_juventud);
-            formData.append("aporte_educacion", data.aporte_educacion);
-            formData.append("objetivo", data.objetivo);
-            formData.append("desarrollo", data.desarrollo);
-            formData.append("condiciones", data.condiciones);
-            formData.append("controles", data.controles);
-            formData.append("caracteristicas", data.caracteristicas);
-            formData.append("tecnologias", data.tecnologias);
-            formData.append("estilo", data.estilo);
-            formData.append("genero", data.genero);
-            imageFiles.forEach((file) => formData.append("game_images", file));
-            archiveFiles.forEach((file) => formData.append("game_archive", file));
-            questionFiles.forEach((file) => formData.append("game_questions", file));
+            for (const [key, value] of Object.entries(data)) {
+                if (Array.isArray(value)) {
+                    value.forEach((file) => formData.append(key, file));
+                } else {
+                    formData.append(key, value);
+                }
+            }
 
             if (formAction && updateID) {
                 await UpdateData({ path: "games", data: formData }, updateID);
             } else {
                 await AddData({ path: "games", data: formData });
             }
+            console.log(formData);
 
             onSubmitSuccess();
             handleCloseSheet();
-            toast({
-                variant: "success",
-                title: `Éxito!`,
-                description: `El Juego ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
-            });
+            toast({ variant: "success", title: `Éxito!`, description: `El Juego ${data.titulo} fue ${formAction ? "editado" : "agregado"}` });
         } catch (error) {
-            console.log(error);
-            toast({
-                variant: "destructive",
-                title: "Ocurrió un Error!",
-                description: "Fallo algo durante el proceso, pruebe de nuevo",
-            });
+            console.error(error);
+            toast({ variant: "destructive", title: "Error!", description: "Fallo algo durante el proceso, prueba de nuevo" });
         }
     };
-
-    function handleLoadingText() {
-        if (formAction) {
-            return isSubmitting ? "Editando Juego" : "Editar Juego";
-        } else {
-            return isSubmitting ? "Agregando Juego" : "Agregar Juego";
-        }
-    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -190,14 +166,9 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 {errors?.titulo && <p className="text-red-700 p-2 font-semibold">{errors?.titulo?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Autor:</label>
-                <input
-                    {...register("autor")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
-                {errors?.autor && <p className="text-red-700 p-2 font-semibold">{errors?.autor?.message}</p>}
+                <label className="block text-gray-700">Autor/es:</label>
+                <MultiInput values={autores} onChange={(val) => handleArrayChange("autores", val)} />
+                {errors?.autores && <p className="text-red-700 p-2 font-semibold">{errors?.autores?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Sinopsis:</label>
@@ -262,51 +233,26 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
             <div className="mb-4">
                 <label className="block text-gray-700">Desarrollo:</label>
                 <input
-                    {...register("desarrollo")}
+                    {...register("desarrollo_juego")}
                     type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.desarrollo && <p className="text-red-700 p-2 font-semibold">{errors?.desarrollo?.message}</p>}
+                {errors?.desarrollo_juego && <p className="text-red-700 p-2 font-semibold">{errors?.desarrollo_juego?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Condiciones:</label>
-                <input
-                    {...register("condiciones")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
-                {errors?.condiciones && <p className="text-red-700 p-2 font-semibold">{errors?.condiciones?.message}</p>}
+                <label className="block text-gray-700">Condiciones de Victoria:</label>
+                <MultiInput values={condiciones_juego} onChange={(val) => handleArrayChange("condiciones_juego", val)} />
+                {errors?.condiciones_juego && <p className="text-red-700 p-2 font-semibold">{errors?.condiciones_juego?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Controles:</label>
-                <input
-                    {...register("controles")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
+                <MultiInput values={controles} onChange={(val) => handleArrayChange("controles", val)} />
                 {errors?.controles && <p className="text-red-700 p-2 font-semibold">{errors?.controles?.message}</p>}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Características:</label>
-                <input
-                    {...register("caracteristicas")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
-                {errors?.caracteristicas && <p className="text-red-700 p-2 font-semibold">{errors?.caracteristicas?.message}</p>}
-            </div>
-            <div className="mb-4">
                 <label className="block text-gray-700">Tecnologías:</label>
-                <input
-                    {...register("tecnologias")}
-                    type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                />
+                <MultiInput values={tecnologias} onChange={(val) => handleArrayChange("tecnologias", val)} />
                 {errors?.tecnologias && <p className="text-red-700 p-2 font-semibold">{errors?.tecnologias?.message}</p>}
             </div>
             <div className="mb-4">
@@ -321,52 +267,39 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Género:</label>
+                <MultiInput values={genero} onChange={(val) => handleArrayChange("genero", val)} />
+                {errors?.genero && <p className="text-red-700 p-2 font-semibold">{errors?.genero?.message}</p>}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Modo de ventana(vertical/horizontal):</label>
                 <input
-                    {...register("genero")}
+                    {...register("game_window")}
                     type="text"
                     className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {errors?.genero && <p className="text-red-700 p-2 font-semibold">{errors?.genero?.message}</p>}
+                {errors?.game_window && <p className="text-red-700 p-2 font-semibold">{errors?.game_window?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Imágenes del juego:</label>
-                {/* <FileUpload
-                    {...register("game_images")}
-                    files={imageFiles}
-                    onFilesSelected={handleImagesSelected}
-                    onFileRemoved={handleRemoveImage}
-                    limit={5}
-                /> */}
+                <FileUpload files={imageFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_images")} onFileRemoved={() => handleFileRemoved("game_images")} limit={4} />
                 {errors?.game_images?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Archivos del juego:</label>
-                {/* <FileUpload
-                    {...register("game_archive")}
-                    files={archiveFiles}
-                    onFilesSelected={handleArchiveSelected}
-                    onFileRemoved={handleRemoveArchive}
-                    limit={5}
-                /> */}
+                <FileUpload files={archiveFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_archive")} onFileRemoved={() => handleFileRemoved("game_archive")} limit={4} />
                 {errors?.game_archive?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Preguntas del juego:</label>
-                {/* <FileUpload
-                    {...register("game_questions")}
-                    files={questionFiles}
-                    onFilesSelected={handleQuestionsSelected}
-                    onFileRemoved={handleRemoveQuestion}
-                    limit={5}
-                /> */}
+                <input type="file" {...register("game_questions")}/>
                 {errors?.game_questions?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_questions?.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
-                <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
+                <button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
                     {isSubmitting && <AiOutlineLoading3Quarters className="animate-spin mr-2 text-[#FFFFFF]" />}
-                    {handleLoadingText()}
-                </Button>
+                    {isSubmitting ? <AiOutlineLoading3Quarters className="animate-spin" /> : "Guardar"}
+                </button>
             </div>
         </form>
     );

@@ -1,11 +1,11 @@
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { FilePreview } from "./image-grid-preview";
 import { LuUpload } from "react-icons/lu";
 import { cx } from "class-variance-authority";
 import { IoIosWarning } from "react-icons/io";
 
 interface FileUploadProps {
-    files: string[];
+    files: any[];
     onFilesSelected: (files: File[]) => void;
     onFileRemoved: (index: number) => void;
     limit?: number;
@@ -18,6 +18,7 @@ export function FileUpload({
     limit = 5,
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
+    const [fileUrls, setFileUrls] = useState<string[]>([]);
 
     const onChooseFile = () => {
         inputRef.current?.click();
@@ -26,10 +27,19 @@ export function FileUpload({
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
         if (event.target.files && event.target.files.length > 0) {
-            const newFiles = Array.from(event.target.files);
+            const newFiles = Array.from(event.target.files).slice(0, limit - files.length);
             onFilesSelected(newFiles);
         }
     };
+
+    useEffect(() => {
+        // Convertimos archivos a URLs y actualizamos el estado de `fileUrls`
+        const urls = files.map((file) => URL.createObjectURL(file));
+        setFileUrls(urls);
+
+        // Limpiamos las URLs cuando el componente se desmonta
+        return () => urls.forEach((url) => URL.revokeObjectURL(url));
+    }, [files]);
 
     return (
         <div className="flex flex-col mt-2">
@@ -58,7 +68,7 @@ export function FileUpload({
                 {files.length < limit ? "Cargar Archivos" : "Llegaste al límite"}
             </button>
             <FilePreview
-                files={files}
+                files={fileUrls}
                 limit_preview={limit}
                 handleFilesRemoved={onFileRemoved}
             />
