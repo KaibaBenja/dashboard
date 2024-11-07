@@ -44,9 +44,6 @@ const schema: ObjectSchema<PostFormValues> = object({
         .defined(),
     blog_images: mixed<File[]>()
         .required("Se debe ingresar al menos una imagen")
-        .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
-            Array.isArray(value) && value.every(file => file instanceof File)
-        )
         .defined(),
 });
 
@@ -88,7 +85,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             formData.append("pre_descripcion", data.pre_descripcion);
             formData.append("descripcion", data.descripcion);
 
-            data.blog_images.forEach((file) => {
+            data.blog_images.forEach((file: File) => {
                 formData.append("blog_images", file);
             });
 
@@ -176,8 +173,9 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 <textarea
                     {...register("pre_descripcion")}
                     rows={4}
+                    
                     placeholder="Pie de la noticia"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg resize-none focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("", errors?.pre_descripcion?.message!, errors?.pre_descripcion!)}
@@ -190,7 +188,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                     {...register("descripcion")}
                     rows={4}
                     placeholder="Noticia completa"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg resize-none focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
@@ -205,7 +203,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                     onFileRemoved={handleImageRemoved}
                     limit={4}
                 />
-                {/* {inputMessageHelper("", errors?.blog_images?.message!, errors?.blog_images!)} */}
+                {inputMessageHelper("Las imagenes no contener nombres con caracteres especiales (* - _ \ / | # { } + = @ ¿ ? : % ! ¡)", errors?.blog_images?.message!)}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
