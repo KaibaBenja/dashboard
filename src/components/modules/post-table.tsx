@@ -212,7 +212,7 @@ export function PostsTable() {
                 editActionCell={onEditClick}
             >
                 <Image
-                    src={`${currentPost?.blog_images}`}
+                    src={`${currentPost?.blog_images[0]}`}
                     alt="example"
                     width={150}
                     height={150}
