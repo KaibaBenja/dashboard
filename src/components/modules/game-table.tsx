@@ -123,7 +123,7 @@ export function GameTable() {
                                             <span className='block md:hidden'>Título: </span>{game?.titulo}
                                         </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
-                                            <span className='block md:hidden'>Autor: </span>{game?.autor}
+                                            <span className='block md:hidden'>Autor: </span>{game?.autores}
                                         </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
                                             <span className='block md:hidden'>Tecnologías: </span>{game?.tecnologias}
@@ -206,15 +206,15 @@ export function GameTable() {
             >
                 <h1 className='text-center font-bold text-xl'>{currentGame?.titulo}</h1>
                 <div className="mt-4">
-                    <p><strong>Autor:</strong> {currentGame?.autor}</p>
+                    <p><strong>Autor:</strong> {currentGame?.autores}</p>
                     <p><strong>Sinopsis:</strong> {currentGame?.sinopsis}</p>
                     <p><strong>Aporte al Turismo:</strong> {currentGame?.aporte_turismo}</p>
                     <p><strong>Aporte a la Cultura:</strong> {currentGame?.aporte_cultura}</p>
                     <p><strong>Aporte a la Juventud:</strong> {currentGame?.aporte_juventud}</p>
                     <p><strong>Aporte a la Educacion:</strong> {currentGame?.aporte_educacion}</p>
                     <p><strong>Objetivo:</strong> {currentGame?.objetivo}</p>
-                    <p><strong>Desarrollo:</strong> {currentGame?.desarrollo}</p>
-                    <p><strong>Condiciones:</strong> {currentGame?.condiciones}</p>
+                    <p><strong>Desarrollo:</strong> {currentGame?.desarrollo_juego}</p>
+                    <p><strong>Condiciones:</strong> {currentGame?.condiciones_juego}</p>
                     <p><strong>Controles:</strong> {currentGame?.controles}</p>
                     <p><strong>Tecnologias:</strong> {currentGame?.tecnologias}</p>
                     <p><strong>Estilo:</strong> {currentGame?.estilo}</p>
