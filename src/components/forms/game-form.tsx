@@ -34,15 +34,12 @@ interface GameFormValues {
     game_window: string;
     game_images: File[];
     game_archive: File[];
-    game_questions: File[];
+    game_questions?: File | null;
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
     titulo: string().required("El título es requerido"),
-    autores: array(string())
-        .of(string().required("Cada autor debe ser un texto"))
-        .required("Debe especificar al menos un autor")
-        .min(1, "Debe incluir al menos un autor"),
+    autores: array().of(string().required("Cada autor debe ser un texto")).required("Debe especificar al menos un autor").min(1, "Debe incluir al menos un autor"),
     sinopsis: string().required("La sinopsis es requerida"),
     aporte_turismo: string().required("El aporte al turismo es requerido"),
     aporte_cultura: string().required("El aporte a la cultura es requerido"),
@@ -50,16 +47,23 @@ const schema: ObjectSchema<GameFormValues> = object({
     aporte_educacion: string().required("El aporte a la educación es requerido"),
     objetivo: string().required("El objetivo es requerido"),
     desarrollo_juego: string().required("El desarrollo es requerido"),
-    condiciones_juego: array().of(string().required()).min(1, "Se requiere al menos una condición"),
-    controles: array().of(string().required()).min(1, "Se requiere al menos un control"),
-    tecnologias: array().of(string().required()).min(1, "Se requiere al menos una tecnología"),
+    condiciones_juego: array().of(string().required()).required("Se requiere al menos una condición").min(1, "Se requiere al menos una condición"),
+    controles: array().of(string().required()).required("Se requiere al menos un control").min(1, "Se requiere al menos un control"),
+    tecnologias: array().of(string().required()).required("Se requiere al menos una tecnología").min(1, "Se requiere al menos una tecnología"),
     estilo: string().required("El estilo es requerido"),
-    genero: array().of(string().required()).min(1, "Se requiere al menos un género"),
-    game_window: string().required("Se requiere colocar la direccion del juego(Horizontal/Vertical)"),
-    game_images: mixed().test("fileSize", "Se requiere al menos una imagen", (value) => value && value.length > 0),
-    game_archive: mixed().test("fileSize", "Se requiere al menos un archivo", (value) => value && value.length > 0),
-    game_questions: mixed().test("fileSize", "Se requiere al menos una pregunta", (value) => value && value.length > 0),
+    genero: array().of(string().required("Debe especificar un género para el juego")).required("Se requiere al menos un género").min(1, "Se requiere al menos un género"),
+    game_window: string().required("Se requiere colocar la direccion del juego (Horizontal/Vertical)"),
+    game_images: mixed<File[]>()
+        .required("Se debe ingresar al menos una imagen")
+        .defined(),
+    game_archive: mixed<File[]>()
+    .required("Se debe ingresar al menos una imagen")
+    .defined(),
+    game_questions:mixed<File>()
+    .optional()
+    .defined(),
 });
+
 
 export function GameForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<GameType>) {
     const { register, handleSubmit, setValue, control, formState: { errors, isSubmitting } } = useForm<GameFormValues>({
@@ -80,7 +84,7 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
             genero: formData?.genero || [],
             game_images: [],
             game_archive: [],
-            game_questions: [],
+            game_questions: null,
         },
         resolver: yupResolver(schema),
         mode: "onChange",
@@ -107,7 +111,7 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
         setValue(type, files, { shouldValidate: true });
     };
 
-    const handleFileRemoved = (field:any) => {
+    const handleFileRemoved = (field: any) => {
         setFileURLs([]);
         setValue(field, "", { shouldValidate: true });
     };
@@ -115,6 +119,8 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
     const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
         console.log("Formulario enviado:", data);
         console.log("Errores de validación:", errors); // Verifica errores aquí
+
+        
 
         if (isSubmitting) {
             console.log("El formulario ya se está enviando");
@@ -276,17 +282,17 @@ export function GameForm({ updateID, formAction, formData, onSubmitSuccess, hand
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Imágenes del juego:</label>
-                <FileUpload files={imageFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_images")} onFileRemoved={() => handleFileRemoved("game_images")} limit={5} />
+                <FileUpload files={imageFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_images")} onFileRemoved={() => handleFileRemoved("game_images")} limit={4} />
                 {errors?.game_images?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_images?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Archivos del juego:</label>
-                <FileUpload files={archiveFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_archive")} onFileRemoved={() => handleFileRemoved("game_archive")} limit={5} />
+                <FileUpload files={archiveFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_archive")} onFileRemoved={() => handleFileRemoved("game_archive")} limit={4} />
                 {errors?.game_archive?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_archive?.message}</p>}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Preguntas del juego:</label>
-                <FileUpload files={questionFiles} onFilesSelected={(files) => handleFilesSelected(files, "game_questions")} onFileRemoved={() => handleFileRemoved("game_questions")} limit={5} />
+                <input type="file" {...register("game_questions")}/>
                 {errors?.game_questions?.message && <p className="text-red-700 p-2 font-semibold">{errors?.game_questions?.message}</p>}
             </div>
             <div className="col-span-2 flex justify-end">
