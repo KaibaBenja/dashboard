@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, mixed, ObjectSchema } from 'yup';
-import { StaticImageData } from "next/image";
 
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -24,7 +23,7 @@ interface PostFormValues {
     categoria: string;
     pre_descripcion: string;
     descripcion: string;
-    blog_images: string | File;
+    blog_images: File[];
 }
 
 const schema: ObjectSchema<PostFormValues> = object({
@@ -43,10 +42,10 @@ const schema: ObjectSchema<PostFormValues> = object({
     descripcion: string()
         .required("La descripción es requerida")
         .defined(),
-    blog_images: mixed<string | File>()
-        .required("Se debe ingresar una imagen")
+    blog_images: mixed<File[]>()
+        .required("Se debe ingresar al menos una imagen")
         .test('is-valid-type', 'El archivo de imagen debe ser un tipo válido', value =>
-            typeof value === 'string' || value instanceof File || (value && typeof value === 'object')
+            Array.isArray(value) && value.every(file => file instanceof File)
         )
         .defined(),
 });
@@ -55,31 +54,29 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
-            categoria: formAction ? formData?.categoria : "¿Qué Tipo de Noticia es?",
+            categoria: formAction ? formData?.categoria : "",
             fecha: formAction ? formData?.fecha : "",
             pre_descripcion: formAction ? formData?.pre_descripcion : "",
             descripcion: formAction ? formData?.descripcion : "",
-            blog_images: formAction ? formData?.blog_images : "",
+            blog_images: [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
-
-    const [fileUrls, setFileUrls] = useState<any>([]);
+    const [fileUrls, setFileUrls] = useState<string[]>([]);
 
     const handleFilesSelected = (files: File[]) => {
         if (files.length > 0) {
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
             setFileUrls(newFileURLs);
-            setValue("blog_images", files[0], { shouldValidate: true, shouldTouch: true });
-            event?.preventDefault();
+            setValue("blog_images", files, { shouldValidate: true, shouldTouch: true });
         }
     };
 
     const handleImageRemoved = () => {
         setFileUrls([]);
-        setValue("blog_images", "", { shouldValidate: true });
+        setValue("blog_images", [], { shouldValidate: true });
     };
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data) => {
@@ -91,9 +88,9 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             formData.append("pre_descripcion", data.pre_descripcion);
             formData.append("descripcion", data.descripcion);
 
-            if (fileUrls.length > 0) {
-                formData.append("blog_images", data.blog_images);
-            }
+            data.blog_images.forEach((file) => {
+                formData.append("blog_images", file);
+            });
 
             if (formAction && updateID) {
                 await UpdateData({ path: "posts", data: formData }, updateID);
@@ -119,12 +116,10 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
     };
 
     function handleLoadingText() {
-        if (formAction) {
-            return isSubmitting ? "Editando Post" : "Editar Post";
-        } else {
-            return isSubmitting ? "Agregando Post" : "Agregar Post";
-        }
+        return formAction ? (isSubmitting ? "Editando Post" : "Editar Post") : (isSubmitting ? "Agregando Post" : "Agregar Post");
     }
+
+    console.log(fileUrls);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -143,7 +138,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
-                    Equipo <span className="font-bold text-red-800">*</span>
+                    Categoria <span className="font-bold text-red-800">*</span>
                 </label>
                 <Select
                     value={watch("categoria")}
@@ -208,9 +203,9 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                     files={fileUrls}
                     onFilesSelected={handleFilesSelected}
                     onFileRemoved={handleImageRemoved}
-                    limit={1}
+                    limit={4}
                 />
-                {inputMessageHelper("", errors?.blog_images?.message!, errors?.blog_images!)}
+                {/* {inputMessageHelper("", errors?.blog_images?.message!, errors?.blog_images!)} */}
             </div>
             <div className="col-span-2 flex justify-end">
                 <Button type="submit" className="mr-2 bg-green-800 w-full" disabled={isSubmitting}>
