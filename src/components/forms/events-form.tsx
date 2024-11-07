@@ -119,11 +119,11 @@ export function EventForm({ formAction, formData, onSubmitSuccess, handleCloseSh
                 <label className="block text-gray-700">
                     Descripción <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
+                <textarea
                     {...register("descripcion")}
-                    type="text"
+                    rows={4}
                     placeholder="Descripción del evento"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg resize-none focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
