@@ -68,6 +68,8 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
             setFileUrls(newFileURLs);
             setValue("blog_images", files, { shouldValidate: true, shouldTouch: true });
+            console.log(files);
+            
         }
     };
 
