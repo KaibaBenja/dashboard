@@ -164,7 +164,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("", errors?.puesto?.message!, errors?.puesto!)}
+                {inputMessageHelper("Rol que cumple", errors?.puesto?.message!, errors?.puesto!)}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
