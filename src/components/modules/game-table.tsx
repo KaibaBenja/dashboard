@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
@@ -12,14 +11,19 @@ import { GameForm } from '../forms/game-form';
 import { ActionCell } from '../table-actions/actions-cell';
 import { SheetForm } from '../table-actions/sheet-form';
 import { InfoDialog } from '../table-actions/info-card';
+import { CarouselImage } from '../table-actions/carousel-image';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
 import { EmptyTable } from '../handlers/empty-elements';
 import { Loading } from '../handlers/loading';
 
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa';
+import { IoAddCircleSharp, IoPeople } from 'react-icons/io5';
+import { FaArrowCircleLeft, FaArrowCircleRight, FaListUl } from 'react-icons/fa';
 import { IoGameController } from "react-icons/io5";
+import { HiIdentification } from 'react-icons/hi';
+import { MdOutlineTextFields, MdStyle } from 'react-icons/md';
+import { GoGoal } from 'react-icons/go';
+import { TbFileArrowRight } from 'react-icons/tb';
 
 export function GameTable() {
     const [games, setGames] = useState<GameType[]>([]);
@@ -123,7 +127,7 @@ export function GameTable() {
                                             <span className='block md:hidden'>Título: </span>{game?.titulo}
                                         </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
-                                            <span className='block md:hidden'>Autor: </span>{game?.autores}
+                                            <span className='block md:hidden'>Autor: </span>{game?.autores.join("\n")}
                                         </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
                                             <span className='block md:hidden'>Tecnologías: </span>{game?.tecnologias}
@@ -204,21 +208,96 @@ export function GameTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
+                <CarouselImage
+                    images={currentGame?.game_images!}
+                />
                 <h1 className='text-center font-bold text-xl'>{currentGame?.titulo}</h1>
-                <div className="mt-4">
-                    <p><strong>Autor:</strong> {currentGame?.autores}</p>
-                    <p><strong>Sinopsis:</strong> {currentGame?.sinopsis}</p>
-                    <p><strong>Aporte al Turismo:</strong> {currentGame?.aporte_turismo}</p>
-                    <p><strong>Aporte a la Cultura:</strong> {currentGame?.aporte_cultura}</p>
-                    <p><strong>Aporte a la Juventud:</strong> {currentGame?.aporte_juventud}</p>
-                    <p><strong>Aporte a la Educacion:</strong> {currentGame?.aporte_educacion}</p>
-                    <p><strong>Objetivo:</strong> {currentGame?.objetivo}</p>
-                    <p><strong>Desarrollo:</strong> {currentGame?.desarrollo_juego}</p>
-                    <p><strong>Condiciones:</strong> {currentGame?.condiciones_juego}</p>
-                    <p><strong>Controles:</strong> {currentGame?.controles}</p>
-                    <p><strong>Tecnologias:</strong> {currentGame?.tecnologias}</p>
-                    <p><strong>Estilo:</strong> {currentGame?.estilo}</p>
-                    <p><strong>Género:</strong> {currentGame?.genero}</p>
+                <div className='bg-gray-100 rounded-md p-2 pb-12 mt-4 flex flex-col justify-center font-semibold'>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <HiIdentification className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentGame?._id}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <IoPeople className='w-5 h-5 text-green-800' />
+                        <span>Autor/es:</span>
+                    </div>
+                    {currentGame?.autores.map((autor: string, index: number) => (
+                        <span key={index} className='capitalize'>• {autor}</span>
+                    ))}
+                    <div className='flex items-center gap-2 mt-2'>
+                        <MdOutlineTextFields className='w-5 h-5 text-green-800' />
+                        <h3>Sinopsis:</h3>
+                    </div>
+                    <span className='capitalize'>• {currentGame?.sinopsis}</span>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Aporte al Turismo:</span>
+                    </div>
+                    {currentGame?.aporte_turismo.map((aporte: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {aporte}</span>
+                    ))}
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Aporte a la Cultura:</span>
+                    </div>
+                    {currentGame?.aporte_cultura.map((aporte: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {aporte}</span>
+                    ))}
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Aporte a la Juventud:</span>
+                    </div>
+                    {currentGame?.aporte_juventud.map((aporte: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {aporte}</span>
+                    ))}
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Aporte a la Educación:</span>
+                    </div>
+                    {currentGame?.aporte_educacion.map((aporte: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {aporte}</span>
+                    ))}
+                    <div className='flex items-center'>
+                        <GoGoal className='w-5 h-5 text-green-800' />
+                        <span className='capitalize ml-2'>Objetivo del Juego:</span>
+                    </div>
+                    <span className='capitalize ml-2'>{currentGame?.objetivo}</span>
+                    <div className='flex items-center'>
+                        <TbFileArrowRight className='w-5 h-5 text-green-800' />
+                        <span className='capitalize ml-2'>Desarrollo del Juego:</span>
+                    </div>
+                    <span className='capitalize ml-2'>{currentGame?.desarrollo_juego}</span>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Condiciones:</span>
+                    </div>
+                    {currentGame?.condiciones_juego.map((condicion: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {condicion}</span>
+                    ))}
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Controles:</span>
+                    </div>
+                    {currentGame?.controles.map((control: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {control}</span>
+                    ))}
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaListUl className='w-5 h-5 text-green-800' />
+                        <span>Tecnologías:</span>
+                    </div>
+                    {currentGame?.tecnologias.map((tecnologia: string, index: number) => (
+                        <span key={index} className='capitalize my-2'>• {tecnologia}</span>
+                    ))}
+                    <div className='flex items-center'>
+                        <MdStyle className='w-8 h-8 text-green-800' />
+                        <span className='capitalize ml-2'>Estilo del Juego:</span>
+                    </div>
+                    <span className='capitalize ml-2'>{currentGame?.estilo}</span>
+                    <div className='flex items-center'>
+                        <MdStyle className='w-8 h-8 text-green-800' />
+                        <span className='capitalize ml-2'>Genero del Juego:</span>
+                    </div>
+                    <span className='capitalize ml-2'>{currentGame?.genero}</span>
                 </div>
             </InfoDialog>
         </div>
