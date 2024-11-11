@@ -118,8 +118,6 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
         return formAction ? (isSubmitting ? "Editando Post" : "Editar Post") : (isSubmitting ? "Agregando Post" : "Agregar Post");
     }
 
-    console.log(fileUrls);
-
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
             <div className="mb-4">

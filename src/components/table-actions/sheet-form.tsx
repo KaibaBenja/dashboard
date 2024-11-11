@@ -22,7 +22,7 @@ export function SheetForm({ isOpen, handleOpen, title, descripcion, children }: 
             open={isOpen}
             onOpenChange={handleOpen}
         >
-            <SheetContent >
+            <SheetContent className="w-[400px] sm:w-[740px]">
                 <SheetHeader>
                     <SheetTitle>{title}</SheetTitle>
                     <SheetDescription>

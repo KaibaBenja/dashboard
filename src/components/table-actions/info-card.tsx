@@ -1,10 +1,14 @@
+"use client";
+
+import React from "react";
 import {
     Dialog,
     DialogContent,
     DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "../ui/button";
-import { DeleteWarning } from "./warning";
+import { Button } from "@/components/ui/button";
+
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 interface InfoDialogProps {
     data: any;
@@ -21,40 +25,40 @@ interface InfoDialogProps {
 
 export function InfoDialog({
     data,
+    children,
     openCard,
     handleOpenCard,
-    openWarning,
     handleWarning,
-    children,
     takeCurrentId,
-    currentId,
     editActionCell,
-    deleteActionCell
 }: InfoDialogProps) {
+    const handleEdit = () => {
+        editActionCell(data);
+        handleOpenCard(false);
+    };
+
     return (
         <Dialog open={openCard} onOpenChange={handleOpenCard}>
-            <DialogContent className="w-full flex flex-col justify-center no-scrollbar">
-                {children}
-                <DialogFooter className="mt-4 flex justify-around gap-2 w-full">
-                    <Button onClick={() => editActionCell(data!)}>Editar</Button>
-                    <Button className="bg-red-800 hover:bg-red-700" onClick={() => {
-                        takeCurrentId();
-                        handleWarning(true);
-                    }}>Eliminar</Button>
+            <DialogContent className="no-scrollbar">
+                <div className="grid gap-4 py-4">{children}</div>
+                <DialogFooter>
+                    <Button 
+                        onClick={handleEdit} 
+                        className="flex items-center gap-2 bg-green-800 hover:bg-green-700"
+                    >
+                        Editar <FaEdit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                        className='items-center gap-2 bg-red-800 hover:bg-red-700'
+                        onClick={() => {
+                            takeCurrentId();
+                            handleWarning(true);
+                        }}
+                    >
+                        Eliminar  <FaTrashAlt className="text-[#FFFFFF]"/>
+                    </Button>
                 </DialogFooter>
             </DialogContent>
-            <DeleteWarning
-                closeDialog={openWarning && currentId === data?._id}
-                currentId={currentId}
-                handleCloseDialog={handleWarning}
-                deleteAction={async () => {
-                    if (currentId) {
-                        await deleteActionCell(currentId);
-                    }
-                    await handleWarning(false);
-                    await handleOpenCard(false);
-                }}
-            />
         </Dialog>
-    )
+    );
 }

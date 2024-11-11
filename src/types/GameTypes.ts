@@ -3,10 +3,10 @@ export interface GameType {
   titulo: string;
   autores: string[];
   sinopsis: string;
-  aporte_turismo: string;
-  aporte_cultura: string;
-  aporte_juventud: string;
-  aporte_educacion: string;
+  aporte_turismo: string[];
+  aporte_cultura: string[];
+  aporte_juventud: string[];
+  aporte_educacion: string[];
   objetivo: string;
   desarrollo_juego: string;
   condiciones_juego: string[];
@@ -17,5 +17,5 @@ export interface GameType {
   game_window: string;
   game_images: string[];
   game_archive: string[];
-  game_questions: string;
+  game_questions: string[];
 }

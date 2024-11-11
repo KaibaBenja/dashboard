@@ -1,19 +1,29 @@
 import { useState } from "react";
 import Image from "next/image";
 import cx from "classnames";
+
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosWarning, IoIosCloseCircle } from "react-icons/io";
+import { LiaFileCodeSolid } from "react-icons/lia";
 
 interface FilesPreviewProps {
     files: Array<string>;
     handleFilesRemoved: (index: number) => void;
     limit_preview: number;
+    showPrev: boolean;
+}
+
+interface FileItemProps { 
+    showImagePreview: boolean;
+    file: string; 
+    index: number 
 }
 
 export function FilePreview({
     files,
     handleFilesRemoved,
     limit_preview,
+    showPrev
 }: FilesPreviewProps) {
     const NoFilesAddedInfo = () => (
         <div className="flex items-start flex-col gap-2 p-3 w-full rounded border-2 font-medium border-green-800 bg-green-100">
@@ -30,15 +40,14 @@ export function FilePreview({
         </div>
     );
 
-    const FileItem = ({ file, index }: { file: string; index: number }) => {
+    const FileItem = ({ showImagePreview = true, file, index }: FileItemProps) => {
         const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
-        console.log(typeof file);
 
         return (
             <div className="relative m-1">
                 <div className="h-24 w-24">
                     <div className="relative">
-                        {Boolean(typeof file === "string") ? <Image
+                        {showImagePreview ? (<Image
                             src={file}
                             alt={`image ${index}`}
                             width={imageDimensions?.width || 100}
@@ -50,7 +59,9 @@ export function FilePreview({
                                     height: img.naturalHeight,
                                 });
                             }}
-                        /> : <p>esto no es una imagen</p>}
+                        />) : (
+                            <LiaFileCodeSolid className="h-20 w-20 text-green-800 "/>
+                        )}
                         <button
                             onClick={() => handleFilesRemoved(index)}
                             className="absolute top-0 right-3 ml-2 -mt-1 text-red-600 hover:text-red-300 border bg-red-900 border-red-900 rounded-full"
@@ -71,7 +82,7 @@ export function FilePreview({
             })}
         >
             {files.length > 0 ? (
-                files.map((file, i) => <FileItem key={i} file={file} index={i} />)
+                files.map((file, i) => <FileItem key={i} showImagePreview={showPrev} file={file} index={i} />)
             ) : (
                 <NoFilesAddedInfo />
             )}

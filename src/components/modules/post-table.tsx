@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
@@ -12,11 +11,12 @@ import { PostForm } from '../forms/post-form';
 import { ActionCell } from '../table-actions/actions-cell';
 import { SheetForm } from '../table-actions/sheet-form';
 import { InfoDialog } from '../table-actions/info-card';
+import { CarouselImage } from '../table-actions/carousel-image';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
 import { EmptyTable } from '../handlers/empty-elements';
 import { Loading } from '../handlers/loading';
 
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck } from 'react-icons/fa';
 import { BsFileEarmarkPost } from "react-icons/bs";
@@ -211,15 +211,11 @@ export function PostsTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                <Image
-                    src={`${currentPost?.blog_images[0]}`}
-                    alt="example"
-                    width={150}
-                    height={150}
-                    className='w-full h-[400px] my-4'
+                <CarouselImage 
+                    images={currentPost?.blog_images!}
                 />
                 <h1 className='text-start font-bold text-xl'>{currentPost?.titulo}</h1>
-                <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
+                <div className='bg-gray-100 rounded-md p-2 pb-12 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>
                         <HiIdentification className='w-5 h-5 text-green-800' />
                         <span className='capitalize'>{currentPost?._id}</span>

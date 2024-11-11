@@ -5,10 +5,11 @@ import { cx } from "class-variance-authority";
 import { IoIosWarning } from "react-icons/io";
 
 interface FileUploadProps {
-    files: any[];
-    onFilesSelected: (files: File[]) => void;
+    files: any;
+    onFilesSelected: (files: any) => void;
     onFileRemoved: (index: number) => void;
     limit?: number;
+    prev?: boolean;
 }
 
 export function FileUpload({
@@ -16,9 +17,9 @@ export function FileUpload({
     onFilesSelected,
     onFileRemoved,
     limit = 5,
+    prev = true
 }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
-    const [fileUrls, setFileUrls] = useState<string[]>([]);
 
     const onChooseFile = () => {
         inputRef.current?.click();
@@ -31,15 +32,6 @@ export function FileUpload({
             onFilesSelected(newFiles);
         }
     };
-
-    useEffect(() => {
-        // Convertimos archivos a URLs y actualizamos el estado de `fileUrls`
-        const urls = files.map((file) => URL.createObjectURL(file));
-        setFileUrls(urls);
-
-        // Limpiamos las URLs cuando el componente se desmonta
-        return () => urls.forEach((url) => URL.revokeObjectURL(url));
-    }, [files]);
 
     return (
         <div className="flex flex-col mt-2">
@@ -68,7 +60,8 @@ export function FileUpload({
                 {files.length < limit ? "Cargar Archivos" : "Llegaste al límite"}
             </button>
             <FilePreview
-                files={fileUrls}
+                showPrev={prev}
+                files={files}
                 limit_preview={limit}
                 handleFilesRemoved={onFileRemoved}
             />
