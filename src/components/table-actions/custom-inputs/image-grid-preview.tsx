@@ -42,13 +42,12 @@ export function FilePreview({
 
     const FileItem = ({ showImagePreview = true, file, index }: FileItemProps) => {
         const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
-        console.log( file);
 
         return (
             <div className="relative m-1">
                 <div className="h-24 w-24">
                     <div className="relative">
-                        {showImagePreview ? <Image
+                        {showImagePreview ? (<Image
                             src={file}
                             alt={`image ${index}`}
                             width={imageDimensions?.width || 100}
@@ -60,7 +59,7 @@ export function FilePreview({
                                     height: img.naturalHeight,
                                 });
                             }}
-                        /> : (
+                        />) : (
                             <LiaFileCodeSolid className="h-20 w-20 text-green-800 "/>
                         )}
                         <button

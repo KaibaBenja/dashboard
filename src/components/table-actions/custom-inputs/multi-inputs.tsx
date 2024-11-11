@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 import { RiAddCircleLine } from "react-icons/ri";
+import { IoMdCloseCircle } from "react-icons/io";
+
 
 interface MultiInputProps {
     name: string;
@@ -46,11 +48,11 @@ export const MultiInput = ({ name, onChange, values }: MultiInputProps) => {
             </div>
             <div className="mt-2">
                 {values.map((value, index) => (
-                    <div key={index} className="flex items-center">
+                    <div key={index} className="flex items-center gap-2">
                         <span className="mr-2">{value}</span>
-                        <button type="button" onClick={() => handleRemove(index)} className="text-red-500">
-                            Quitar
-                        </button>
+                        <div onClick={() => handleRemove(index)} className="text-red-700 cursor-pointer hover:text-red-800">
+                            <IoMdCloseCircle className="w-6 h-6"/>
+                        </div>
                     </div>
                 ))}
             </div>

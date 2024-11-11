@@ -35,7 +35,7 @@ interface GameFormValues {
     game_window: string;
     game_images: File[];
     game_archive: File[];
-    game_questions?: string | File;
+    game_questions?: File[];
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
@@ -85,11 +85,7 @@ const schema: ObjectSchema<GameFormValues> = object({
     game_archive: mixed<File[]>()
         .required("Se debe ingresar al menos una imagen")
         .defined(),
-    game_questions: mixed<string | File>()
-        .test("is-csv", "El archivo debe ser un CSV", (value: any) => {
-            return !value || (value && value[0]?.type === "text/csv");
-        })
-        .optional(),
+    game_questions: mixed<File[]>().optional(),
 });
 
 export function GameForm({
@@ -124,16 +120,16 @@ export function GameForm({
             game_window: formAction ? formData?.game_window : "",
             game_images: [],
             game_archive: [],
-            game_questions: "",
+            game_questions: [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
 
-    const [imageFiles, setImageFiles] = useState<string[] | File[]>([]);
-    const [archiveFiles, setArchiveFiles] = useState<string[] | File[]>([]);
-    const [questionFile, setQuestionFile] = useState<string | File>("");
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [archiveFiles, setArchiveFiles] = useState<File[]>([]);
+    const [questionFile, setQuestionFile] = useState<File[]>([]);
     const autores = useWatch({ control, name: "autores", defaultValue: [] });
     const aporte_turismo = useWatch({
         control,
@@ -178,7 +174,7 @@ export function GameForm({
     const handleImageSelected = (files: File[]) => {
         if (files.length > 0) {
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setImageFiles(newFileURLs);
+            setImageFiles((prevFiles: any) => [...prevFiles, ...newFileURLs]);
             setValue("game_images", files, {
                 shouldValidate: true,
                 shouldTouch: true,
@@ -190,7 +186,7 @@ export function GameForm({
     const handleArchiveSelected = (files: File[]) => {
         if (files.length > 0) {
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setArchiveFiles(newFileURLs);
+            setArchiveFiles((prevFiles: any) => [...prevFiles, ...newFileURLs]);
             setValue("game_archive", files, {
                 shouldValidate: true,
                 shouldTouch: true,
@@ -199,18 +195,40 @@ export function GameForm({
         }
     };
 
-    const handleQuestionsSelected = (file: File) => {
-        const newFileURL = URL.createObjectURL(file);
-        setQuestionFile(newFileURL);
-        setValue("game_questions", file, {
+    const handleQuestionsSelected = (files: File[]) => {
+        if (files.length > 0) {
+            const newFileURLs = files.map((file) => URL.createObjectURL(file));
+            setQuestionFile((prevFiles: any) => [...prevFiles, ...newFileURLs]);
+            setValue("game_questions", files, {
+                shouldValidate: true,
+                shouldTouch: true,
+            });
+            console.log(files);
+        }
+    };
+
+    const handleFileRemoved = (index: number) => {
+        setArchiveFiles((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
+        setValue("game_archive", archiveFiles.filter((_: any, i: number) => i !== index), {
             shouldValidate: true,
             shouldTouch: true,
         });
-        console.log(file);
     };
 
-    const handleFileRemoved = (field: any) => {
-        setValue(field, "", { shouldValidate: true });
+    const handleImageRemoved = (index: number) => {
+        setImageFiles((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
+        setValue("game_images", imageFiles.filter((_: any, i: number) => i !== index), {
+            shouldValidate: true,
+            shouldTouch: true,
+        });
+    };
+
+    const handleQuestionRemoved = (index: number) => {
+        setQuestionFile((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
+        setValue("game_questions", imageFiles.filter((_: any, i: number) => i !== index), {
+            shouldValidate: true,
+            shouldTouch: true,
+        });
     };
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
@@ -256,8 +274,10 @@ export function GameForm({
                 formData.append("game_archive", file);
             });
 
-            if(data.game_questions) {
-                formData.append("game_questions", data.game_questions);
+            if (data.game_questions && data.game_questions?.length > 0) {
+                data.game_archive.forEach((file: File) => {
+                    formData.append("game_archive", file);
+                });
             }
 
             if (formAction && updateID) {
@@ -445,14 +465,9 @@ export function GameForm({
                 <FileUpload
                     files={imageFiles}
                     onFilesSelected={handleImageSelected}
-                    onFileRemoved={() => handleFileRemoved("game_images")}
+                    onFileRemoved={handleImageRemoved}
                     limit={4}
                 />
-                {errors?.game_images?.message && (
-                    <p className="text-red-700 p-2 font-semibold">
-                        {errors?.game_images?.message}
-                    </p>
-                )}
                 {inputMessageHelper(
                     "Las imagenes no contener nombres con caracteres especiales (* - _  / | # { } + = @ ¿ ? : % ! ¡)",
                     errors?.game_images?.message!
@@ -466,7 +481,7 @@ export function GameForm({
                     prev={false}
                     files={archiveFiles}
                     onFilesSelected={handleArchiveSelected}
-                    onFileRemoved={() => handleFileRemoved("game_archive")}
+                    onFileRemoved={handleFileRemoved}
                     limit={4}
                 />
                 {inputMessageHelper(
@@ -476,32 +491,15 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">Preguntas del juego:</label>
-                {/* <div className="w-full py-9 bg-gray-50 rounded-2xl border border-gray-300 border-dashed">
-                    <div className="grid gap-3">
-                        <div className="grid gap-2">
-                            <h4 className="text-center text-gray-900 text-sm font-medium leading-snug">
-                                Preguntas de los juegos
-                            </h4>
-                            <div className="flex items-center justify-center">
-                                <label>
-                                    <input type="file" {...register("game_questions")} hidden />
-                                    <div className="flex w-auto h-9 px-2 flex-col bg-[#66cc00] rounded-full shadow text-white text-xs font-semibold leading-4 items-center justify-center cursor-pointer focus:outline-none">
-                                        Agregar preguntas
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
                 <FileUpload
                     prev={false}
                     files={questionFile}
                     onFilesSelected={handleQuestionsSelected}
-                    onFileRemoved={() => handleFileRemoved("game_archive")}
-                    limit={4}
+                    onFileRemoved={handleQuestionRemoved}
+                    limit={1}
                 />
                 {inputMessageHelper(
-                    "Archivo CSV con la pregunta del juego (no es obligatorio este input)",
+                    "Archivo con las preguntas del juego (no es obligatorio este campo)",
                     errors?.game_images?.message!
                 )}
             </div>

@@ -4,11 +4,11 @@ import React from "react";
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
-    DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 interface InfoDialogProps {
     data: any;
@@ -44,18 +44,18 @@ export function InfoDialog({
                 <DialogFooter>
                     <Button 
                         onClick={handleEdit} 
-                        className="bg-green-800 hover:bg-green-700"
+                        className="flex items-center gap-2 bg-green-800 hover:bg-green-700"
                     >
-                        Editar
+                        Editar <FaEdit className="w-4 h-4" />
                     </Button>
                     <Button
-                        className='bg-red-800 hover:bg-red-700'
+                        className='items-center gap-2 bg-red-800 hover:bg-red-700'
                         onClick={() => {
                             takeCurrentId();
                             handleWarning(true);
                         }}
                     >
-                        Borrar
+                        Eliminar  <FaTrashAlt className="text-[#FFFFFF]"/>
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -17,5 +17,5 @@ export interface GameType {
   game_window: string;
   game_images: string[];
   game_archive: string[];
-  game_questions: string;
+  game_questions: string[];
 }
