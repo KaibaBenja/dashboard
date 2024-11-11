@@ -2,11 +2,13 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { StaticImageData } from "next/image";
+import { object, string, ObjectSchema, mixed } from 'yup';
+
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
-import { object, string, ObjectSchema, mixed } from 'yup';
 import { MemberType } from "@/types/MemberTypes";
 import { FormProps } from "@/types/formProps";
+
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
@@ -59,7 +61,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
     });
     const { toast } = useToast();
 
-    const [fileURLs, setFileURLs] = useState<any>([]);
+    const [fileURLs, setFileURLs] = useState<any[]>([]);
 
     const handleFilesSelected = (files: File[]) => {
         if (files.length > 0) {
@@ -87,10 +89,12 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                 formData.append("profile_pic", data.profile_pic);
             }
 
-            if (formAction) {
-                await UpdateData({ path: "members", data: formData }, updateID!);
-            } else {
-                await AddData({ path: "members", data: formData });
+            if(fileURLs.length === 1) {
+                if (formAction) {
+                    await UpdateData({ path: "members", data: formData }, updateID!);
+                } else {
+                    await AddData({ path: "members", data: formData });
+                }
             }
 
             onSubmitSuccess();
@@ -111,8 +115,8 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
     };
 
     const handleLoadingText = () => {
-        return isSubmitting 
-            ? (formAction ? "Editando Miembro" : "Agregando Miembro") 
+        return isSubmitting
+            ? (formAction ? "Editando Miembro" : "Agregando Miembro")
             : (formAction ? "Editar Miembro" : "Agregar Miembro");
     };
 

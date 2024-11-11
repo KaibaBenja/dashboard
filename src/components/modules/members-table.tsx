@@ -211,15 +211,15 @@ export function MembersTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {Boolean(currentMember?.profile_pic) &&
+                <div className='w-full flex justify-center'>
                     <Image
                         src={`${currentMember?.profile_pic}`}
                         alt="example"
                         width={150}
                         height={150}
-                        className='rounded-full w-[150px] h-[150px] self-center my-4'
+                        className='rounded-full w-[150px] h-[150px] flex justify-center my-4'
                     />
-                }
+                </div>
                 <h1 className='text-center font-bold text-xl'>{currentMember?.name_surname}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center gap-4 font-semibold'>
                     <div className='flex items-center gap-2'>

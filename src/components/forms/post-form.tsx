@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string, mixed, ObjectSchema } from 'yup';
 
@@ -16,13 +16,14 @@ import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { MultiInput } from "../table-actions/custom-inputs/multi-inputs";
 
 interface PostFormValues {
     fecha: string;
     titulo: string;
     categoria: string;
-    pre_descripcion: string;
-    descripcion: string;
+    pie_noticia: string;
+    parrafos_noticia: string[];
     blog_images: File[];
 }
 
@@ -36,10 +37,10 @@ const schema: ObjectSchema<PostFormValues> = object({
     fecha: string()
         .required("La fecha es requerida")
         .defined(),
-    pre_descripcion: string()
+    pie_noticia: string()
         .required("La pre descripción es requerida")
         .defined(),
-    descripcion: string()
+    parrafos_noticia: mixed<string[]>()
         .required("La descripción es requerida")
         .defined(),
     blog_images: mixed<File[]>()
@@ -48,34 +49,51 @@ const schema: ObjectSchema<PostFormValues> = object({
 });
 
 export function PostForm({ updateID, formAction, formData, onSubmitSuccess, handleCloseSheet }: FormProps<PostType>) {
-    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
+    const { register, handleSubmit, setValue, control, watch, formState: { errors, isSubmitting } } = useForm<PostFormValues>({
         defaultValues: {
             titulo: formAction ? formData?.titulo : "",
             categoria: formAction ? formData?.categoria : "",
             fecha: formAction ? formData?.fecha : "",
-            pre_descripcion: formAction ? formData?.pre_descripcion : "",
-            descripcion: formAction ? formData?.descripcion : "",
+            pie_noticia: formAction ? formData?.pie_noticia : "",
+            parrafos_noticia: formAction ? formData?.parrafos_noticia : [],
             blog_images: [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
-    const [fileUrls, setFileUrls] = useState<string[]>([]);
+    const [fileUrls, setFileUrls] = useState<any[]>([]);
+    const parrafos_noticia = useWatch({
+        control,
+        name: "parrafos_noticia",
+        defaultValue: [],
+    });
 
-    const handleFilesSelected = (files: File[]) => {
+    const handleArrayChange = (
+        fieldName: keyof PostFormValues,
+        values: string[]
+    ) => {
+        setValue(fieldName, values, { shouldValidate: true });
+    };
+
+    const handleImageSelected = (files: File[]) => {
         if (files.length > 0) {
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setFileUrls(newFileURLs);
-            setValue("blog_images", files, { shouldValidate: true, shouldTouch: true });
+            setFileUrls((prevFiles: any) => [...prevFiles, ...newFileURLs]);
+            setValue("blog_images", files, {
+                shouldValidate: true,
+                shouldTouch: true,
+            });
             console.log(files);
-            
         }
     };
 
-    const handleImageRemoved = () => {
-        setFileUrls([]);
-        setValue("blog_images", [], { shouldValidate: true });
+    const handleImageRemoved = (index: number) => {
+        setFileUrls((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
+        setValue("blog_images", fileUrls.filter((_: any, i: number) => i !== index), {
+            shouldValidate: true,
+            shouldTouch: true,
+        });
     };
 
     const onSubmit: SubmitHandler<PostFormValues> = async (data) => {
@@ -84,17 +102,21 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             formData.append("titulo", data.titulo);
             formData.append("categoria", data.categoria);
             formData.append("fecha", data.fecha);
-            formData.append("pre_descripcion", data.pre_descripcion);
-            formData.append("descripcion", data.descripcion);
+            formData.append("pie_noticia", data.pie_noticia);
+            data.parrafos_noticia.forEach((parrafo: string) => {
+                formData.append("parrafos_noticia", parrafo);
+            });
 
             data.blog_images.forEach((file: File) => {
                 formData.append("blog_images", file);
             });
 
-            if (formAction && updateID) {
-                await UpdateData({ path: "posts", data: formData }, updateID);
-            } else {
-                await AddData({ path: "posts", data: formData });
+            if (fileUrls.length <= 4) {
+                if (formAction && updateID) {
+                    await UpdateData({ path: "posts", data: formData }, updateID);
+                } else {
+                    await AddData({ path: "posts", data: formData });
+                }
             }
 
             onSubmitSuccess();
@@ -171,27 +193,32 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                     Pre Descripción <span className="font-bold text-red-800">*</span>
                 </label>
                 <textarea
-                    {...register("pre_descripcion")}
+                    {...register("pie_noticia")}
                     rows={4}
-                    
+
                     placeholder="Pie de la noticia"
                     className="w-full px-2 py-2 border rounded-lg resize-none focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("", errors?.pre_descripcion?.message!, errors?.pre_descripcion!)}
+                {inputMessageHelper("", errors?.pie_noticia?.message!, errors?.pie_noticia!)}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">
+                {/* <label className="block text-gray-700">
                     Descripción <span className="font-bold text-red-800">*</span>
-                </label>
-                <textarea
-                    {...register("descripcion")}
+                </label> */}
+                <MultiInput
+                    name="Parrafos de la Noticia:"
+                    values={parrafos_noticia}
+                    onChange={(val) => handleArrayChange("parrafos_noticia", val)}
+                />
+                {/* <textarea
+                    {...register("parrafos_noticia")}
                     rows={4}
                     placeholder="Noticia completa"
                     className="w-full px-2 py-2 border rounded-lg resize-none focus:outline-green-800"
                     disabled={isSubmitting}
-                />
-                {inputMessageHelper("", errors?.descripcion?.message!, errors?.descripcion!)}
+                /> */}
+                {inputMessageHelper("", errors?.parrafos_noticia?.message!)}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
@@ -199,7 +226,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 </label>
                 <FileUpload
                     files={fileUrls}
-                    onFilesSelected={handleFilesSelected}
+                    onFilesSelected={handleImageSelected}
                     onFileRemoved={handleImageRemoved}
                     limit={4}
                 />
