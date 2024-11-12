@@ -232,12 +232,14 @@ export function PostsTable() {
                         <MdOutlineTextFields className='w-5 h-5 text-green-800' />
                         <h3>Pre Descripción</h3>
                     </div>
-                    <span className='capitalize'>• {currentPost?.pre_descripcion}</span>
+                    <span className='capitalize'>• {currentPost?.pie_noticia}</span>
                     <div className='flex items-center gap-2 mt-2'>
                         <MdOutlineTextFields className='w-5 h-5 text-green-800' />
                         <h3>Descripción</h3>
                     </div>
-                    <span className='capitalize'>• {currentPost?.descripcion}</span>
+                    {currentPost?.parrafos_noticia.map((parrafo: string, index: number) => (
+                        <span key={index} className='capitalize'>• {parrafo}</span>
+                    ))}
                 </div>
             </InfoDialog>
         </div>

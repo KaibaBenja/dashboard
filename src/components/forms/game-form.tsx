@@ -273,17 +273,18 @@ export function GameForm({
             data.game_archive.forEach((file: File) => {
                 formData.append("game_archive", file);
             });
-
             if (data.game_questions && data.game_questions?.length > 0) {
                 data.game_archive.forEach((file: File) => {
-                    formData.append("game_archive", file);
+                    formData.append("game_questions", file);
                 });
             }
 
-            if (formAction && updateID) {
-                await UpdateData({ path: "games", data: formData }, updateID);
-            } else {
-                await AddData({ path: "games", data: formData });
+            if(imageFiles.length <= 4) {
+                if (formAction && updateID) {
+                    await UpdateData({ path: "games", data: formData }, updateID);
+                } else {
+                    await AddData({ path: "games", data: formData });
+                }
             }
 
             onSubmitSuccess();

@@ -3,7 +3,7 @@ export interface PostType {
     titulo: string;
     categoria: string;
     fecha: string;
-    pre_descripcion: string;
-    descripcion: string;
+    pie_noticia: string;
+    parrafos_noticia: string[];
     blog_images: string[];
 }
