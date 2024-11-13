@@ -41,7 +41,7 @@ export function InfoDialog({
         <Dialog open={openCard} onOpenChange={handleOpenCard}>
             <DialogContent className="no-scrollbar">
                 <div className="grid gap-4 py-4">{children}</div>
-                <DialogFooter>
+                <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-2">
                     <Button 
                         onClick={handleEdit} 
                         className="flex items-center gap-2 bg-green-800 hover:bg-green-700"

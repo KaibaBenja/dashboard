@@ -5,8 +5,8 @@ import { parseCookies } from "nookies";
 
 import { UserInfo } from "@/types/UserInfo";
 
-import { SectionViews } from "./section-cards";
-import { Info } from "./info";
+import { SectionViews } from "../components/home/section-cards";
+import { Info } from "../components/home/info";
 
 export function Home() {
     const cookies = parseCookies();
@@ -22,7 +22,7 @@ export function Home() {
     }, [cookies.role, cookies.token, cookies.user]);
 
     return (
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center mb-14">
             <h1 className="font-semibold text-4xl text-[#66cc00]">
                 Tablero dinamico del Gamecenter
             </h1>

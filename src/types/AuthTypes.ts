@@ -2,5 +2,5 @@ export interface AuthorityType {
     _id: string;
     name: string;
     puesto: string;
-    profile_pic: string | string[];
+    profile_pic: string;
 }

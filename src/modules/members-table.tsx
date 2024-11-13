@@ -8,13 +8,13 @@ import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
 import { MemberType } from '@/types/MemberTypes';
 
-import { MemberForm } from '../forms/members-form';
-import { ActionCell } from '../table-actions/actions-cell';
-import { SheetForm } from '../table-actions/sheet-form';
-import { InfoDialog } from '../table-actions/info-card';
+import { MemberForm } from '../components/forms/members-form';
+import { ActionCell } from '../components/table-actions/actions-cell';
+import { SheetForm } from '../components/table-actions/sheet-form';
+import { InfoDialog } from '../components/table-actions/info-card';
 
-import { EmptyTable } from '../handlers/empty-elements';
-import { Loading } from '../handlers/loading';
+import { EmptyTable } from '../components/handlers/empty-elements';
+import { Loading } from '../components/handlers/loading';
 
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
@@ -100,7 +100,7 @@ export function MembersTable() {
     const currentMembers: MemberType[] = members.slice(indexOfFirstMember, indexOfLastMember);
 
     return isTableEmpty ? (
-        <div className='flex flex-col'>
+        <div className='flex flex-col mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>

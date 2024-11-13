@@ -24,7 +24,7 @@ interface PostFormValues {
     categoria: string;
     pie_noticia: string;
     parrafos_noticia: string[];
-    blog_images: File[];
+    blog_images: (File | string)[];
 }
 
 const schema: ObjectSchema<PostFormValues> = object({
@@ -56,13 +56,14 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
             fecha: formAction ? formData?.fecha : "",
             pie_noticia: formAction ? formData?.pie_noticia : "",
             parrafos_noticia: formAction ? formData?.parrafos_noticia : [],
-            blog_images: [],
+            blog_images: formAction ? formData?.blog_images : [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
-    const [fileUrls, setFileUrls] = useState<any[]>([]);
+    const blog_images: string[] = formAction ? formData?.blog_images! : [];
+    const [fileUrls, setFileUrls] = useState<any[]>(blog_images);
     const parrafos_noticia = useWatch({
         control,
         name: "parrafos_noticia",
@@ -107,7 +108,7 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 formData.append("parrafos_noticia", parrafo);
             });
 
-            data.blog_images.forEach((file: File) => {
+            data.blog_images.forEach((file: File | string) => {
                 formData.append("blog_images", file);
             });
 
@@ -203,21 +204,11 @@ export function PostForm({ updateID, formAction, formData, onSubmitSuccess, hand
                 {inputMessageHelper("", errors?.pie_noticia?.message!, errors?.pie_noticia!)}
             </div>
             <div className="mb-4">
-                {/* <label className="block text-gray-700">
-                    Descripción <span className="font-bold text-red-800">*</span>
-                </label> */}
                 <MultiInput
                     name="Parrafos de la Noticia:"
                     values={parrafos_noticia}
                     onChange={(val) => handleArrayChange("parrafos_noticia", val)}
                 />
-                {/* <textarea
-                    {...register("parrafos_noticia")}
-                    rows={4}
-                    placeholder="Noticia completa"
-                    className="w-full px-2 py-2 border rounded-lg resize-none focus:outline-green-800"
-                    disabled={isSubmitting}
-                /> */}
                 {inputMessageHelper("", errors?.parrafos_noticia?.message!)}
             </div>
             <div className="mb-4">

@@ -44,10 +44,10 @@ export function LoginForm() {
     };
 
     return (
-        <div className='flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8'>
+        <div className='flex min-h-screen items-center justify-center bg-background py-12 px-6 lg:px-8'>
             <form onSubmit={handleSubmit(onSubmit)} className='w-full max-w-sm space-y-6'>
                 <div className="space-y-2 text-center">
-                    <h1 className="text-4xl text-[#66cc00] font-bold">Dashboard Login</h1>
+                    <h1 className="text-4xl text-[#66cc00] font-bold">Tablero GameCenter Login</h1>
                 </div>
                 <div className="space-y-4">
                     <div className="space-y-2">

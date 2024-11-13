@@ -33,9 +33,9 @@ interface GameFormValues {
     estilo: string;
     genero: string[];
     game_window: string;
-    game_images: File[];
-    game_archive: File[];
-    game_questions?: File[];
+    game_images: (File | string)[];
+    game_archive: (File | string)[];
+    game_questions?: (File | string)[];
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
@@ -118,18 +118,21 @@ export function GameForm({
             estilo: formAction ? formData?.estilo : "",
             genero: formAction ? formData?.genero : [],
             game_window: formAction ? formData?.game_window : "",
-            game_images: [],
-            game_archive: [],
-            game_questions: [],
+            game_images: formAction ? formData?.game_images! : [],
+            game_archive: formAction ? formData?.game_archive! : [],
+            game_questions: formAction ? formData?.game_questions! : [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
 
-    const [imageFiles, setImageFiles] = useState<File[]>([]);
-    const [archiveFiles, setArchiveFiles] = useState<File[]>([]);
-    const [questionFile, setQuestionFile] = useState<File[]>([]);
+    const game_images: string[] = formAction ? formData?.game_images! : [];
+    const game_archive: string[] = formAction ? formData?.game_archive! : [];
+    const game_questions: string[] = formAction ? formData?.game_questions! : [];
+    const [imageFiles, setImageFiles] = useState<any[]>(game_images);
+    const [archiveFiles, setArchiveFiles] = useState<any[]>(game_archive);
+    const [questionFile, setQuestionFile] = useState<any[]>(game_questions);
     const autores = useWatch({ control, name: "autores", defaultValue: [] });
     const aporte_turismo = useWatch({
         control,
@@ -267,19 +270,19 @@ export function GameForm({
                 formData.append("genero", genero);
             });
             formData.append("game_window", data.game_window);
-            data.game_images.forEach((image: File) => {
+            data.game_images.forEach((image: File | string) => {
                 formData.append("game_images", image);
             });
-            data.game_archive.forEach((file: File) => {
+            data.game_archive.forEach((file: File | string) => {
                 formData.append("game_archive", file);
             });
             if (data.game_questions && data.game_questions?.length > 0) {
-                data.game_archive.forEach((file: File) => {
+                data.game_archive.forEach((file: File | string) => {
                     formData.append("game_questions", file);
                 });
             }
 
-            if(imageFiles.length <= 4) {
+            if (imageFiles.length <= 4) {
                 if (formAction && updateID) {
                     await UpdateData({ path: "games", data: formData }, updateID);
                 } else {

@@ -60,8 +60,8 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
         mode: "onChange",
     });
     const { toast } = useToast();
-
-    const [fileURLs, setFileURLs] = useState<any[]>([]);
+    const images: string = formAction ? formData?.profile_pic! : "";
+    const [fileURLs, setFileURLs] = useState<any[] | string>(images);
 
     const handleFilesSelected = (files: File[]) => {
         if (files.length > 0) {
@@ -89,7 +89,7 @@ export function MemberForm({ updateID, formAction, formData, onSubmitSuccess, ha
                 formData.append("profile_pic", data.profile_pic);
             }
 
-            if(fileURLs.length === 1) {
+            if(fileURLs?.length === 1) {
                 if (formAction) {
                     await UpdateData({ path: "members", data: formData }, updateID!);
                 } else {
