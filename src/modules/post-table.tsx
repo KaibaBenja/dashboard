@@ -7,15 +7,15 @@ import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
 import { PostType } from '@/types/PostTypes';
 
-import { PostForm } from '../forms/post-form';
-import { ActionCell } from '../table-actions/actions-cell';
-import { SheetForm } from '../table-actions/sheet-form';
-import { InfoDialog } from '../table-actions/info-card';
-import { CarouselImage } from '../table-actions/carousel-image';
+import { PostForm } from '../components/forms/post-form';
+import { ActionCell } from '../components/table-actions/actions-cell';
+import { SheetForm } from '../components/table-actions/sheet-form';
+import { InfoDialog } from '../components/table-actions/info-card';
+import { CarouselImage } from '../components/table-actions/carousel-image';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
-import { EmptyTable } from '../handlers/empty-elements';
-import { Loading } from '../handlers/loading';
+import { EmptyTable } from '../components/handlers/empty-elements';
+import { Loading } from '../components/handlers/loading';
 
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck } from 'react-icons/fa';
@@ -101,7 +101,7 @@ export function PostsTable() {
     const currentPosts: PostType[] = posts.slice(indexOfFirstMember, indexOfLastMember);
 
     return isTableEmpty ? (
-        <div className='flex flex-col'>
+        <div className='flex flex-col mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>

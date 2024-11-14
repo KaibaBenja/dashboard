@@ -52,7 +52,8 @@ export function AuthorityForm({ updateID, formAction, formData, onSubmitSuccess,
     });
 
     const { toast } = useToast();
-    const [fileURLs, setFileURLs] = useState<any[]>([]);
+    const images: string = formAction ? formData?.profile_pic! : "";
+    const [fileURLs, setFileURLs] = useState<any[] | string>(images);
 
     const handleFilesSelected = (files: File[]) => {
         if (files.length > 0) {

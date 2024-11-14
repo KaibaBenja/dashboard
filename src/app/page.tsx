@@ -1,4 +1,4 @@
-import { Home } from "@/components/modules/home/home";
+import { Home } from "@/modules/home";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 import { AppContextProvider } from "@/context/AppContext";

@@ -7,15 +7,15 @@ import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
 import { GameType } from '@/types/GameTypes';
 
-import { GameForm } from '../forms/game-form';
-import { ActionCell } from '../table-actions/actions-cell';
-import { SheetForm } from '../table-actions/sheet-form';
-import { InfoDialog } from '../table-actions/info-card';
-import { CarouselImage } from '../table-actions/carousel-image';
+import { GameForm } from '../components/forms/game-form';
+import { ActionCell } from '../components/table-actions/actions-cell';
+import { SheetForm } from '../components/table-actions/sheet-form';
+import { InfoDialog } from '../components/table-actions/info-card';
+import { CarouselImage } from '../components/table-actions/carousel-image';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
-import { EmptyTable } from '../handlers/empty-elements';
-import { Loading } from '../handlers/loading';
+import { EmptyTable } from '../components/handlers/empty-elements';
+import { Loading } from '../components/handlers/loading';
 
 import { IoAddCircleSharp, IoPeople } from 'react-icons/io5';
 import { FaArrowCircleLeft, FaArrowCircleRight, FaListUl } from 'react-icons/fa';
@@ -101,7 +101,7 @@ export function GameTable() {
     const currentGames: GameType[] = games.slice(indexOfFirstGame, indexOfLastGame);
 
     return isTableEmpty ? (
-        <div className='flex flex-col'>
+        <div className='flex flex-col mb-14'>
             {isTableEmpty
                 ? <div className='flex flex-col'>
                     <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onAddClick}>

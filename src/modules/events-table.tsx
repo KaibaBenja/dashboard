@@ -1,66 +1,66 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
-import { DeleteData } from '@/queries/DeleteData';
-import { AuthorityType } from '@/types/AuthTypes';
+import { DeleteData } from "@/queries/DeleteData";
+import { EventType } from '@/types/EventTypes';
 
-import { AuthorityForm } from '../forms/authorities-form';
-import { ActionCell } from '../table-actions/actions-cell';
-import { SheetForm } from '../table-actions/sheet-form';
-import { InfoDialog } from '../table-actions/info-card';
+import { EventForm } from '../components/forms/events-form';
+import { ActionCell } from '../components/table-actions/actions-cell';
+import { SheetForm } from '../components/table-actions/sheet-form';
+import { InfoDialog } from '../components/table-actions/info-card';
 
-import { EmptyTable } from '../handlers/empty-elements';
-import { Loading } from '../handlers/loading';
+import { EmptyTable } from '../components/handlers/empty-elements';
+import { Loading } from '../components/handlers/loading';
 
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaBriefcase } from 'react-icons/fa';
+import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { MdOutlineTextFields, MdOutlineEventNote } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 
-export function AuthoritiesTable() {
-    const [authorities, setAuthorities] = useState<AuthorityType[]>([]);
+
+export function EventsTable() {
+    const [events, setEvents] = useState<EventType[]>([]);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [warning, setWarning] = useState<boolean>(false);
-    const [currentAuthorityId, setCurrentAuthorityId] = useState<string>("");
+    const [currentEventId, setCurrentEventId] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
-    const [currentAuthority, setCurrentAuthority] = useState<AuthorityType | null>(null);
+    const [currentEvent, setCurrentEvent] = useState<EventType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
     const itemsPerPage: number = 5;
-    const isTableEmpty = Boolean(authorities.length > 0);
+    const isTableEmpty = Boolean(events.length > 0);
 
     useEffect(() => {
-        async function loadAuthorities() {
+        async function loadEvents() {
             try {
-                const updateAuthorities = await FetchAllData("authorities");
-                setAuthorities(updateAuthorities);
+                const updateEvents = await FetchAllData("events");
+                setEvents(updateEvents);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
             }
         }
 
-        loadAuthorities();
+        loadEvents();
     }, []);
 
     function onAddClick() {
         setIsOpen(true);
         setActionForm(false);
-        setCurrentAuthority(null);
+        setCurrentEvent(null);
     }
 
-    function onEditClick(authority: AuthorityType) {
+    function onEditClick(event: EventType) {
         setIsOpen(true);
         setActionForm(true);
-        setCurrentAuthority(authority);
-        setCurrentAuthorityId(authority?._id)
+        setCurrentEvent(event);
     }
 
-    function onViewClick(authority: AuthorityType) {
-        setCurrentAuthority(authority);
+    function onViewClick(event: EventType) {
+        setCurrentEvent(event);
         setInfoDialogOpen(true);
     }
 
@@ -75,30 +75,30 @@ export function AuthoritiesTable() {
         }, 300);
     }
 
-    async function handleDelete(authorityId: string) {
+    async function handleDelete(eventId: string) {
         try {
-            await DeleteData("authorities", authorityId);
-            setAuthorities(prevAuthority => prevAuthority.filter(authority => authority._id !== authorityId));
+            await DeleteData("events", eventId);
+            setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
         } catch (error) {
-            console.error('Failed to delete authority:', error);
+            console.error('Failed to delete event:', error);
         }
     }
 
-    async function refreshAuthorities() {
+    async function refreshPosts() {
         try {
-            const updatedAuthorities = await FetchAllData("authorities");
-            setAuthorities(updatedAuthorities);
+            const updateEvents = await FetchAllData("events");
+            setEvents(updateEvents);
         } catch (error) {
-            console.error('Failed to fetch authority:', error);
+            console.error('Failed to fetch event:', error);
         }
     }
 
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
-    const currentAuthorites: AuthorityType[] = authorities.slice(indexOfFirstMember, indexOfLastMember);
+    const currentEvents: EventType[] = events.slice(indexOfFirstMember, indexOfLastMember);
 
     return isTableEmpty ? (
-        <div className='flex flex-col'>
+        <div className='flex flex-col mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>
@@ -110,29 +110,33 @@ export function AuthoritiesTable() {
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
                                         <TableHead className='table-cell'>ID</TableHead>
-                                        <TableHead className="table-cell">Nombre</TableHead>
-                                        <TableHead className="hidden md:table-cell">Puesto</TableHead>
+                                        <TableHead className="table-cell">Título</TableHead>
+                                        <TableHead className="hidden md:table-cell">Dirección</TableHead>
+                                        <TableHead className="hidden md:table-cell">Fecha</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {currentAuthorites.map((authority: AuthorityType, index: number) => (
-                                        <TableRow key={authority?._id} className='flex flex-col md:flex-row md:table-row'>
+                                    {currentEvents.map((event: EventType, index: number) => (
+                                        <TableRow key={event?._id} className='flex flex-col md:flex-row md:table-row'>
                                             <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{authority?._id}
+                                                <span className='block md:hidden'>Id: </span>{event?._id}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Titulo: </span>{authority?.name}
+                                                <span className='block md:hidden'>Título: </span>{event?.event_name}
+                                            </TableCell>
+                                            <TableCell className="flex md:table-cell md:items-center gap-2">
+                                                <span className='block md:hidden'>Dirección: </span>{event?.direccion}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Fecha: </span>{authority?.puesto}
+                                                <span className='block md:hidden'>Fecha: </span>{event?.fecha}
                                             </TableCell>
                                             <ActionCell
-                                                data={authority}
-                                                index={`Autoridad ${index + 1}`}
-                                                closeWarning={warning && currentAuthorityId === authority?._id}
+                                                data={event}
+                                                index={`Evento ${index + 1}`}
+                                                closeWarning={warning && currentEventId === event?._id}
                                                 handleCloseWarning={handleWarning}
-                                                takeCurrentId={() => setCurrentAuthorityId(authority?._id)}
-                                                currentId={currentAuthorityId}
+                                                takeCurrentId={() => setCurrentEventId(event?._id)}
+                                                currentId={currentEventId}
                                                 deleteActionCell={handleDelete}
                                                 editActionCell={onEditClick}
                                                 viewActionCell={onViewClick}
@@ -145,12 +149,12 @@ export function AuthoritiesTable() {
                     </div>
                 ) : (
                     <EmptyTable
-                        tableName='Autoridades'
-                        Icon={HiIdentification}
+                        tableName='Eventos'
+                        Icon={MdOutlineEventNote}
                         handleClick={onAddClick}
                     />
                 )}
-            {Boolean(authorities.length > 5) &&
+            {Boolean(events.length > 5) &&
                 <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
                     <button
                         disabled={currentPage === 1}
@@ -163,34 +167,33 @@ export function AuthoritiesTable() {
                         <FaArrowCircleLeft className='w-6 h-6' />
                     </button>
                     <span className='font-semibold '>
-                        {currentPage} - {Math.ceil(authorities.length / itemsPerPage)}
+                        {currentPage} - {Math.ceil(events.length / itemsPerPage)}
                     </span>
                     <button
-                        disabled={currentPage === Math.ceil(authorities.length / itemsPerPage)}
+                        disabled={currentPage === Math.ceil(events.length / itemsPerPage)}
                         onClick={() => setCurrentPage(currentPage + 1)}
                         className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(authorities.length / itemsPerPage)),
-                            "text-green-800": !Boolean(currentPage === Math.ceil(authorities.length / itemsPerPage))
+                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(events.length / itemsPerPage)),
+                            "text-green-800": !Boolean(currentPage === Math.ceil(events.length / itemsPerPage))
                         })}
                     >
                         <FaArrowCircleRight className='w-6 h-6' />
                     </button>
                 </div>}
             <SheetForm
-                title='Formulario de Autoridades'
+                title='Formulario de Post'
                 descripcion={actionForm
-                    ? `Editar Autoridad, cambiar los campos que se desea`
-                    : "Agregar Nueva Autoridad, todos los campos son obligatorios"
+                    ? `Editar Post, cambiar los campos que se desea`
+                    : "Agregar Nuevo Post, todos los campos son obligatorios"
                 }
                 isOpen={isOpen}
                 handleOpen={handleCloseForm}
             >
-                <AuthorityForm
-                    updateID={currentAuthorityId}
+                <EventForm
                     formAction={actionForm}
-                    formData={currentAuthority}
+                    formData={currentEvent}
                     handleCloseSheet={handleCloseForm}
-                    onSubmitSuccess={refreshAuthorities}
+                    onSubmitSuccess={refreshPosts}
                 />
             </SheetForm>
             <InfoDialog
@@ -198,30 +201,34 @@ export function AuthoritiesTable() {
                 openWarning={warning}
                 handleOpenCard={() => setInfoDialogOpen(false)}
                 handleWarning={handleWarning}
-                data={currentAuthority}
-                takeCurrentId={() => setCurrentAuthorityId(currentAuthority?._id!)}
-                currentId={currentAuthorityId}
+                data={currentEvent}
+                takeCurrentId={() => setCurrentEventId(currentEvent?._id!)}
+                currentId={currentEventId}
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {Boolean(currentAuthority?.profile_pic[0]) &&
-                    <Image
-                        src={currentAuthority?.profile_pic[0]!}
-                        alt="example"
-                        width={150}
-                        height={150}
-                        className='rounded-full w-[150px] h-[150px] self-center my-4'
-                    />
-                }
-                <h1 className='text-start font-bold text-xl'>{currentAuthority?.name}</h1>
+                <h1 className='text-start font-bold text-xl'>{currentEvent?.event_name}</h1>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>
                         <HiIdentification className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentAuthority?._id}</span>
+                        <span className='capitalize'>{currentEvent?._id}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
-                        <FaBriefcase className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentAuthority?.puesto}</span>
+                        <FaMapMarkerAlt className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentEvent?.direccion}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <MdOutlineTextFields className='w-5 h-5 text-green-800' />
+                        <h3>Descripción</h3>
+                    </div>
+                    <span className='capitalize'>• {currentEvent?.descripcion}</span>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaCalendarCheck className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentEvent?.fecha}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaClock className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentEvent?.horario}</span>
                     </div>
                 </div>
             </InfoDialog>

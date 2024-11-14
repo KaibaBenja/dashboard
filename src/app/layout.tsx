@@ -8,8 +8,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Dashboard",
-    description: "Tablero dinamico para el manejo del gamecenter",
+    title: "Tablero GameCenter",
+    description: "Tablero dinamico para el manejo del GameCenter",
 };
 
 export default function RootLayout({
