@@ -126,13 +126,10 @@ export function GameForm({
         mode: "onChange",
     });
     const { toast } = useToast();
-
-    const game_images: string[] = formAction ? formData?.game_images! : [];
-    const game_archive: string[] = formAction ? formData?.game_archive! : [];
-    const game_questions: string[] = formAction ? formData?.game_questions! : [];
-    const [imageFiles, setImageFiles] = useState<any[]>(game_images);
-    const [archiveFiles, setArchiveFiles] = useState<any[]>(game_archive);
-    const [questionFile, setQuestionFile] = useState<any[]>(game_questions);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
+    const [imagesPreview, setImagesPreview] = useState<string[]>([]);
+    const [archiveFiles, setArchiveFiles] = useState<File[]>([]);
+    const [questionFile, setQuestionFile] = useState<File[]>([]);
     const autores = useWatch({ control, name: "autores", defaultValue: [] });
     const aporte_turismo = useWatch({
         control,
@@ -177,7 +174,8 @@ export function GameForm({
     const handleImageSelected = (files: File[]) => {
         if (files.length > 0) {
             const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setImageFiles((prevFiles: any) => [...prevFiles, ...newFileURLs]);
+            setImagesPreview((prevFiles: any) => [...prevFiles, ...newFileURLs]);
+            setImageFiles((prevFiles: any) => [...prevFiles, ...files]);
             setValue("game_images", files, {
                 shouldValidate: true,
                 shouldTouch: true,
@@ -188,8 +186,7 @@ export function GameForm({
 
     const handleArchiveSelected = (files: File[]) => {
         if (files.length > 0) {
-            const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setArchiveFiles((prevFiles: any) => [...prevFiles, ...newFileURLs]);
+            setArchiveFiles((prevFiles: any) => [...prevFiles, ...files]);
             setValue("game_archive", files, {
                 shouldValidate: true,
                 shouldTouch: true,
@@ -200,8 +197,7 @@ export function GameForm({
 
     const handleQuestionsSelected = (files: File[]) => {
         if (files.length > 0) {
-            const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setQuestionFile((prevFiles: any) => [...prevFiles, ...newFileURLs]);
+            setQuestionFile((prevFiles: any) => [...prevFiles, ...files]);
             setValue("game_questions", files, {
                 shouldValidate: true,
                 shouldTouch: true,
@@ -270,17 +266,16 @@ export function GameForm({
                 formData.append("genero", genero);
             });
             formData.append("game_window", data.game_window);
-            data.game_images.forEach((image: File | string) => {
+
+            imageFiles.forEach((image: File) => {
                 formData.append("game_images", image);
             });
-            data.game_archive.forEach((file: File | string) => {
+            archiveFiles.forEach((file: File) => {
                 formData.append("game_archive", file);
             });
-            if (data.game_questions && data.game_questions?.length > 0) {
-                data.game_archive.forEach((file: File | string) => {
-                    formData.append("game_questions", file);
-                });
-            }
+            questionFile?.forEach((file: File) => {
+                formData.append("game_questions", file);
+            });
 
             if (imageFiles.length <= 4) {
                 if (formAction && updateID) {
@@ -467,7 +462,7 @@ export function GameForm({
                     Imágenes del juego: <span className="font-bold text-red-800">*</span>
                 </label>
                 <FileUpload
-                    files={imageFiles}
+                    files={imagesPreview}
                     onFilesSelected={handleImageSelected}
                     onFileRemoved={handleImageRemoved}
                     limit={4}
