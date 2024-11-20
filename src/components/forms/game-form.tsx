@@ -216,6 +216,7 @@ export function GameForm({
 
     const handleImageRemoved = (index: number) => {
         setImageFiles((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
+        setImagesPreview((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
         setValue("game_images", imageFiles.filter((_: any, i: number) => i !== index), {
             shouldValidate: true,
             shouldTouch: true,
