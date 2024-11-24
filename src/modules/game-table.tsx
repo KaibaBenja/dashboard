@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
@@ -13,12 +12,13 @@ import { SheetForm } from '../components/table-actions/sheet-form';
 import { InfoDialog } from '../components/table-actions/info-card';
 import { CarouselImage } from '../components/table-actions/carousel-image';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-
 import { EmptyTable } from '../components/handlers/empty-elements';
 import { Loading } from '../components/handlers/loading';
+import { Pagination } from '@/components/table-actions/paginado';
+import { useToast } from '@/components/ui/use-toast';
 
 import { IoAddCircleSharp, IoPeople } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaListUl } from 'react-icons/fa';
+import { FaListUl } from 'react-icons/fa';
 import { IoGameController } from "react-icons/io5";
 import { HiIdentification } from 'react-icons/hi';
 import { MdOutlineTextFields, MdStyle } from 'react-icons/md';
@@ -34,16 +34,21 @@ export function GameTable() {
     const [currentGame, setCurrentGame] = useState<GameType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { toast } = useToast();
     const itemsPerPage: number = 5;
     const isTableEmpty = Boolean(games.length > 0);
 
     useEffect(() => {
         async function loadGames() {
+            setIsLoading(true);
             try {
                 const updatedGames = await FetchAllData("games");
                 setGames(updatedGames);
             } catch (error) {
                 console.error('Failed to fetch games:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -82,8 +87,20 @@ export function GameTable() {
         try {
             await DeleteData("games", gameId);
             setGames(prevGames => prevGames.filter(game => game._id !== gameId));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El juego ${gameId} fue eliminado`,
+            });
         } catch (error) {
             console.error('Failed to delete game:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${gameId} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
         }
     }
 
@@ -100,8 +117,8 @@ export function GameTable() {
     const indexOfFirstGame: number = indexOfLastGame - itemsPerPage;
     const currentGames: GameType[] = games.slice(indexOfFirstGame, indexOfLastGame);
 
-    return isTableEmpty ? (
-        <div className='flex flex-col mb-14'>
+    return !isLoading ? (
+        <div className='flex flex-col justify-between h-full mb-14'>
             {isTableEmpty
                 ? <div className='flex flex-col'>
                     <button className="flex items-center self-end gap-2 text-[#FFFFFF] rounded-lg px-4 py-2 mb-4 bg-green-800 hover:bg-green-700" onClick={onAddClick}>
@@ -155,32 +172,14 @@ export function GameTable() {
                     handleClick={onAddClick}
                 />
             }
-            {Boolean(games.length >= 5) &&
-                <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === 1),
-                            "text-green-800": !Boolean(currentPage === 1)
-                        })}
-                    >
-                        <FaArrowCircleLeft className='w-6 h-6' />
-                    </button>
-                    <span className='font-semibold '>
-                        {currentPage} - {Math.ceil(games.length / itemsPerPage)}
-                    </span>
-                    <button
-                        disabled={currentPage === Math.ceil(games.length / itemsPerPage)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(games.length / itemsPerPage)),
-                            "text-green-800": !Boolean(currentPage === Math.ceil(games.length / itemsPerPage))
-                        })}
-                    >
-                        <FaArrowCircleRight className='w-6 h-6' />
-                    </button>
-                </div>}
+            {games.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={games.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
             <SheetForm
                 title='Formulario de Juego'
                 descripcion={actionForm

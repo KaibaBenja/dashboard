@@ -79,12 +79,41 @@ const schema: ObjectSchema<GameFormValues> = object({
     game_window: string().required(
         "Se requiere colocar la direccion del juego (Horizontal/Vertical)"
     ),
-    game_images: mixed<File[]>()
-        .required("Se debe ingresar al menos una imagen")
-        .defined(),
-    game_archive: mixed<File[]>()
-        .required("Se debe ingresar al menos una imagen")
-        .defined(),
+    game_images: array()
+        .of(
+            mixed<File>()
+                .required("Debes subir una imagen")
+                .test(
+                    "is-valid-file",
+                    "El archivo debe ser una imagen válida (JPEG, JPG, PNG)",
+                    (file) =>
+                        file &&
+                        ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
+                )
+                .test(
+                    "is-valid-size",
+                    "El archivo no debe superar los 3MB",
+                    (file) => file && file.size <= 3 * 1024 * 1024
+                )
+                .test(
+                    "is-valid-name",
+                    "El archivo no debe contener caracteres especiales en el nombre",
+                    (file) => file && /^[a-zA-Z0-9.]+$/.test(file.name)
+                )
+        )
+        .min(1, "Debes subir al menos una imagen")
+        .required("Este campo es obligatorio"),
+    game_archive: array()
+        .of(
+            mixed<File>()
+                .required("Debes subir una archivo")
+                .test(
+                    "is-valid-name",
+                    "El archivo no debe contener caracteres especiales en el nombre",
+                    (file) => file && /^[a-zA-Z0-9.]+$/.test(file.name)
+                )
+        )
+        .required("Este campo es obligatorio"),
     game_questions: mixed<File[]>().optional(),
 });
 
@@ -207,28 +236,48 @@ export function GameForm({
     };
 
     const handleFileRemoved = (index: number) => {
-        setArchiveFiles((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
-        setValue("game_archive", archiveFiles.filter((_: any, i: number) => i !== index), {
-            shouldValidate: true,
-            shouldTouch: true,
-        });
+        setArchiveFiles((prevFiles: any) =>
+            prevFiles.filter((_: any, i: number) => i !== index)
+        );
+        setValue(
+            "game_archive",
+            archiveFiles.filter((_: any, i: number) => i !== index),
+            {
+                shouldValidate: true,
+                shouldTouch: true,
+            }
+        );
     };
 
     const handleImageRemoved = (index: number) => {
-        setImageFiles((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
-        setImagesPreview((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
-        setValue("game_images", imageFiles.filter((_: any, i: number) => i !== index), {
-            shouldValidate: true,
-            shouldTouch: true,
-        });
+        setImageFiles((prevFiles: any) =>
+            prevFiles.filter((_: any, i: number) => i !== index)
+        );
+        setImagesPreview((prevFiles: any) =>
+            prevFiles.filter((_: any, i: number) => i !== index)
+        );
+        setValue(
+            "game_images",
+            imageFiles.filter((_: any, i: number) => i !== index),
+            {
+                shouldValidate: true,
+                shouldTouch: true,
+            }
+        );
     };
 
     const handleQuestionRemoved = (index: number) => {
-        setQuestionFile((prevFiles: any) => prevFiles.filter((_: any, i: number) => i !== index));
-        setValue("game_questions", imageFiles.filter((_: any, i: number) => i !== index), {
-            shouldValidate: true,
-            shouldTouch: true,
-        });
+        setQuestionFile((prevFiles: any) =>
+            prevFiles.filter((_: any, i: number) => i !== index)
+        );
+        setValue(
+            "game_questions",
+            imageFiles.filter((_: any, i: number) => i !== index),
+            {
+                shouldValidate: true,
+                shouldTouch: true,
+            }
+        );
     };
 
     const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
@@ -323,19 +372,34 @@ export function GameForm({
                 <input
                     {...register("titulo")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Ingresa el título del juego"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("", errors?.autores?.message!)}
+                {inputMessageHelper("", errors?.titulo?.message!)}
             </div>
+
             <div className="mb-4">
                 <MultiInput
                     name="Autor/es:"
                     values={autores}
                     onChange={(val) => handleArrayChange("autores", val)}
+                    placeholderText="Ejemplo: Juan Pérez, María López"
                 />
-                {inputMessageHelper("Poner autor o autores del proyecto", errors?.autores?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>1. Especifica los nombres completos de los autores del proyecto.</p>
+                        <p>
+                            {formAction &&
+                                "2. En el caso de edición, vuelve a ingresar los datos que deseas mantener y añade los nuevos."}
+                        </p>
+                    </div>,
+                    errors?.autores?.message!,
+                    errors?.autores
+                )}
             </div>
+
             <div className="mb-4">
                 <label className="block text-gray-700">
                     Sinopsis: <span className="font-bold text-red-800">*</span>
@@ -343,18 +407,31 @@ export function GameForm({
                 <input
                     {...register("sinopsis")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="Describe brevemente el juego"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Sinopsis del juego", errors?.sinopsis?.message!)}
+                {inputMessageHelper("Proporciona una descripción general del juego.", errors?.sinopsis?.message!)}
             </div>
+
             <div className="mb-4">
                 <MultiInput
                     name="Aporte al Turismo:"
                     values={aporte_turismo}
                     onChange={(val) => handleArrayChange("aporte_turismo", val)}
                 />
-                {inputMessageHelper("Agregar los aportes del informe", errors?.aporte_turismo?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>1. Menciona cómo el juego beneficia al turismo.</p>
+                        <p>
+                            {formAction &&
+                                "2. En el caso de edición, vuelve a ingresar los datos que deseas mantener y añade los nuevos."}
+                        </p>
+                    </div>,
+                    errors?.aporte_turismo?.message!,
+                    errors?.aporte_turismo
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -362,7 +439,20 @@ export function GameForm({
                     values={aporte_cultura}
                     onChange={(val) => handleArrayChange("aporte_cultura", val)}
                 />
-                {inputMessageHelper("Agregar los aportes del informe", errors?.aporte_cultura?.message!)}
+                {inputMessageHelper(<div className="flex flex-col gap-2 mt-2">
+                    ESPECIFICACIONES:
+                    <p>
+                        1. Agregar los aportes del informe.
+                        <br />
+                    </p>
+                    <p>
+                        {formAction &&
+                            "2. En caso de querer editar los aportes del juego a la cultura se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                    </p>
+                </div>,
+                    errors?.aporte_cultura?.message!,
+                    errors?.aporte_cultura
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -370,7 +460,21 @@ export function GameForm({
                     values={aporte_juventud}
                     onChange={(val) => handleArrayChange("aporte_juventud", val)}
                 />
-                {inputMessageHelper("Agregar los aportes del informe", errors?.aporte_juventud?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. Agregar los aportes del informe.
+                            <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "2. En caso de querer editar los aportes del juego a la juventud se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                        </p>
+                    </div>,
+                    errors?.aporte_juventud?.message!,
+                    errors?.aporte_juventud
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -378,7 +482,21 @@ export function GameForm({
                     values={aporte_educacion}
                     onChange={(val) => handleArrayChange("aporte_educacion", val)}
                 />
-                {inputMessageHelper("Agregar los aportes del informe", errors?.aporte_educacion?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. Agregar los aportes del informe.
+                            <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "2. En caso de querer editar los aportes del juego a la educación se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                        </p>
+                    </div>,
+                    errors?.aporte_educacion?.message!,
+                    errors?.aporte_educacion
+                )}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
@@ -387,20 +505,29 @@ export function GameForm({
                 <input
                     {...register("objetivo")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    placeholder="¿Cuáles son los objetivos del juego?"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Poner el objetivo del juego", errors?.objetivo?.message!)}
+                {inputMessageHelper(
+                    "Poner el objetivo del juego",
+                    errors?.objetivo?.message!
+                )}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Desarrollo:</label>
+                <label className="block text-gray-700">
+                    Desarrollo: <span className="font-bold text-red-800">*</span>
+                </label>
                 <input
                     {...register("desarrollo_juego")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Explicar como fue el desarrollo del juego", errors?.desarrollo_juego?.message!)}
+                {inputMessageHelper(
+                    "Explicar como fue el desarrollo del juego",
+                    errors?.desarrollo_juego?.message!
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -408,7 +535,21 @@ export function GameForm({
                     values={condiciones_juego}
                     onChange={(val) => handleArrayChange("condiciones_juego", val)}
                 />
-                {inputMessageHelper("Agregar cuales son las condiciones del juego", errors?.condiciones_juego?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. Agregar cuales son las condiciones del juego.
+                            <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "2. En caso de querer editar las condiciones del juego se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                        </p>
+                    </div>,
+                    errors?.condiciones_juego?.message!,
+                    errors?.condiciones_juego
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -416,7 +557,21 @@ export function GameForm({
                     values={controles}
                     onChange={(val) => handleArrayChange("controles", val)}
                 />
-                {inputMessageHelper("Agregar cuales son los controles del juego", errors?.controles?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. Agregar cuales son los controles del juego.
+                            <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "2. En caso de querer editar los controles del juego se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                        </p>
+                    </div>,
+                    errors?.controles?.message!,
+                    errors?.controles
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -424,7 +579,21 @@ export function GameForm({
                     values={tecnologias}
                     onChange={(val) => handleArrayChange("tecnologias", val)}
                 />
-                {inputMessageHelper("Agregar que tecnologias se utilizarón", errors?.tecnologias?.message!)}
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. Agregar que tecnologias se utilizarón.
+                            <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "2. En caso de querer editar las tecnologias que se utilizaron se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                        </p>
+                    </div>,
+                    errors?.tecnologias?.message!,
+                    errors?.tecnologias
+                )}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
@@ -433,10 +602,13 @@ export function GameForm({
                 <input
                     {...register("estilo")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Agregar el estilo que se uso", errors?.estilo?.message!)}
+                {inputMessageHelper(
+                    "Agregar el estilo que se uso",
+                    errors?.estilo?.message!
+                )}
             </div>
             <div className="mb-4">
                 <MultiInput
@@ -444,19 +616,36 @@ export function GameForm({
                     values={genero}
                     onChange={(val) => handleArrayChange("genero", val)}
                 />
-                {inputMessageHelper("Agregar el genero o los generos a los que pertenece el juego", errors?.genero?.message!)}
+                {inputMessageHelper(<div className="flex flex-col gap-2 mt-2">
+                    ESPECIFICACIONES:
+                    <p>
+                        1. Agregar el género o los generos a los que pertenece el juego.
+                        <br />
+                    </p>
+                    <p>
+                        {formAction &&
+                            "2. En caso de querer editar los géneros que se utilizaron se deben volver a ingresar los datos que se quieran mantener y las nuevas (manteniendo el mismo orden), sino dejar vacio este input en el formulario de edición"}
+                    </p>
+                </div>,
+                    errors?.genero?.message!,
+                    errors?.genero
+                )}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
-                    Modo de ventana(vertical/horizontal): <span className="font-bold text-red-800">*</span>
+                    Modo de ventana(vertical/horizontal):{" "}
+                    <span className="font-bold text-red-800">*</span>
                 </label>
                 <input
                     {...register("game_window")}
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
-                {inputMessageHelper("Poner en que orientación se debe jugar (Horizontal | Vertical)", errors?.game_window?.message!)}
+                {inputMessageHelper(
+                    "Poner en que orientación se debe jugar (Horizontal | Vertical)",
+                    errors?.game_window?.message!
+                )}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
@@ -468,9 +657,28 @@ export function GameForm({
                     onFileRemoved={handleImageRemoved}
                     limit={4}
                 />
-                {inputMessageHelper(
-                    "Las imagenes no contener nombres con caracteres especiales (* - _  / | # { } + = @ ¿ ? : % ! ¡)",
-                    errors?.game_images?.message!
+                {inputMessageHelper(<div className="flex flex-col gap-2 mt-2">
+                    ESPECIFICACIONES:
+                    <p>
+                        1. Las imágenes no deben contener nombres con caracteres especiales (*
+                        - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
+                    </p>
+                    <p>
+                        2. Ingresar solo Archivos de imágenes (JPG, JPEG, PNG). <br />
+                    </p>
+                    <p>
+                        3. Imágenes no Mayores a 3MB. <br />
+                    </p>
+                    <p>
+                        4. Imágenes Horizontales. <br />
+                    </p>
+                    <p>
+                        {formAction &&
+                            "5. En caso de editar se deben volver a ingresar las imágenes que se quieran mantener y las nuevas (o solamente las nuevas)"}
+                    </p>
+                </div>,
+                    errors?.game_images?.message!,
+                    errors?.game_images
                 )}
             </div>
             <div className="mb-4">
@@ -485,12 +693,26 @@ export function GameForm({
                     limit={4}
                 />
                 {inputMessageHelper(
-                    "Archivos de la build: Subir en orden loaderUrl, dataUrl, frameworkUrl, codeUrl",
-                    errors?.game_archive?.message!
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. Las archivos no deben contener nombres con caracteres especiales (*
+                            - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
+                        </p>
+                        <p>
+                            2. Ingresar solo Archivos de los juegos (br, js, unityWeb). <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "3. En caso de editar los archivos del juego se deben volver a ingresar los que se quieran mantener y los nuevos (o solamente las nuevos)"}
+                        </p>
+                    </div>,
+                    errors?.game_archive?.message!,
+                    errors?.game_archive
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">Preguntas del juego:</label>
+                <label className="block text-gray-700">StreamingAssets:</label>
                 <FileUpload
                     prev={false}
                     files={questionFile}
@@ -499,7 +721,19 @@ export function GameForm({
                     limit={1}
                 />
                 {inputMessageHelper(
-                    "Archivo con las preguntas del juego (no es obligatorio este campo)",
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. No es obligatorio este campo <br />
+                        </p>
+                        <p>
+                            2. El archivo no debe contener nombres con caracteres especiales (* - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "3. En caso de editar los streamingAssets del juego se debe volver a ingresar el archivo que se quiera mantener o el nuevo"}
+                        </p>
+                    </div>,
                     errors?.game_images?.message!
                 )}
             </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import cx from "classnames";
+import Link from 'next/link';
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
@@ -12,16 +12,16 @@ import { MemberForm } from '../components/forms/members-form';
 import { ActionCell } from '../components/table-actions/actions-cell';
 import { SheetForm } from '../components/table-actions/sheet-form';
 import { InfoDialog } from '../components/table-actions/info-card';
-
 import { EmptyTable } from '../components/handlers/empty-elements';
 import { Loading } from '../components/handlers/loading';
-
+import { Pagination } from '@/components/table-actions/paginado';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { useToast } from '@/components/ui/use-toast';
+
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { RiTeamFill } from "react-icons/ri";
-import { FaArrowCircleLeft, FaArrowCircleRight, FaLinkedin, FaBriefcase } from 'react-icons/fa';
+import { FaLinkedin, FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
-
 
 export function MembersTable() {
     const [members, setMembers] = useState<MemberType[]>([]);
@@ -32,16 +32,21 @@ export function MembersTable() {
     const [currentMember, setCurrentMember] = useState<MemberType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { toast } = useToast();
     const itemsPerPage: number = 5;
     const isTableEmpty = Boolean(members.length > 0);
 
     useEffect(() => {
         async function loadMembers() {
+            setIsLoading(true);
             try {
                 const updatedMembers = await FetchAllData("members");
                 setMembers(updatedMembers);
             } catch (error) {
                 console.error('Failed to fetch members:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -81,8 +86,20 @@ export function MembersTable() {
         try {
             await DeleteData("members", memberId);
             setMembers(prevMembers => prevMembers.filter(member => member._id !== memberId));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El miembro ${memberId} fue eliminado`,
+            });
         } catch (error) {
             console.error('Failed to delete member:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${memberId} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
         }
     }
 
@@ -99,8 +116,8 @@ export function MembersTable() {
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentMembers: MemberType[] = members.slice(indexOfFirstMember, indexOfLastMember);
 
-    return isTableEmpty ? (
-        <div className='flex flex-col mb-14'>
+    return !isLoading ? (
+        <div className='flex flex-col justify-between h-full mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>
@@ -157,32 +174,14 @@ export function MembersTable() {
                         handleClick={onAddClick}
                     />
                 )}
-            {Boolean(members.length > 5) &&
-                <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === 1),
-                            "text-green-800": !Boolean(currentPage === 1)
-                        })}
-                    >
-                        <FaArrowCircleLeft className='w-6 h-6' />
-                    </button>
-                    <span className='font-semibold '>
-                        {currentPage} - {Math.ceil(members.length / itemsPerPage)}
-                    </span>
-                    <button
-                        disabled={currentPage === Math.ceil(members.length / itemsPerPage)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(members.length / itemsPerPage)),
-                            "text-green-800": !Boolean(currentPage === Math.ceil(members.length / itemsPerPage))
-                        })}
-                    >
-                        <FaArrowCircleRight className='w-6 h-6' />
-                    </button>
-                </div>}
+            {members.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={members.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
             <SheetForm
                 title='Formulario de Miembros'
                 descripcion={actionForm
@@ -236,7 +235,9 @@ export function MembersTable() {
                     </div>
                     <div className='flex items-center gap-2'>
                         <FaLinkedin className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentMember?.linkedIn}</span>
+                        <Link href={`${currentMember?.linkedIn}`} target="_blank" className='hover:underline hover:text-[#66cc00]'>
+                            {currentMember?.linkedIn}
+                        </Link>
                     </div>
                 </div>
             </InfoDialog>
