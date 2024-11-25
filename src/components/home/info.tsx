@@ -6,7 +6,7 @@ export function Info() {
             <div>
                 <div className="text-xl text-[#000000]">
                     <span className="text-3xl font-bold text-green-800 pr-2">
-                        Existén 4 roles esenciales:
+                        Existén 3 roles esenciales:
                     </span>
                     <p className="lg:ml-6">
                         El sistema está diseñado para diferentes tipos de usuarios con roles
