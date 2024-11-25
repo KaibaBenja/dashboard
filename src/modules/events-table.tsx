@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from "@/queries/DeleteData";
@@ -11,13 +10,14 @@ import { EventForm } from '../components/forms/events-form';
 import { ActionCell } from '../components/table-actions/actions-cell';
 import { SheetForm } from '../components/table-actions/sheet-form';
 import { InfoDialog } from '../components/table-actions/info-card';
-
 import { EmptyTable } from '../components/handlers/empty-elements';
 import { Loading } from '../components/handlers/loading';
-
+import { Pagination } from '@/components/table-actions/paginado';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { useToast } from '@/components/ui/use-toast';
+
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarCheck, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import { MdOutlineTextFields, MdOutlineEventNote } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 
@@ -31,16 +31,21 @@ export function EventsTable() {
     const [currentEvent, setCurrentEvent] = useState<EventType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { toast } = useToast();
     const itemsPerPage: number = 5;
     const isTableEmpty = Boolean(events.length > 0);
 
     useEffect(() => {
         async function loadEvents() {
+            setIsLoading(true);
             try {
                 const updateEvents = await FetchAllData("events");
                 setEvents(updateEvents);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -79,8 +84,20 @@ export function EventsTable() {
         try {
             await DeleteData("events", eventId);
             setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El evento ${eventId} fue eliminado`,
+            });
         } catch (error) {
             console.error('Failed to delete event:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${eventId} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
         }
     }
 
@@ -97,8 +114,8 @@ export function EventsTable() {
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentEvents: EventType[] = events.slice(indexOfFirstMember, indexOfLastMember);
 
-    return isTableEmpty ? (
-        <div className='flex flex-col mb-14'>
+    return !isLoading ? (
+        <div className='flex flex-col justify-between h-full mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>
@@ -125,7 +142,7 @@ export function EventsTable() {
                                                 <span className='block md:hidden'>Título: </span>{event?.event_name}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell md:items-center gap-2">
-                                                <span className='block md:hidden'>Dirección: </span>{event?.direccion}
+                                                <span className='block md:hidden'>Dirección: </span>{event?.direccion.split("|")[0]}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
                                                 <span className='block md:hidden'>Fecha: </span>{event?.fecha}
@@ -154,32 +171,14 @@ export function EventsTable() {
                         handleClick={onAddClick}
                     />
                 )}
-            {Boolean(events.length > 5) &&
-                <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === 1),
-                            "text-green-800": !Boolean(currentPage === 1)
-                        })}
-                    >
-                        <FaArrowCircleLeft className='w-6 h-6' />
-                    </button>
-                    <span className='font-semibold '>
-                        {currentPage} - {Math.ceil(events.length / itemsPerPage)}
-                    </span>
-                    <button
-                        disabled={currentPage === Math.ceil(events.length / itemsPerPage)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(events.length / itemsPerPage)),
-                            "text-green-800": !Boolean(currentPage === Math.ceil(events.length / itemsPerPage))
-                        })}
-                    >
-                        <FaArrowCircleRight className='w-6 h-6' />
-                    </button>
-                </div>}
+            {events.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={events.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
             <SheetForm
                 title='Formulario de Post'
                 descripcion={actionForm

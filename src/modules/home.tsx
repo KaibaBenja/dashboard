@@ -27,7 +27,9 @@ export function Home() {
                 Tablero dinamico del Gamecenter
             </h1>
             <div className="flex flex-col flex-wrap gap-8 mt-8">
-                <SectionViews userRole={userInfo?.role} />
+                <SectionViews
+                    userRole={userInfo?.role}
+                />
                 <Info />
             </div>
         </div>

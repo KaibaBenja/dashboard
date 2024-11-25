@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
@@ -12,13 +11,14 @@ import { AuthorityForm } from '../components/forms/authorities-form';
 import { ActionCell } from '../components/table-actions/actions-cell';
 import { SheetForm } from '../components/table-actions/sheet-form';
 import { InfoDialog } from '../components/table-actions/info-card';
-
 import { EmptyTable } from '../components/handlers/empty-elements';
 import { Loading } from '../components/handlers/loading';
-
+import { Pagination } from '@/components/table-actions/paginado';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { useToast } from '@/components/ui/use-toast';
+
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaBriefcase } from 'react-icons/fa';
+import { FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
 
 export function AuthoritiesTable() {
@@ -30,16 +30,21 @@ export function AuthoritiesTable() {
     const [currentAuthority, setCurrentAuthority] = useState<AuthorityType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { toast } = useToast();
     const itemsPerPage: number = 5;
     const isTableEmpty = Boolean(authorities.length > 0);
 
     useEffect(() => {
         async function loadAuthorities() {
+            setIsLoading(true);
             try {
                 const updateAuthorities = await FetchAllData("authorities");
                 setAuthorities(updateAuthorities);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -79,8 +84,20 @@ export function AuthoritiesTable() {
         try {
             await DeleteData("authorities", authorityId);
             setAuthorities(prevAuthority => prevAuthority.filter(authority => authority._id !== authorityId));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `La autoridad ${authorityId} fue eliminada`,
+            });
         } catch (error) {
             console.error('Failed to delete authority:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${authorityId} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
         }
     }
 
@@ -97,8 +114,8 @@ export function AuthoritiesTable() {
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentAuthorites: AuthorityType[] = authorities.slice(indexOfFirstMember, indexOfLastMember);
 
-    return isTableEmpty ? (
-        <div className='flex flex-col mb-14'>
+    return !isLoading ? (
+        <div className='flex flex-col justify-between h-full mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>
@@ -150,32 +167,14 @@ export function AuthoritiesTable() {
                         handleClick={onAddClick}
                     />
                 )}
-            {Boolean(authorities.length > 5) &&
-                <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === 1),
-                            "text-green-800": !Boolean(currentPage === 1)
-                        })}
-                    >
-                        <FaArrowCircleLeft className='w-6 h-6' />
-                    </button>
-                    <span className='font-semibold '>
-                        {currentPage} - {Math.ceil(authorities.length / itemsPerPage)}
-                    </span>
-                    <button
-                        disabled={currentPage === Math.ceil(authorities.length / itemsPerPage)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(authorities.length / itemsPerPage)),
-                            "text-green-800": !Boolean(currentPage === Math.ceil(authorities.length / itemsPerPage))
-                        })}
-                    >
-                        <FaArrowCircleRight className='w-6 h-6' />
-                    </button>
-                </div>}
+            {authorities.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={authorities.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
             <SheetForm
                 title='Formulario de Autoridades'
                 descripcion={actionForm
@@ -204,7 +203,7 @@ export function AuthoritiesTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                {Boolean(currentAuthority?.profile_pic[0]) &&
+                <div className='flex flex-col items-center justify-center'>
                     <Image
                         src={currentAuthority?.profile_pic[0]!}
                         alt="example"
@@ -212,8 +211,8 @@ export function AuthoritiesTable() {
                         height={150}
                         className='rounded-full w-[150px] h-[150px] self-center my-4'
                     />
-                }
-                <h1 className='text-start font-bold text-xl'>{currentAuthority?.name}</h1>
+                    <h1 className='text-start font-bold text-xl'>{currentAuthority?.name}</h1>
+                </div>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>
                         <HiIdentification className='w-5 h-5 text-green-800' />

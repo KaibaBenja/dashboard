@@ -9,11 +9,12 @@ import { IoMdCloseCircle } from "react-icons/io";
 
 interface MultiInputProps {
     name: string;
+    placeholderText?: string;
     onChange: (values: string[]) => void;
     values: string[];
 }
 
-export const MultiInput = ({ name, onChange, values }: MultiInputProps) => {
+export const MultiInput = ({ name, placeholderText, onChange, values }: MultiInputProps) => {
     const [inputValue, setInputValue] = useState("");
 
     const handleAdd = () => {
@@ -42,14 +43,15 @@ export const MultiInput = ({ name, onChange, values }: MultiInputProps) => {
                 <input
                     type="text"
                     value={inputValue}
+                    placeholder={placeholderText}
                     onChange={(e) => setInputValue(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                 />
             </div>
             <div className="mt-2">
                 {values.map((value, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                        <span className="mr-2">{value}</span>
+                    <div key={index} className="flex items-start justify-between py-3 px-1 my-2 rounded-md border border-gray-200 w-full gap-2">
+                        <span className="mr-2 w-[250px]">{value}</span>
                         <div onClick={() => handleRemove(index)} className="text-red-700 cursor-pointer hover:text-red-800">
                             <IoMdCloseCircle className="w-6 h-6"/>
                         </div>

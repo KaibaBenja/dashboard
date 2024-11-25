@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import cx from "classnames";
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
@@ -12,13 +11,14 @@ import { ActionCell } from '../components/table-actions/actions-cell';
 import { SheetForm } from '../components/table-actions/sheet-form';
 import { InfoDialog } from '../components/table-actions/info-card';
 import { CarouselImage } from '../components/table-actions/carousel-image';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-
 import { EmptyTable } from '../components/handlers/empty-elements';
 import { Loading } from '../components/handlers/loading';
+import { Pagination } from '@/components/table-actions/paginado';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { useToast } from '@/components/ui/use-toast';
 
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaArrowCircleLeft, FaArrowCircleRight, FaCalendarCheck } from 'react-icons/fa';
+import { FaCalendarCheck } from 'react-icons/fa';
 import { BsFileEarmarkPost } from "react-icons/bs";
 import { BiSolidCategory } from "react-icons/bi";
 import { MdOutlineTextFields } from "react-icons/md";
@@ -33,16 +33,21 @@ export function PostsTable() {
     const [currentPost, setCurrentPost] = useState<PostType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const { toast } = useToast();
     const itemsPerPage: number = 5;
     const isTableEmpty = Boolean(posts.length > 0);
 
     useEffect(() => {
         async function loadPosts() {
+            setIsLoading(true);
             try {
                 const updatedPosts = await FetchAllData("posts");
                 setPosts(updatedPosts);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -82,8 +87,20 @@ export function PostsTable() {
         try {
             await DeleteData("posts", postId);
             setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El Post ${postId} fue eliminado`,
+            });
         } catch (error) {
             console.error('Failed to delete post:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${postId} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
         }
     }
 
@@ -100,8 +117,8 @@ export function PostsTable() {
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
     const currentPosts: PostType[] = posts.slice(indexOfFirstMember, indexOfLastMember);
 
-    return isTableEmpty ? (
-        <div className='flex flex-col mb-14'>
+    return !isLoading ? (
+        <div className='flex flex-col justify-between h-full mb-14'>
             {isTableEmpty
                 ? (
                     <div className='flex flex-col'>
@@ -157,32 +174,14 @@ export function PostsTable() {
                         handleClick={onAddClick}
                     />
                 )}
-            {Boolean(posts.length > 5) &&
-                <div className="flex items-end justify-center gap-4 mt-4 text-green-800">
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === 1),
-                            "text-green-800": !Boolean(currentPage === 1)
-                        })}
-                    >
-                        <FaArrowCircleLeft className='w-6 h-6' />
-                    </button>
-                    <span className='font-semibold '>
-                        {currentPage} - {Math.ceil(posts.length / itemsPerPage)}
-                    </span>
-                    <button
-                        disabled={currentPage === Math.ceil(posts.length / itemsPerPage)}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        className={cx({
-                            "text-gray-300 cursor-not-allowed": Boolean(currentPage === Math.ceil(posts.length / itemsPerPage)),
-                            "text-green-800": !Boolean(currentPage === Math.ceil(posts.length / itemsPerPage))
-                        })}
-                    >
-                        <FaArrowCircleRight className='w-6 h-6' />
-                    </button>
-                </div>}
+            {posts.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={posts.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
             <SheetForm
                 title='Formulario de Post'
                 descripcion={actionForm
@@ -211,7 +210,7 @@ export function PostsTable() {
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                <CarouselImage 
+                <CarouselImage
                     images={currentPost?.blog_images!}
                 />
                 <h1 className='text-start font-bold text-xl'>{currentPost?.titulo}</h1>
