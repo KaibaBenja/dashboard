@@ -284,7 +284,7 @@ export function GameForm({
         );
     };
 
-    const onSubmit: SubmitHandler<GameFormValues> = async (data) => {
+    const onSubmit: SubmitHandler<GameFormValues> = async (data: GameFormValues) => {
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
@@ -333,7 +333,7 @@ export function GameForm({
 
             if (imageFiles.length <= 4) {
                 if (formAction && updateID) {
-                    await UpdateData({ path: "games", data: formData }, updateID);
+                    await UpdateData({ path: "games", data: formData }, updateID!);
                 } else {
                     await AddData({ path: "games", data: formData });
                 }

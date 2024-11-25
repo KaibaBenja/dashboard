@@ -65,6 +65,7 @@ export function GameTable() {
         setIsOpen(true);
         setActionForm(true);
         setCurrentGame(game);
+        setCurrentGameId(game?._id);
     }
 
     function onViewClick(game: GameType) {
@@ -190,6 +191,7 @@ export function GameTable() {
                 handleOpen={handleCloseForm}
             >
                 <GameForm
+                    updateID={currentGameId}
                     formAction={actionForm}
                     formData={currentGame}
                     handleCloseSheet={handleCloseForm}
