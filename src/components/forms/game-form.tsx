@@ -47,16 +47,20 @@ const schema: ObjectSchema<GameFormValues> = object({
     sinopsis: string().required("La sinopsis es requerida"),
     aporte_turismo: array()
         .of(string().required())
-        .required("El aporte al turismo es requerido"),
+        .required("El aporte al turismo es requerido")
+        .min(1, "Debe incluir al menos un aporte"),
     aporte_cultura: array()
         .of(string().required())
-        .required("El aporte a la cultura es requerido"),
+        .required("El aporte a la cultura es requerido")
+        .min(1, "Debe incluir al menos un aporte"),
     aporte_juventud: array()
         .of(string().required())
-        .required("El aporte a la juventud es requerido"),
+        .required("El aporte a la juventud es requerido")
+        .min(1, "Debe incluir al menos un aporte"),
     aporte_educacion: array()
         .of(string().required())
-        .required("El aporte a la educación es requerido"),
+        .required("El aporte a la educación es requerido")
+        .min(1, "Debe incluir al menos un aporte"),
     objetivo: string().required("El objetivo es requerido"),
     desarrollo_juego: string().required("El desarrollo es requerido"),
     condiciones_juego: array()
