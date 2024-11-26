@@ -2,8 +2,8 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export default function middleware(request: NextRequest) {
-  const token = request.cookies.get('token');
-  const role = request.cookies.get('role')?.value;
+  const token = request.cookies.get("token")?.value;
+  const role = request.cookies.get("role")?.value;
 
   if (!token && request.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -16,14 +16,24 @@ export default function middleware(request: NextRequest) {
   if (token) {
     const url = request.nextUrl.pathname;
 
-    const adminRoutes = ["/posts", "/juegos", "/miembros", "/autoridades", "eventos"];
+    const adminRoutes = [
+      "/posts",
+      "/juegos",
+      "/miembros",
+      "/autoridades",
+      "/eventos",
+    ];
     const devRoutes = ["/juegos"];
+    const impresionRoutes = ["/impresiones"];
     const comunicationRoutes = ["/posts", "/eventos"];
 
     if (role === "Admin" && !adminRoutes.includes(url)) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     if (role === "Desarrollador" && !devRoutes.includes(url)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    if (role === "Impresiones" && !impresionRoutes.includes(url)) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     if (role === "Comunicación" && !comunicationRoutes.includes(url)) {
@@ -33,5 +43,14 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/posts", "/juegos", "/miembros", "/autoridades", "/eventos"],
+  matcher: [
+    "/",
+    "/login",
+    "/posts",
+    "/juegos",
+    "/miembros",
+    "/autoridades",
+    "/eventos",
+    "/impresiones",
+  ],
 };
