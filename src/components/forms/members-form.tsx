@@ -302,7 +302,7 @@ export function MemberForm({
                             3. Imagen no Mayores a 3MB. <br />
                         </p>
                         <p>
-                            4. Imagen Horizontales. <br />
+                            4. DIMENSION DE LA IMAGEN: CUADRADO MEDIANO (ANCHO 750 - ALTURA 750) <br />
                         </p>
                         <p>
                             {formAction &&

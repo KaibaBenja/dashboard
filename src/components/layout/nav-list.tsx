@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { NavigationProps, ViewsTypes } from "@/types/NavTypes";
 
-import { adminViews, comunicationViews, devView } from "@/utils/roles";
+import { adminViews, comunicationViews, devView, impresionView } from "@/utils/roles";
 
 function NavList({ views }: { views: ViewsTypes[] }) {
     return (
@@ -34,6 +34,8 @@ export function Navigation({ userRole }: NavigationProps) {
             return <NavList views={comunicationViews} />;
         case "Desarrollador":
             return <NavList views={devView} />;
+        case "Impresiones":
+            return <NavList views={impresionView} />;
         default:
             return <NavList views={adminViews} />;
     }

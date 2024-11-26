@@ -674,7 +674,7 @@ export function GameForm({
                         3. Imágenes no Mayores a 3MB. <br />
                     </p>
                     <p>
-                        4. Imágenes Horizontales. <br />
+                        4. DIMENSIONES IMÁGENES: HORIZONTAL TAMAÑO MEDIANO (ANCHO 1125PX ALTURA 750PX) <br />
                     </p>
                     <p>
                         {formAction &&

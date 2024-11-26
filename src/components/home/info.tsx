@@ -6,7 +6,7 @@ export function Info() {
             <div>
                 <div className="text-xl text-[#000000]">
                     <span className="text-3xl font-bold text-green-800 pr-2">
-                        Existén 3 roles esenciales:
+                        Existén 4 roles esenciales:
                     </span>
                     <p className="lg:ml-6">
                         El sistema está diseñado para diferentes tipos de usuarios con roles
@@ -43,7 +43,7 @@ export function Info() {
                             finales.
                         </p>
                     </div>
-                    {/* <div>
+                    <div>
                         <span className="flex items-center gap-1 font-bold text-green-800">
                             <GoDotFill className="h-3 w-3" /> Impresión 3D:
                         </span>
@@ -53,7 +53,7 @@ export function Info() {
                             seguimiento detallado de las actividades relacionadas con esta
                             tecnología.
                         </p>
-                    </div> */}
+                    </div>
                 </div>
             </div>
             <div className="text-xl text-[#000000] border-y border-gray-600 py-4">

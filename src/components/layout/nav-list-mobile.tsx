@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { NavigationProps, ViewsTypes } from "@/types/NavTypes";
 
-import { adminViews, comunicationViews, devView } from "@/utils/roles";
+import { adminViews, comunicationViews, devView, impresionView } from "@/utils/roles";
 
 import {
     DropdownMenu,
@@ -84,6 +84,14 @@ export function MobileNavigation({ user, selectedRoute, isHomeView, logout }: Na
             return (<NavList
                 user={user}
                 views={devView}
+                selectedRoute={selectedRoute}
+                isHomeView={isHomeView}
+                logout={logout}
+            />);
+        case "Impresiones":
+            return (<NavList
+                user={user}
+                views={impresionView}
                 selectedRoute={selectedRoute}
                 isHomeView={isHomeView}
                 logout={logout}

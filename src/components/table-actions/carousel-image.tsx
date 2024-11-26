@@ -8,6 +8,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
+import { ImageDialog } from './image-modal';
 
 interface ImageCarouselCardProps {
     images: string[]
@@ -16,10 +17,11 @@ interface ImageCarouselCardProps {
 export function CarouselImage({
     images,
 }: ImageCarouselCardProps) {
+    if (!images) return null;
 
     return (
-        <Card className="w-full  mx-auto mb-6">
-            <CardContent className="p-6">
+        <Card className="w-full max-w-[1125px] mx-auto mb-6">
+            <CardContent className="p-4">
                 <Carousel
                     opts={{
                         align: "start",
@@ -29,21 +31,19 @@ export function CarouselImage({
                 >
                     <CarouselContent>
                         {images.map((src, index) => (
-                            <CarouselItem key={index}>
+                            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                                 <div className="relative aspect-[3/2] w-full overflow-hidden rounded-lg">
-                                    <Image
+                                    <ImageDialog
                                         src={src}
                                         alt={`Gallery image ${index + 1}`}
-                                        fill
-                                        className="object-cover"
                                     />
                                 </div>
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    <div className="absolute inset-0 flex items-center justify-between p-4">
-                        <CarouselPrevious />
-                        <CarouselNext />
+                    <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between p-4 pointer-events-none">
+                        <CarouselPrevious className="pointer-events-auto" />
+                        <CarouselNext className="pointer-events-auto" />
                     </div>
                 </Carousel>
             </CardContent>

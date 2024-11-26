@@ -5,9 +5,9 @@ import Image from 'next/image';
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from '@/queries/DeleteData';
-import { AuthorityType } from '@/types/AuthTypes';
+import { ImpresionType } from '@/types/ImpresionTypes';
 
-import { AuthorityForm } from '../components/forms/authorities-form';
+import { ImpresionForm } from '../components/forms/impresiones-form';
 import { ActionCell } from '../components/table-actions/actions-cell';
 import { SheetForm } from '../components/table-actions/sheet-form';
 import { InfoDialog } from '../components/table-actions/info-card';
@@ -18,29 +18,30 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { useToast } from '@/components/ui/use-toast';
 
 import { IoAddCircleSharp } from 'react-icons/io5';
-import { FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
+import { BsBadge3D } from 'react-icons/bs';
+import { MdDescription } from 'react-icons/md';
 
-export function AuthoritiesTable() {
-    const [authorities, setAuthorities] = useState<AuthorityType[]>([]);
+export function ImpresionesTable() {
+    const [impresiones, setImpresiones] = useState<ImpresionType[]>([]);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [warning, setWarning] = useState<boolean>(false);
-    const [currentAuthorityId, setCurrentAuthorityId] = useState<string>("");
+    const [currentImpresionId, setCurrentImpresionId] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
-    const [currentAuthority, setCurrentAuthority] = useState<AuthorityType | null>(null);
+    const [currentImpresion, setCurrentImpresion] = useState<ImpresionType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [infoDialogOpen, setInfoDialogOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const { toast } = useToast();
     const itemsPerPage: number = 5;
-    const isTableEmpty = Boolean(authorities.length > 0);
+    const isTableEmpty = Boolean(impresiones.length > 0);
 
     useEffect(() => {
-        async function loadAuthorities() {
+        async function loadimpresiones() {
             setIsLoading(true);
             try {
-                const updateAuthorities = await FetchAllData("authorities");
-                setAuthorities(updateAuthorities);
+                const updateimpresiones = await FetchAllData("impresiones");
+                setImpresiones(updateimpresiones);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
             } finally {
@@ -48,24 +49,24 @@ export function AuthoritiesTable() {
             }
         }
 
-        loadAuthorities();
+        loadimpresiones();
     }, []);
 
     function onAddClick() {
         setIsOpen(true);
         setActionForm(false);
-        setCurrentAuthority(null);
+        setCurrentImpresion(null);
     }
 
-    function onEditClick(authority: AuthorityType) {
+    function onEditClick(Impresion: ImpresionType) {
         setIsOpen(true);
         setActionForm(true);
-        setCurrentAuthority(authority);
-        setCurrentAuthorityId(authority?._id)
+        setCurrentImpresion(Impresion);
+        setCurrentImpresionId(Impresion?._id)
     }
 
-    function onViewClick(authority: AuthorityType) {
-        setCurrentAuthority(authority);
+    function onViewClick(Impresion: ImpresionType) {
+        setCurrentImpresion(Impresion);
         setInfoDialogOpen(true);
     }
 
@@ -80,39 +81,39 @@ export function AuthoritiesTable() {
         }, 300);
     }
 
-    async function handleDelete(authorityId: string) {
+    async function handleDelete(ImpresionId: string) {
         try {
-            await DeleteData("authorities", authorityId);
-            setAuthorities(prevAuthority => prevAuthority.filter(authority => authority._id !== authorityId));
+            await DeleteData("impresiones", ImpresionId);
+            setImpresiones(prevImpresion => prevImpresion.filter(Impresion => Impresion._id !== ImpresionId));
             toast({
                 variant: "success",
                 title: `Exito!`,
-                description: `La autoridad ${authorityId} fue eliminada`,
+                description: `La autoridad ${ImpresionId} fue eliminada`,
             });
         } catch (error) {
-            console.error('Failed to delete authority:', error);
+            console.error('Failed to delete Impresion:', error);
             toast({
                 variant: "destructive",
                 title: `Error!`,
-                description: `Ocurrio un error al intentar eliminar al elemento ${authorityId} (${error})`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${ImpresionId} (${error})`,
             });
         } finally {
             setInfoDialogOpen(false)
         }
     }
 
-    async function refreshAuthorities() {
+    async function refreshimpresiones() {
         try {
-            const updatedAuthorities = await FetchAllData("authorities");
-            setAuthorities(updatedAuthorities);
+            const updatedimpresiones = await FetchAllData("impresiones");
+            setImpresiones(updatedimpresiones);
         } catch (error) {
-            console.error('Failed to fetch authority:', error);
+            console.error('Failed to fetch Impresion:', error);
         }
     }
 
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
-    const currentAuthorites: AuthorityType[] = authorities.slice(indexOfFirstMember, indexOfLastMember);
+    const currentAuthorites: ImpresionType[] = impresiones.slice(indexOfFirstMember, indexOfLastMember);
 
     return !isLoading ? (
         <div className='flex flex-col justify-between h-full mb-14'>
@@ -132,24 +133,24 @@ export function AuthoritiesTable() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {currentAuthorites.map((authority: AuthorityType, index: number) => (
-                                        <TableRow key={authority?._id} className='flex flex-col md:flex-row md:table-row'>
+                                    {currentAuthorites.map((Impresion: ImpresionType, index: number) => (
+                                        <TableRow key={Impresion?._id} className='flex flex-col md:flex-row md:table-row'>
                                             <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{authority?._id}
+                                                <span className='block md:hidden'>Id: </span>{Impresion?._id}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Titulo: </span>{authority?.name}
+                                                <span className='block md:hidden'>Titulo: </span>{Impresion?.titulo}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Fecha: </span>{authority?.puesto}
+                                                <span className='block md:hidden'>Epígrafe: </span>{Impresion?.epigrafe}
                                             </TableCell>
                                             <ActionCell
-                                                data={authority}
+                                                data={Impresion}
                                                 index={`Autoridad ${index + 1}`}
-                                                closeWarning={warning && currentAuthorityId === authority?._id}
+                                                closeWarning={warning && currentImpresionId === Impresion?._id}
                                                 handleCloseWarning={handleWarning}
-                                                takeCurrentId={() => setCurrentAuthorityId(authority?._id)}
-                                                currentId={currentAuthorityId}
+                                                takeCurrentId={() => setCurrentImpresionId(Impresion?._id)}
+                                                currentId={currentImpresionId}
                                                 deleteActionCell={handleDelete}
                                                 editActionCell={onEditClick}
                                                 viewActionCell={onViewClick}
@@ -162,15 +163,15 @@ export function AuthoritiesTable() {
                     </div>
                 ) : (
                     <EmptyTable
-                        tableName='Autoridades'
-                        Icon={HiIdentification}
+                        tableName='Impresiones'
+                        Icon={BsBadge3D}
                         handleClick={onAddClick}
                     />
                 )}
-            {authorities.length > itemsPerPage && (
+            {impresiones.length > itemsPerPage && (
                 <Pagination
                     currentPage={currentPage}
-                    totalItems={authorities.length}
+                    totalItems={impresiones.length}
                     itemsPerPage={itemsPerPage}
                     onPageChange={setCurrentPage}
                 />
@@ -184,12 +185,12 @@ export function AuthoritiesTable() {
                 isOpen={isOpen}
                 handleOpen={handleCloseForm}
             >
-                <AuthorityForm
-                    updateID={currentAuthorityId}
+                <ImpresionForm
+                    updateID={currentImpresionId}
                     formAction={actionForm}
-                    formData={currentAuthority}
+                    formData={currentImpresion}
                     handleCloseSheet={handleCloseForm}
-                    onSubmitSuccess={refreshAuthorities}
+                    onSubmitSuccess={refreshimpresiones}
                 />
             </SheetForm>
             <InfoDialog
@@ -197,32 +198,34 @@ export function AuthoritiesTable() {
                 openWarning={warning}
                 handleOpenCard={() => setInfoDialogOpen(false)}
                 handleWarning={handleWarning}
-                data={currentAuthority}
-                takeCurrentId={() => setCurrentAuthorityId(currentAuthority?._id!)}
-                currentId={currentAuthorityId}
+                data={currentImpresion}
+                takeCurrentId={() => setCurrentImpresionId(currentImpresion?._id!)}
+                currentId={currentImpresionId}
                 deleteActionCell={handleDelete}
                 editActionCell={onEditClick}
             >
-                <div className='flex flex-col items-center justify-center'>
-                    <Image
-                        src={currentAuthority?.profile_pic[0]!}
-                        alt="autoridad image"
-                        width={150}
-                        height={150}
-                        className='rounded-full w-[150px] h-[150px] self-center my-4'
-                    />
-                    <h1 className='text-start font-bold text-xl'>{currentAuthority?.name}</h1>
-                </div>
-                <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
-                    <div className='flex items-center gap-2 mt-2'>
-                        <HiIdentification className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentAuthority?._id}</span>
+                    <div className="w-full mb-4">
+                        <div className="relative w-full h-0 pb-[100%]">
+                            <Image
+                                src={currentImpresion?.impresion_image[0]!}
+                                alt="impresion image"
+                                fill
+                                className="object-cover rounded-lg"
+                                priority
+                            />
+                        </div>
                     </div>
-                    <div className='flex items-center gap-2 mt-2'>
-                        <FaBriefcase className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentAuthority?.puesto}</span>
+                    <h1 className="text-start font-bold text-xl mb-4">{currentImpresion?.titulo}</h1>
+                    <div className="bg-gray-100 rounded-md p-4 w-full">
+                        <div className="flex items-center gap-2 mb-2">
+                            <HiIdentification className="w-5 h-5 text-green-800 flex-shrink-0" />
+                            <span className="capitalize break-all">{currentImpresion?._id}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <MdDescription className="w-5 h-5 text-green-800 flex-shrink-0" />
+                            <span className="capitalize break-all">{currentImpresion?.epigrafe}</span>
+                        </div>
                     </div>
-                </div>
             </InfoDialog>
         </div>
     ) : (
