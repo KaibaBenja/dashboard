@@ -12,9 +12,10 @@ import { FormProps } from "@/types/formProps";
 
 import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { useToast } from "@/components/ui/use-toast";
+import { inputMessageHelper } from "../handlers/input-helper";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { inputMessageHelper } from "../handlers/input-helper";
 
 interface AuthorityFormValues {
     name: string;
@@ -92,6 +93,7 @@ export function AuthorityForm({
         register,
         handleSubmit,
         setValue,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm<AuthorityFormValues>({
         defaultValues: {
@@ -187,13 +189,29 @@ export function AuthorityForm({
                 <label className="block text-gray-700">
                     Puesto <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
+                {/* <input
                     {...register("puesto")}
                     type="text"
                     placeholder="Especifica el cargo o posición de la autoridad"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
-                />
+                /> */}
+                <Select
+                    value={watch("puesto")}
+                    onValueChange={(value) =>
+                        setValue("puesto", value, { shouldValidate: true })
+                    }
+                    disabled={isSubmitting}
+                >
+                    <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                        <SelectValue placeholder="Selecciona una Puesto" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Gobernador de la Provincia de Corrientes">Gobernador de la Provincia de Corrientes</SelectItem>
+                        <SelectItem value="	Ministro de Hacienda y Finanzas">	Ministro de Hacienda y Finanzas</SelectItem>
+                        <SelectItem value="	Subsecretario de Sistemas y Tecnologías de la información">	Subsecretario de Sistemas y Tecnologías de la información</SelectItem>
+                    </SelectContent>
+                </Select>
                 {inputMessageHelper("", errors?.puesto?.message!, errors?.puesto!)}
             </div>
             <div className="mb-4">

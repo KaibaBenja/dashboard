@@ -252,7 +252,7 @@ export function PostForm({
                     <SelectContent>
                         <SelectItem value="Eventos">Eventos</SelectItem>
                         <SelectItem value="Tecnología">Tecnología</SelectItem>
-                        <SelectItem value="SuSTI">SuSTI</SelectItem>
+                        <SelectItem value="Institucional">Institucional</SelectItem>
                     </SelectContent>
                 </Select>
                 {inputMessageHelper(
