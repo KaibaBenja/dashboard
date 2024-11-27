@@ -22,7 +22,7 @@ interface ImpresionFormValues {
     impresion_image: string | File;
 }
 
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 const FILE_NAME_PATTERN = /^[a-zA-Z0-9.\-_\s]+$/;
 
@@ -47,7 +47,7 @@ const schema: ObjectSchema<ImpresionFormValues> = object({
         .required("Se debe ingresar una foto de perfil")
         .test(
             "is-valid-type",
-            "El archivo debe ser una imagen válida (JPEG, JPG o PNG)",
+            "El archivo debe ser una imagen válida (JPEG, JPG o PNG o GIF)",
             (value) => {
                 if (typeof value === "string") {
                     return true;
@@ -215,7 +215,7 @@ export function ImpresionForm({
                             _ / | # { } + = @ ¿ ? : % ! ¡). <br />
                         </p>
                         <p>
-                            2. Ingresar solo Archivos de imágenes (JPG, JPEG, PNG). <br />
+                            2. Ingresar solo Archivos de imágenes (JPG, JPEG, PNG o GIF). <br />
                         </p>
                         <p>
                             3. Imagen no Mayores a 3MB. <br />

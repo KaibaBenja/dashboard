@@ -34,7 +34,7 @@ interface GameFormValues {
     genero: string[];
     game_window: string;
     game_images: (File | string)[];
-    game_archive: (File | string)[];
+    game_archive?: (File | string)[];
     game_questions?: (File | string)[];
 }
 
@@ -89,10 +89,10 @@ const schema: ObjectSchema<GameFormValues> = object({
                 .required("Debes subir una imagen")
                 .test(
                     "is-valid-file",
-                    "El archivo debe ser una imagen válida (JPEG, JPG, PNG)",
+                    "El archivo debe ser una imagen válida (JPEG, JPG, PNG o GIF)",
                     (file) =>
                         file &&
-                        ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
+                        ["image/jpeg", "image/jpg", "image/png", "image/gif"].includes(file.type)
                 )
                 .test(
                     "is-valid-size",
@@ -107,17 +107,7 @@ const schema: ObjectSchema<GameFormValues> = object({
         )
         .min(1, "Debes subir al menos una imagen")
         .required("Este campo es obligatorio"),
-    game_archive: array()
-        .of(
-            mixed<File>()
-                .required("Debes subir una archivo")
-                .test(
-                    "is-valid-name",
-                    "El archivo no debe contener caracteres especiales en el nombre",
-                    (file) => file && /^[a-zA-Z0-9.]+$/.test(file.name)
-                )
-        )
-        .required("Este campo es obligatorio"),
+    game_archive: mixed<File[]>().optional(),
     game_questions: mixed<File[]>().optional(),
 });
 
@@ -668,7 +658,7 @@ export function GameForm({
                         - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
                     </p>
                     <p>
-                        2. Ingresar solo Archivos de imágenes (JPG, JPEG, PNG). <br />
+                        2. Ingresar solo Archivos de imágenes (JPG, JPEG, PNG o GIF). <br />
                     </p>
                     <p>
                         3. Imágenes no Mayores a 3MB. <br />
@@ -687,7 +677,7 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
-                    Archivos del juego: <span className="font-bold text-red-800">*</span>
+                    Archivos del juego: <span className="font-bold text-gray-300">*</span>
                 </label>
                 <FileUpload
                     prev={false}
@@ -700,15 +690,18 @@ export function GameForm({
                     <div className="flex flex-col gap-2 mt-2">
                         ESPECIFICACIONES:
                         <p>
-                            1. Las archivos no deben contener nombres con caracteres especiales (*
+                            1. Las archivos de los juegos son opcionales, en caso de no poder adaptarse la build a web solamente se debe subir el informe del juego. <br />
+                        </p>
+                        <p>
+                            2. Las archivos no deben contener nombres con caracteres especiales (*
                             - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
                         </p>
                         <p>
-                            2. Ingresar solo Archivos de los juegos (br, js, unityWeb). <br />
+                            3. Ingresar solo los Archivos que corresponden a la build del juego. <br />
                         </p>
                         <p>
                             {formAction &&
-                                "3. En caso de editar los archivos del juego se deben volver a ingresar los que se quieran mantener y los nuevos (o solamente las nuevos)"}
+                                "4. En caso de editar los archivos del juego se deben volver a ingresar los que se quieran mantener y los nuevos (o solamente las nuevos)"}
                         </p>
                     </div>,
                     errors?.game_archive?.message!,
@@ -716,7 +709,9 @@ export function GameForm({
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">StreamingAssets:</label>
+                <label className="block text-gray-700">
+                    StreamingAssets: <span className="font-bold text-gray-300">*</span>
+                </label>
                 <FileUpload
                     prev={false}
                     files={questionFile}
@@ -728,14 +723,14 @@ export function GameForm({
                     <div className="flex flex-col gap-2 mt-2">
                         ESPECIFICACIONES:
                         <p>
-                            1. No es obligatorio este campo <br />
+                            1. No es obligatorio este campo. <br />
                         </p>
                         <p>
                             2. El archivo no debe contener nombres con caracteres especiales (* - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
                         </p>
                         <p>
                             {formAction &&
-                                "3. En caso de editar los streamingAssets del juego se debe volver a ingresar el archivo que se quiera mantener o el nuevo"}
+                                "3. En caso de editar los streamingAssets del juego se debe volver a ingresar el archivo que se quiera mantener o el nuevo."}
                         </p>
                     </div>,
                     errors?.game_images?.message!
