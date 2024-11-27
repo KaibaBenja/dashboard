@@ -59,11 +59,6 @@ const schema: ObjectSchema<PostFormValues> = object({
                         file && ["image/jpeg", "image/jpg", "image/png"].includes(file.type)
                 )
                 .test(
-                    "is-valid-size",
-                    "El archivo no debe superar los 3MB",
-                    (file) => file && file.size <= 3 * 1024 * 1024
-                )
-                .test(
                     "is-valid-name",
                     "El archivo no debe contener caracteres especiales en el nombre",
                     (file) => file && /^[a-zA-Z0-9.]+$/.test(file.name)

@@ -1,19 +1,14 @@
 import Link from "next/link";
 import cx from "classnames";
 
-import { adminViews, comunicationViews, devView } from "@/utils/roles";
 import { ViewsTypes } from "@/types/NavTypes";
-
-interface SectionViewsProps {
-    userRole: string;
-}
 
 interface SectionViewsListProps {
     views: ViewsTypes[];
     alignItems?: string;
 }
 
-function SectionViewsList({ views, alignItems = "justify-between" }: SectionViewsListProps) {
+export function SectionViewsList({ views, alignItems = "justify-between" }: SectionViewsListProps) {
     return (
         <div className={cx("flex flex-wrap w-full gap-4 px-2", alignItems)}>
             {views.map((data: ViewsTypes, index: number) => (
@@ -32,17 +27,4 @@ function SectionViewsList({ views, alignItems = "justify-between" }: SectionView
             ))}
         </div>
     );
-}
-
-export function SectionViews({ userRole }: SectionViewsProps) {
-    switch (userRole) {
-        case "Admin":
-            return <SectionViewsList views={adminViews} />;
-        case "Comunicación":
-            return <SectionViewsList views={comunicationViews} alignItems="justify-around" />;
-        case "Desarrollador":
-            return <SectionViewsList views={devView} alignItems="justify-start" />;
-        default:
-            return <SectionViewsList views={adminViews} />;
-    }
 }

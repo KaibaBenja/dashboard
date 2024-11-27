@@ -13,6 +13,7 @@ export default function middleware(request: NextRequest) {
     "/miembros",
     "/autoridades",
     "/eventos",
+    "/impresiones"
   ];
   const devRoutes = ["/", "/juegos"];
   const impresionRoutes = ["/", "/impresiones"];

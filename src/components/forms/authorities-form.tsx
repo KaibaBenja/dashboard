@@ -24,7 +24,6 @@ interface AuthorityFormValues {
 }
 
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
-const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 const FILE_NAME_PATTERN = /^[a-zA-Z0-9.\-_\s]+$/; 
 
 const schema: ObjectSchema<AuthorityFormValues> = object({
@@ -57,16 +56,6 @@ const schema: ObjectSchema<AuthorityFormValues> = object({
                 return ALLOWED_FILE_TYPES.includes(value.type);
             }
             return false;
-        }
-    )
-    .test(
-        "is-valid-size",
-        "El archivo no debe superar los 3MB",
-        (value) => {
-            if (value instanceof File) {
-                return value.size <= MAX_FILE_SIZE;
-            }
-            return true;
         }
     )
     .test(

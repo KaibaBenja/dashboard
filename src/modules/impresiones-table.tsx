@@ -88,7 +88,7 @@ export function ImpresionesTable() {
             toast({
                 variant: "success",
                 title: `Exito!`,
-                description: `La autoridad ${ImpresionId} fue eliminada`,
+                description: `La Impresión ${ImpresionId} fue eliminada`,
             });
         } catch (error) {
             console.error('Failed to delete Impresion:', error);
@@ -146,7 +146,7 @@ export function ImpresionesTable() {
                                             </TableCell>
                                             <ActionCell
                                                 data={Impresion}
-                                                index={`Autoridad ${index + 1}`}
+                                                index={`Impresión ${index + 1}`}
                                                 closeWarning={warning && currentImpresionId === Impresion?._id}
                                                 handleCloseWarning={handleWarning}
                                                 takeCurrentId={() => setCurrentImpresionId(Impresion?._id)}
@@ -177,10 +177,10 @@ export function ImpresionesTable() {
                 />
             )}
             <SheetForm
-                title='Formulario de Autoridades'
+                title='Formulario de Impresiones'
                 descripcion={actionForm
-                    ? `Editar Autoridad, cambiar los campos que se desea`
-                    : "Agregar Nueva Autoridad, todos los campos son obligatorios"
+                    ? `Editar Impresión, cambiar los campos que se desea`
+                    : "Agregar Nueva Impresión, todos los campos son obligatorios"
                 }
                 isOpen={isOpen}
                 handleOpen={handleCloseForm}

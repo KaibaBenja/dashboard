@@ -5,7 +5,7 @@ import { parseCookies } from "nookies";
 
 import { UserInfo } from "@/types/UserInfo";
 
-import { SectionViews } from "../components/home/section-cards";
+import { SectionViews } from "../components/home/section-views";
 import { Info } from "../components/home/info";
 
 export function Home() {

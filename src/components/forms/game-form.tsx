@@ -36,6 +36,8 @@ interface GameFormValues {
     game_images: (File | string)[];
     game_archive?: (File | string)[];
     game_questions?: (File | string)[];
+    windows_ejecutable?: (File | string)[];
+    android_apk?: (File | string)[];
 }
 
 const schema: ObjectSchema<GameFormValues> = object({
@@ -95,11 +97,6 @@ const schema: ObjectSchema<GameFormValues> = object({
                         ["image/jpeg", "image/jpg", "image/png", "image/gif"].includes(file.type)
                 )
                 .test(
-                    "is-valid-size",
-                    "El archivo no debe superar los 3MB",
-                    (file) => file && file.size <= 3 * 1024 * 1024
-                )
-                .test(
                     "is-valid-name",
                     "El archivo no debe contener caracteres especiales en el nombre",
                     (file) => file && /^[a-zA-Z0-9.]+$/.test(file.name)
@@ -109,6 +106,8 @@ const schema: ObjectSchema<GameFormValues> = object({
         .required("Este campo es obligatorio"),
     game_archive: mixed<File[]>().optional(),
     game_questions: mixed<File[]>().optional(),
+    windows_ejecutable: mixed<File[]>().optional(),
+    android_apk: mixed<File[]>().optional(),
 });
 
 export function GameForm({
@@ -144,6 +143,8 @@ export function GameForm({
             game_images: formAction ? formData?.game_images! : [],
             game_archive: formAction ? formData?.game_archive! : [],
             game_questions: formAction ? formData?.game_questions! : [],
+            windows_ejecutable: formAction ? formData?.windows_ejecutable! : [],
+            android_apk: formAction ? formData?.android_apk! : [],
         },
         resolver: yupResolver(schema),
         mode: "onChange",
@@ -153,6 +154,8 @@ export function GameForm({
     const [imagesPreview, setImagesPreview] = useState<string[]>([]);
     const [archiveFiles, setArchiveFiles] = useState<File[]>([]);
     const [questionFile, setQuestionFile] = useState<File[]>([]);
+    const [windowsEFile, setWindowsEFile] = useState<File[]>([]);
+    const [androidAPKFile, setAndroidAPKFile] = useState<File[]>([]);
     const autores = useWatch({ control, name: "autores", defaultValue: [] });
     const aporte_turismo = useWatch({
         control,
@@ -229,6 +232,28 @@ export function GameForm({
         }
     };
 
+    const handleWindowsESelected = (files: File[]) => {
+        if (files.length > 0) {
+            setWindowsEFile((prevFiles: any) => [...prevFiles, ...files]);
+            setValue("windows_ejecutable", files, {
+                shouldValidate: true,
+                shouldTouch: true,
+            });
+            console.log(files);
+        }
+    };
+
+    const handleAndroidAPKSelected = (files: File[]) => {
+        if (files.length > 0) {
+            setAndroidAPKFile((prevFiles: any) => [...prevFiles, ...files]);
+            setValue("android_apk", files, {
+                shouldValidate: true,
+                shouldTouch: true,
+            });
+            console.log(files);
+        }
+    };
+
     const handleFileRemoved = (index: number) => {
         setArchiveFiles((prevFiles: any) =>
             prevFiles.filter((_: any, i: number) => i !== index)
@@ -266,7 +291,35 @@ export function GameForm({
         );
         setValue(
             "game_questions",
-            imageFiles.filter((_: any, i: number) => i !== index),
+            questionFile.filter((_: any, i: number) => i !== index),
+            {
+                shouldValidate: true,
+                shouldTouch: true,
+            }
+        );
+    };
+    
+    const handleWindowsERemoved = (index: number) => {
+        setWindowsEFile((prevFiles: any) =>
+            prevFiles.filter((_: any, i: number) => i !== index)
+        );
+        setValue(
+            "windows_ejecutable",
+            windowsEFile.filter((_: any, i: number) => i !== index),
+            {
+                shouldValidate: true,
+                shouldTouch: true,
+            }
+        );
+    };
+
+    const handleAndroidAPKRemoved = (index: number) => {
+        setQuestionFile((prevFiles: any) =>
+            prevFiles.filter((_: any, i: number) => i !== index)
+        );
+        setValue(
+            "android_apk",
+            androidAPKFile.filter((_: any, i: number) => i !== index),
             {
                 shouldValidate: true,
                 shouldTouch: true,
@@ -319,6 +372,12 @@ export function GameForm({
             });
             questionFile?.forEach((file: File) => {
                 formData.append("game_questions", file);
+            });
+            windowsEFile?.forEach((file: File) => {
+                formData.append("windows_ejecutable", file);
+            });
+            androidAPKFile?.forEach((file: File) => {
+                formData.append("android_apk", file);
             });
 
             if (imageFiles.length <= 4) {
@@ -731,6 +790,62 @@ export function GameForm({
                         <p>
                             {formAction &&
                                 "3. En caso de editar los streamingAssets del juego se debe volver a ingresar el archivo que se quiera mantener o el nuevo."}
+                        </p>
+                    </div>,
+                    errors?.game_images?.message!
+                )}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Ejecutable para Windows: <span className="font-bold text-gray-300">*</span>
+                </label>
+                <FileUpload
+                    prev={false}
+                    files={windowsEFile}
+                    onFilesSelected={handleWindowsESelected}
+                    onFileRemoved={handleWindowsERemoved}
+                    limit={1}
+                />
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. No es obligatorio este campo. <br />
+                        </p>
+                        <p>
+                            2. El archivo no debe contener nombres con caracteres especiales (* - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "3. En caso de editar el ejecutable del juego para windows, se debe volver a ingresar el archivo que se quiera mantener o el nuevo."}
+                        </p>
+                    </div>,
+                    errors?.game_images?.message!
+                )}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Android APK: <span className="font-bold text-gray-300">*</span>
+                </label>
+                <FileUpload
+                    prev={false}
+                    files={androidAPKFile}
+                    onFilesSelected={handleAndroidAPKSelected}
+                    onFileRemoved={handleAndroidAPKRemoved}
+                    limit={1}
+                />
+                {inputMessageHelper(
+                    <div className="flex flex-col gap-2 mt-2">
+                        ESPECIFICACIONES:
+                        <p>
+                            1. No es obligatorio este campo. <br />
+                        </p>
+                        <p>
+                            2. El archivo no debe contener nombres con caracteres especiales (* - _ / | # { } + = @ ¿ ? : % ! ¡). <br />
+                        </p>
+                        <p>
+                            {formAction &&
+                                "3. En caso de editar el apk para android se debe volver a ingresar el archivo que se quiera mantener o el nuevo."}
                         </p>
                     </div>,
                     errors?.game_images?.message!

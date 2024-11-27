@@ -11,7 +11,8 @@ export const adminViews: ViewsTypes[] = [
     { name: "juegos", icon: LuGamepad },
     { name: "miembros", icon: LuUsers },
     { name: "autoridades", icon: MdOutlineShield },
-    { name: "eventos", icon: IoCalendarNumberOutline }
+    { name: "eventos", icon: IoCalendarNumberOutline },
+    { name: "impresiones", icon: BsBadge3D }
 ];
 
 export const devView: ViewsTypes[] = [{ name: "juegos", icon: LuGamepad }];

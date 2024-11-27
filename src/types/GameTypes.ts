@@ -18,4 +18,6 @@ export interface GameType {
   game_images: string[];
   game_archive: string[];
   game_questions: string[];
+  windows_ejecutable: string[];
+  android_apk: string[];
 }
