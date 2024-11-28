@@ -77,24 +77,13 @@ export function EventForm({
     const onSubmit: SubmitHandler<EventFormValues> = async (
         data: EventFormValues
     ) => {
-        const [day, month, year] = data.fecha_comienzo.split("-");
-        const formatDate = `${year}/${month}/${day}`;
 
         try {
-            const payload = { ...data, fecha_comienzo: formatDate };
             if (formAction && formData) {
-                await UpdateData({
-                    path: "events",
-                    data: payload
-                },
-                    formData?._id
-                );
+                await UpdateData({ path: "events", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddData({
-                    path: "events",
-                    data: payload,
-                });
+                await AddData({ path: "events", data });
                 console.log("Add");
             }
             onSubmitSuccess();

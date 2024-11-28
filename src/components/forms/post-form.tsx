@@ -137,15 +137,12 @@ export function PostForm({
     const onSubmit: SubmitHandler<PostFormValues> = async (
         data: PostFormValues
     ) => {
-        const [day, month, year] = data.fecha.split("-");
-        const formatDate = `${year}/${month}/${day}`;
 
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
             formData.append("categoria", data.categoria);
-            
-            formData.append("fecha", formatDate);
+            formData.append("fecha", data.fecha);
             formData.append("pie_noticia", data.pie_noticia);
             data.parrafos_noticia.forEach((parrafo: string) => {
                 formData.append("parrafos_noticia", parrafo);
@@ -244,7 +241,7 @@ export function PostForm({
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper(
-                    "Formato requerido: DD/MM/YYYY.",
+                    "Fecha de la publicación",
                     errors?.fecha?.message!,
                     errors?.fecha!
                 )}
