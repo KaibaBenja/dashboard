@@ -145,10 +145,7 @@ export function GameTable() {
                                             <span className='block md:hidden'>Título: </span>{game?.titulo}
                                         </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
-                                            <span className='block md:hidden'>Autor: </span>{game?.autores.join("\n")}
-                                        </TableCell>
-                                        <TableCell className="flex md:table-cell items-center gap-2">
-                                            <span className='block md:hidden'>Tecnologías: </span>{game?.tecnologias.join("\n")}
+                                            <span className='block md:hidden'>Autor: </span>{game?.autores.join(`\n ${index + 1})`)}
                                         </TableCell>
                                         <ActionCell
                                             data={game}

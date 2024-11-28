@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, ObjectSchema } from "yup";
+import { object, string, ObjectSchema, number } from "yup";
 
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
@@ -19,8 +19,10 @@ interface EventFormValues {
     event_name: string;
     direccion: string;
     descripcion: string;
-    fecha: string;
-    horario: string;
+    fecha_comienzo: string;
+    duracion_evento: number;
+    horario_comienzo: string;
+    horario_fin: string;
 }
 
 const schema: ObjectSchema<EventFormValues> = object({
@@ -33,12 +35,16 @@ const schema: ObjectSchema<EventFormValues> = object({
     descripcion: string()
         .required("La descripción del evento es obligatoria.")
         .defined(),
-    fecha: string()
-        .matches(/^\d{2}\/\d{2}\/\d{4}$/, "Formato inválido. Use DD/MM/YYYY.")
+    fecha_comienzo: string()
         .required("La fecha del evento es obligatoria.")
         .defined(),
-    horario: string()
-        .matches(/^([01]\d|2[0-3]):([0-5]\d)$/, "Formato inválido. Use HH:MM.")
+    duracion_evento: number()
+        .required("La fecha del evento es obligatoria.")
+        .defined(),
+    horario_comienzo: string()
+        .required("El horario del evento es obligatorio.")
+        .defined(),
+    horario_fin: string()
         .required("El horario del evento es obligatorio.")
         .defined(),
 });
@@ -58,79 +64,36 @@ export function EventForm({
             event_name: formAction ? formData?.event_name : "",
             descripcion: formAction ? formData?.descripcion : "",
             direccion: formAction ? formData?.direccion.split("|")[0] : "",
-            fecha: formAction ? formData?.fecha : "",
-            horario: formAction ? formData?.horario : "",
+            fecha_comienzo: formAction ? formData?.fecha_comienzo : "",
+            duracion_evento: formAction ? formData?.duracion_evento : 1,
+            horario_comienzo: formAction ? formData?.horario_comienzo : "",
+            horario_fin: formAction ? formData?.horario_fin : "",
         },
         resolver: yupResolver(schema),
         mode: "onChange",
     });
     const { toast } = useToast();
-    const [fecha, setFecha] = useState<string>("");
-    const [horario, setHorario] = useState<string>("");
-
-    const formatHorario = (value: string) => {
-        const numeros = value.replace(/\D/g, "");
-        const hours = numeros.substring(0, 2);
-        const minutes = numeros.substring(2, 4);
-
-        let formatted = hours;
-        if (minutes) formatted += `:${minutes}`;
-
-        return formatted;
-    };
-
-    const formatFecha = (value: string) => {
-        const numeros = value.replace(/\D/g, "");
-
-        const day = numeros.substring(0, 2);
-        const month = numeros.substring(2, 4);
-        const year = numeros.substring(4, 8);
-
-        let formatted = day;
-        if (month) formatted += `/${month}`;
-        if (year) formatted += `/${year}`;
-
-        return formatted;
-    };
-
-    const handleFechaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const formattedValue = formatFecha(value);
-        const [dd, mm] = formattedValue.split("/").map(Number);
-
-        if (dd > 31 || mm > 12) {
-            return;
-        }
-
-        setFecha(formattedValue);
-    };
-
-    const handleHorarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const formattedValue = formatHorario(value);
-
-        const [hh, mm] = formattedValue.split(":").map(Number);
-        if (hh > 23 || mm > 59) return;
-
-        setHorario(formattedValue);
-    };
 
     const onSubmit: SubmitHandler<EventFormValues> = async (
         data: EventFormValues
     ) => {
+        const [day, month, year] = data.fecha_comienzo.split("-");
+        const formatDate = `${year}/${month}/${day}`;
+
         try {
+            const payload = { ...data, fecha_comienzo: formatDate };
             if (formAction && formData) {
                 await UpdateData({
-                        path: "events",
-                        data
-                    },
+                    path: "events",
+                    data: payload
+                },
                     formData?._id
                 );
                 console.log("Edit");
             } else {
                 await AddData({
                     path: "events",
-                    data,
+                    data: payload,
                 });
                 console.log("Add");
             }
@@ -215,21 +178,34 @@ export function EventForm({
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
-                    Fecha <span className="font-bold text-red-800">*</span>
+                    Fecha de Inicio <span className="font-bold text-red-800">*</span>
                 </label>
                 <input
-                    {...register("fecha")}
-                    type="text"
-                    placeholder="Ej: 25/12/2024"
-                    value={fecha}
-                    onChange={handleFechaChange}
+                    {...register("fecha_comienzo")}
+                    type="date"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper(
-                    "Formato requerido: DD/MM/YYYY.",
-                    errors?.fecha?.message!,
-                    errors?.fecha!
+                    "Fecha del Evento",
+                    errors?.fecha_comienzo?.message!,
+                    errors?.fecha_comienzo!
+                )}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Fecha de Fin <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("duracion_evento")}
+                    type="number"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper(
+                    "Cantidad de dias del evento de que dure más de un día",
+                    errors?.duracion_evento?.message!,
+                    errors?.duracion_evento!
                 )}
             </div>
             <div className="mb-4">
@@ -237,19 +213,31 @@ export function EventForm({
                     Horario <span className="font-bold text-red-800">*</span>
                 </label>
                 <input
-                    {...register("horario")}
-                    type="text"
-                    placeholder="Ej: 19:00"
-                    value={horario}
-                    onChange={handleHorarioChange}
-                    maxLength={5}
+                    {...register("horario_comienzo")}
+                    type="time"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper(
-                    "Formato requerido: HH:MM.",
-                    errors?.horario?.message!,
-                    errors?.horario!
+                    "Comienzo del Evento",
+                    errors?.horario_comienzo?.message!,
+                    errors?.horario_comienzo!
+                )}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Horario <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("horario_fin")}
+                    type="time"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper(
+                    "Fin del Evento",
+                    errors?.horario_fin?.message!,
+                    errors?.horario_fin!
                 )}
             </div>
             <div className="col-span-2 flex justify-end">

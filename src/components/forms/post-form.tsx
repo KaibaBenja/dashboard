@@ -39,7 +39,6 @@ const schema: ObjectSchema<PostFormValues> = object({
         .defined(),
     categoria: string().required("Debes seleccionar una categoría.").defined(),
     fecha: string()
-        .matches(/^\d{2}\/\d{2}\/\d{4}$/, "Formato inválido. Use DD/MM/YYYY.")
         .required("La fecha del evento es obligatoria.")
         .defined(),
     pie_noticia: string()
@@ -96,7 +95,6 @@ export function PostForm({
     });
     const { toast } = useToast();
     const [fileUrls, setFileUrls] = useState<any[]>([]);
-    const [fecha, setFecha] = useState<string>("");
     const parrafos_noticia = useWatch({
         control,
         name: "parrafos_noticia",
@@ -136,40 +134,18 @@ export function PostForm({
         );
     };
 
-    const formatFecha = (value: string) => {
-        const numeros = value.replace(/\D/g, "");
-
-        const day = numeros.substring(0, 2);
-        const month = numeros.substring(2, 4);
-        const year = numeros.substring(4, 8);
-
-        let formatted = day;
-        if (month) formatted += `/${month}`;
-        if (year) formatted += `/${year}`;
-
-        return formatted;
-    };
-
-    const handleFechaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const formattedValue = formatFecha(value);
-        const [dd, mm] = formattedValue.split("/").map(Number);
-
-        if (dd > 31 || mm > 12) {
-            return;
-        }
-
-        setFecha(formattedValue);
-    };
-
     const onSubmit: SubmitHandler<PostFormValues> = async (
         data: PostFormValues
     ) => {
+        const [day, month, year] = data.fecha.split("-");
+        const formatDate = `${year}/${month}/${day}`;
+
         try {
             const formData = new FormData();
             formData.append("titulo", data.titulo);
             formData.append("categoria", data.categoria);
-            formData.append("fecha", data.fecha);
+            
+            formData.append("fecha", formatDate);
             formData.append("pie_noticia", data.pie_noticia);
             data.parrafos_noticia.forEach((parrafo: string) => {
                 formData.append("parrafos_noticia", parrafo);
@@ -263,10 +239,7 @@ export function PostForm({
                 </label>
                 <input
                     {...register("fecha")}
-                    type="text"
-                    placeholder="Ej: 25/12/2024"
-                    value={fecha}
-                    onChange={handleFechaChange}
+                    type="date"
                     className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />

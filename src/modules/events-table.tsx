@@ -20,6 +20,7 @@ import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaCalendarCheck, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import { MdOutlineTextFields, MdOutlineEventNote } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
+import { BiSolidCalendarExclamation } from 'react-icons/bi';
 
 
 export function EventsTable() {
@@ -145,7 +146,7 @@ export function EventsTable() {
                                                 <span className='block md:hidden'>Dirección: </span>{event?.direccion.split("|")[0]}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Fecha: </span>{event?.fecha}
+                                                <span className='block md:hidden'>Fecha: </span>{event?.fecha_comienzo}
                                             </TableCell>
                                             <ActionCell
                                                 data={event}
@@ -223,11 +224,19 @@ export function EventsTable() {
                     <span className='capitalize'>• {currentEvent?.descripcion}</span>
                     <div className='flex items-center gap-2 mt-2'>
                         <FaCalendarCheck className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentEvent?.fecha}</span>
+                        <span className='capitalize'>{currentEvent?.fecha_comienzo}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <BiSolidCalendarExclamation className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentEvent?.duracion_evento}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
                         <FaClock className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentEvent?.horario}</span>
+                        <span className='capitalize'>{currentEvent?.horario_comienzo}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <FaClock className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentEvent?.horario_fin}</span>
                     </div>
                 </div>
             </InfoDialog>

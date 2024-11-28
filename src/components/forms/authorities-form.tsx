@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { UpdateData } from "@/queries/UpdateData";
 import { AddData } from "@/queries/AddData";
-import { object, string, mixed, ObjectSchema } from "yup";
+import { object, string, mixed, ObjectSchema, number } from "yup";
 import { AuthorityType } from "@/types/AuthTypes";
 import { FormProps } from "@/types/formProps";
 
@@ -20,11 +20,11 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 interface AuthorityFormValues {
     name: string;
     puesto: string;
+    jerarquia: number;
     profile_pic: string | File;
 }
 
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
-const FILE_NAME_PATTERN = /^[a-zA-Z0-9.\-_\s]+$/; 
+const FILE_NAME_PATTERN = /^[a-zA-Z0-9.\-_\s]+$/;
 
 const schema: ObjectSchema<AuthorityFormValues> = object({
     name: string()
@@ -43,32 +43,22 @@ const schema: ObjectSchema<AuthorityFormValues> = object({
             (value) => typeof value === "string"
         )
         .defined(),
+    jerarquia: number()
+        .required("El puesto es obligatorio.")
+        .defined(),
     profile_pic: mixed<string | File>()
-    .required("Se debe ingresar una foto de perfil")
-    .test(
-        "is-valid-type",
-        "El archivo debe ser una imagen válida (JPEG, JPG o PNG)",
-        (value) => {
-            if (typeof value === "string") {
+        .required("Se debe ingresar una foto de perfil")
+        .test(
+            "is-valid-name",
+            "El nombre del archivo contiene caracteres no permitidos. Solo se permiten letras, números, guiones, guiones bajos, espacios y puntos.",
+            (value) => {
+                if (value instanceof File) {
+                    return FILE_NAME_PATTERN.test(value.name);
+                }
                 return true;
             }
-            if (value instanceof File) {
-                return ALLOWED_FILE_TYPES.includes(value.type);
-            }
-            return false;
-        }
-    )
-    .test(
-        "is-valid-name",
-        "El nombre del archivo contiene caracteres no permitidos. Solo se permiten letras, números, guiones, guiones bajos, espacios y puntos.",
-        (value) => {
-            if (value instanceof File) {
-                return FILE_NAME_PATTERN.test(value.name);
-            }
-            return true;
-        }
-    )
-    .defined(),
+        )
+        .defined(),
 });
 
 export function AuthorityForm({
@@ -88,6 +78,7 @@ export function AuthorityForm({
         defaultValues: {
             name: formAction ? formData?.name : "",
             puesto: formAction ? formData?.puesto : "",
+            jerarquia: formAction ? formData?.jerarquia : 1,
             profile_pic: formAction ? formData?.profile_pic : "",
         },
         resolver: yupResolver(schema),
@@ -120,6 +111,8 @@ export function AuthorityForm({
             const formData = new FormData();
             formData.append("name", data.name);
             formData.append("puesto", data.puesto);
+            const jerarquiaParse: number = Number(data.jerarquia);
+            formData.append("jerarquia", jerarquiaParse.toString());
 
             if (data.profile_pic instanceof File) {
                 formData.append("profile_pic", data.profile_pic);
@@ -178,13 +171,6 @@ export function AuthorityForm({
                 <label className="block text-gray-700">
                     Puesto <span className="font-bold text-red-800">*</span>
                 </label>
-                {/* <input
-                    {...register("puesto")}
-                    type="text"
-                    placeholder="Especifica el cargo o posición de la autoridad"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
-                    disabled={isSubmitting}
-                /> */}
                 <Select
                     value={watch("puesto")}
                     onValueChange={(value) =>
@@ -197,11 +183,23 @@ export function AuthorityForm({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="Gobernador de la Provincia de Corrientes">Gobernador de la Provincia de Corrientes</SelectItem>
-                        <SelectItem value="	Ministro de Hacienda y Finanzas">	Ministro de Hacienda y Finanzas</SelectItem>
-                        <SelectItem value="	Subsecretario de Sistemas y Tecnologías de la información">	Subsecretario de Sistemas y Tecnologías de la información</SelectItem>
+                        <SelectItem value="Ministro de Hacienda y Finanzas">Ministro de Hacienda y Finanzas</SelectItem>
+                        <SelectItem value="Subsecretario de Sistemas y Tecnologías de la información">Subsecretario de Sistemas y Tecnologías de la información</SelectItem>
                     </SelectContent>
-                </Select>
+                </Select>   
                 {inputMessageHelper("", errors?.puesto?.message!, errors?.puesto!)}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Jerarquía <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("jerarquia")}
+                    type="number"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper("La jerarquia va según el nivel de importancia de la autoridad y esto afecta al orden en que se muestra en la UI del gamecenter", errors?.jerarquia?.message!, errors?.jerarquia!)}
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">

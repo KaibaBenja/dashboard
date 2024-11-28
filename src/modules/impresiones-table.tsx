@@ -113,7 +113,7 @@ export function ImpresionesTable() {
 
     const indexOfLastMember: number = currentPage * itemsPerPage;
     const indexOfFirstMember: number = indexOfLastMember - itemsPerPage;
-    const currentAuthorites: ImpresionType[] = impresiones.slice(indexOfFirstMember, indexOfLastMember);
+    const currentImpresiones: ImpresionType[] = impresiones.slice(indexOfFirstMember, indexOfLastMember);
 
     return !isLoading ? (
         <div className='flex flex-col justify-between h-full mb-14'>
@@ -133,7 +133,7 @@ export function ImpresionesTable() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {currentAuthorites.map((Impresion: ImpresionType, index: number) => (
+                                    {currentImpresiones.map((Impresion: ImpresionType, index: number) => (
                                         <TableRow key={Impresion?._id} className='flex flex-col md:flex-row md:table-row'>
                                             <TableCell className="flex md:table-cell items-center gap-2 font-medium">
                                                 <span className='block md:hidden'>Id: </span>{Impresion?._id}

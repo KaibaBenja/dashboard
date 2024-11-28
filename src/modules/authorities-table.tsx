@@ -20,6 +20,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
+import { PiRankingFill } from "react-icons/pi";
 
 export function AuthoritiesTable() {
     const [authorities, setAuthorities] = useState<AuthorityType[]>([]);
@@ -138,10 +139,10 @@ export function AuthoritiesTable() {
                                                 <span className='block md:hidden'>Id: </span>{authority?._id}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Titulo: </span>{authority?.name}
+                                                <span className='block md:hidden'>Nombre: </span>{authority?.name}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Fecha: </span>{authority?.puesto}
+                                                <span className='block md:hidden'>Puesto: </span>{authority?.puesto}
                                             </TableCell>
                                             <ActionCell
                                                 data={authority}
@@ -221,6 +222,10 @@ export function AuthoritiesTable() {
                     <div className='flex items-center gap-2 mt-2'>
                         <FaBriefcase className='w-5 h-5 text-green-800' />
                         <span className='capitalize'>{currentAuthority?.puesto}</span>
+                    </div>
+                    <div className='flex items-center gap-2 mt-2'>
+                        <PiRankingFill className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>{currentAuthority?.jerarquia}</span>
                     </div>
                 </div>
             </InfoDialog>
