@@ -23,7 +23,6 @@ export default async function middleware(request: NextRequest) {
   let verifier;
   try {
     if (token) {
-      // Usamos 'jose' para verificar el token
       const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.NEXT_PUBLIC_MYSECRET as string));
       verifier = payload;
     }
@@ -32,7 +31,7 @@ export default async function middleware(request: NextRequest) {
     verifier = false;
   }
 
-  if (!verifier && request.nextUrl.pathname === "/") {
+  if (!verifier && request.nextUrl.pathname !== "/login") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
