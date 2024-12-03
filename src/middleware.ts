@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { jwtVerify } from 'jose';
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const role: string | undefined = request.cookies.get("role")?.value.trim();
   const url = request.nextUrl.pathname;
@@ -19,15 +20,27 @@ export default function middleware(request: NextRequest) {
   const impresionRoutes = ["/", "/impresiones"];
   const comunicationRoutes = ["/", "/posts", "/eventos"];
 
-  if (!token && request.nextUrl.pathname === "/") {
+  let verifier;
+  try {
+    if (token) {
+      // Usamos 'jose' para verificar el token
+      const { payload } = await jwtVerify(token, new TextEncoder().encode(process.env.NEXT_PUBLIC_MYSECRET as string));
+      verifier = payload;
+    }
+  } catch (error) {
+    console.error("Error al verificar el token:", error);
+    verifier = false;
+  }
+
+  if (!verifier && request.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (token && request.nextUrl.pathname === "/login") {
+  if (verifier && request.nextUrl.pathname === "/login") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  if (token) {
+  if (verifier) {
     switch (role) {
       case '"Admin"':
         if (!adminRoutes.includes(url)) {
