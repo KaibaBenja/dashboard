@@ -30,6 +30,7 @@ export function EventsTable() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [warning, setWarning] = useState<boolean>(false);
     const [currentEventId, setCurrentEventId] = useState<string>("");
+    const [currentEventName, setCurrentEventName] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
     const [currentEvent, setCurrentEvent] = useState<EventType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -111,7 +112,7 @@ export function EventsTable() {
             toast({
                 variant: "success",
                 title: `Exito!`,
-                description: `El evento ${eventName} fue eliminado`,
+                description: `Todos los elementos del evento ${eventName} fueron eliminado`,
             });
         } catch (error) {
             console.error('Failed to delete event:', error);
@@ -122,6 +123,7 @@ export function EventsTable() {
             });
         } finally {
             setInfoDialogOpen(false)
+            refreshPosts()
         }
     }
 
@@ -176,9 +178,12 @@ export function EventsTable() {
                                                 index={`Evento ${index + 1}`}
                                                 closeWarning={warning && currentEventId === event?._id}
                                                 handleCloseWarning={handleWarning}
-                                                takeCurrentId={() => setCurrentEventId(event?._id)}
+                                                takeCurrentId={() => {
+                                                    setCurrentEventId(event?._id)
+                                                    setCurrentEventName(event?.event_name)
+                                                }}
                                                 currentId={currentEventId}
-                                                deleteActionCell={handleDelete}
+                                                deleteActionCell={() => handleDeleteMany(currentEventName)}
                                                 editActionCell={onEditClick}
                                                 viewActionCell={onViewClick}
                                             />
