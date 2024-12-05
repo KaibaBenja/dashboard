@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from "@/queries/DeleteData";
+import { DeleteManyData } from '@/queries/DeleteManyData';
 import { EventType } from '@/types/EventTypes';
+
 
 import { EventForm } from '../components/forms/events-form';
 import { ActionCell } from '../components/table-actions/actions-cell';
@@ -96,6 +98,27 @@ export function EventsTable() {
                 variant: "destructive",
                 title: `Error!`,
                 description: `Ocurrio un error al intentar eliminar al elemento ${eventId} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
+        }
+    }
+
+    async function handleDeleteMany(eventName: string) {
+        try {
+            await DeleteManyData("events/by-name", eventName);
+            setEvents(prevEvents => prevEvents.filter(event => event._id !== eventName));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `El evento ${eventName} fue eliminado`,
+            });
+        } catch (error) {
+            console.error('Failed to delete event:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${eventName} (${error})`,
             });
         } finally {
             setInfoDialogOpen(false)
