@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 
 import { FetchAllData } from '@/queries/FetchAllData';
 import { DeleteData } from "@/queries/DeleteData";
+import { DeleteManyData } from '@/queries/DeleteManyData';
 import { EventType } from '@/types/EventTypes';
+
 
 import { EventForm } from '../components/forms/events-form';
 import { ActionCell } from '../components/table-actions/actions-cell';
@@ -28,6 +30,7 @@ export function EventsTable() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [warning, setWarning] = useState<boolean>(false);
     const [currentEventId, setCurrentEventId] = useState<string>("");
+    const [currentEventName, setCurrentEventName] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
     const [currentEvent, setCurrentEvent] = useState<EventType | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -102,6 +105,28 @@ export function EventsTable() {
         }
     }
 
+    async function handleDeleteMany(eventName: string) {
+        try {
+            await DeleteManyData("events/by-name", eventName);
+            setEvents(prevEvents => prevEvents.filter(event => event._id !== eventName));
+            toast({
+                variant: "success",
+                title: `Exito!`,
+                description: `Todos los elementos del evento ${eventName} fueron eliminado`,
+            });
+        } catch (error) {
+            console.error('Failed to delete event:', error);
+            toast({
+                variant: "destructive",
+                title: `Error!`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${eventName} (${error})`,
+            });
+        } finally {
+            setInfoDialogOpen(false)
+            refreshPosts()
+        }
+    }
+
     async function refreshPosts() {
         try {
             const updateEvents = await FetchAllData("events");
@@ -153,9 +178,12 @@ export function EventsTable() {
                                                 index={`Evento ${index + 1}`}
                                                 closeWarning={warning && currentEventId === event?._id}
                                                 handleCloseWarning={handleWarning}
-                                                takeCurrentId={() => setCurrentEventId(event?._id)}
+                                                takeCurrentId={() => {
+                                                    setCurrentEventId(event?._id)
+                                                    setCurrentEventName(event?.event_name)
+                                                }}
                                                 currentId={currentEventId}
-                                                deleteActionCell={handleDelete}
+                                                deleteActionCell={() => handleDeleteMany(currentEventName)}
                                                 editActionCell={onEditClick}
                                                 viewActionCell={onViewClick}
                                             />
