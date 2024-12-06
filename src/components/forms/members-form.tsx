@@ -20,6 +20,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
+import FileInput from "../table-actions/custom-inputs/profile-input";
+import ImageCropper from "../handlers/image-cropper";
+import { Dialog } from "@radix-ui/react-dialog";
+import { DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 
 interface MemberFormValues {
     name_surname: string;
@@ -61,7 +65,7 @@ const schema: ObjectSchema<MemberFormValues> = object({
                 (typeof value === "string" &&
                     value.startsWith("https://www.linkedin.com/in/"))
         ),
-    profile_pic: mixed<string | File>()
+    profile_pic: mixed<File>()
         .required("Se debe ingresar una foto de perfil")
         .test(
             "is-valid-type",
@@ -126,22 +130,69 @@ export function MemberForm({
 
     const { toast } = useToast();
     const [fileURLs, setFileURLs] = useState<any[] | string>([]);
+    const [profileImage, setProfileImage] = useState<any | string>('');
+    const [currentPage, setCurrentPage] = useState("choose-img");
+    const [imageAfterCrop, setImageAfterCrop] = useState('');
 
-    const handleFilesSelected = (files: File[]) => {
-        if (files.length > 0) {
-            const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setFileURLs(newFileURLs);
-            setValue("profile_pic", files[0], {
-                shouldValidate: true,
-                shouldTouch: true,
-            });
+    const onImageSelected = (selectedImg: any) => {
+        setProfileImage(selectedImg);
+        setCurrentPage('crop-img');
+        setValue("profile_pic", selectedImg, { shouldValidate: true });
+    }
+
+    const onCropDone = (imgCroppedArea: any) => {
+        const canvasEle = document.createElement("canvas");
+        canvasEle.width = imgCroppedArea.width;
+        canvasEle.height = imgCroppedArea.height;
+
+        const context = canvasEle.getContext('2d');
+
+        let imageObj1 = new Image();
+        imageObj1.src = profileImage;
+        imageObj1.onload = function () {
+            context?.drawImage(
+                imageObj1,
+                imgCroppedArea.x,
+                imgCroppedArea.y,
+                imgCroppedArea.width,
+                imgCroppedArea.height,
+                0,
+                0,
+                imgCroppedArea.width,
+                imgCroppedArea.height
+            );
+
+            canvasEle.toBlob((blob) => {
+                const croppedFile = new File([blob!], "croppedimage.jpg", {
+                    type: "image/jpeg",
+                });
+                setImageAfterCrop(URL.createObjectURL(croppedFile));
+                setCurrentPage('img-cropped');
+                setValue("profile_pic", croppedFile, { shouldValidate: true });
+            }, "image/jpeg");
         }
     };
 
-    const handleFileRemoved = () => {
-        setFileURLs([]);
-        setValue("profile_pic", "", { shouldValidate: true });
-    };
+    const onCropCancel = () => {
+        setCurrentPage('choose-img');
+        setProfileImage('');
+    }
+
+    // const handleFilesSelected = (files: File[]) => {
+    //     if (files.length > 0) {
+    //         const newFileURLs = files.map((file) => URL.createObjectURL(file));
+    //         setFileURLs(newFileURLs);
+    //         setValue("profile_pic", files[0], {
+    //             shouldValidate: true,
+    //             shouldTouch: true,
+    //         });
+    //     }
+    // };
+
+    // const handleFileRemoved = () => {
+    //     setFileURLs([]);
+    //     setValue("profile_pic", "", { shouldValidate: true });
+    // };
 
     const onSubmit: SubmitHandler<MemberFormValues> = async (
         data: MemberFormValues
@@ -155,27 +206,28 @@ export function MemberForm({
                 "linkedIn",
                 data.linkedIn !== "null" ? data.linkedIn : "no_profile_existence"
             );
-
             if (data.profile_pic instanceof File) {
                 formData.append("profile_pic", data.profile_pic);
             }
-
-            if (fileURLs?.length === 1) {
+            console.log(data);
+            if (data.profile_pic) {
                 if (formAction) {
                     await UpdateData({ path: "members", data: formData }, updateID!);
                 } else {
                     await AddData({ path: "members", data: formData });
                 }
-            }
 
-            onSubmitSuccess();
-            handleCloseSheet();
-            toast({
-                variant: "success",
-                title: `Éxito!`,
-                description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"
-                    }`,
-            });
+                onSubmitSuccess();
+                handleCloseSheet();
+                toast({
+                    variant: "success",
+                    title: `Éxito!`,
+                    description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"
+                        }`,
+                });
+            } else {
+                throw new Error("Falta la imagen de perfil");
+            }
         } catch (error) {
             console.error(error);
             toast({
@@ -281,13 +333,43 @@ export function MemberForm({
                 <label className="block text-gray-700">
                     Foto de Perfil <span className="font-bold text-red-800">*</span>
                 </label>
-                <FileUpload
-                    {...register("profile_pic")}
-                    files={fileURLs}
-                    onFilesSelected={handleFilesSelected}
-                    onFileRemoved={handleFileRemoved}
-                    limit={1}
-                />
+                <div>
+                    {currentPage === 'choose-img' ? (
+                        <FileInput onImageSelected={onImageSelected} />
+                    ) : currentPage === 'crop-img' ? (
+                        <DialogContent className="h-3/4">
+                            <ImageCropper image={profileImage}
+                                onCropDone={onCropDone}
+                                onCropCancel={onCropCancel}
+                            />
+                        </DialogContent>
+                    ) : (
+                        <div className="mt-5 flex flex-col items-center justify-center gap-2">
+                            <div>
+                                <img src={imageAfterCrop} width={250} height={250} alt="profile-preview" />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Button className="text-white bg-green-800 hover:bg-green-700" onClick={() => {
+                                    setCurrentPage('crop-img');
+                                }}>
+                                    Editar
+                                </Button>
+
+                                <Button className="text-white bg-green-800 hover:bg-green-700" onClick={() => {
+                                    setCurrentPage('choose-img');
+                                    setProfileImage('');
+                                }}>
+                                    Nueva Imagen
+                                </Button>
+                            </div>
+                        </div>
+                    )
+
+                    }
+                </div>
+
+
                 {inputMessageHelper(
                     <div className="flex flex-col gap-2 mt-2">
                         ESPECIFICACIONES:
