@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { object, string, ObjectSchema, number } from "yup";
+import { object, string, ObjectSchema, number, boolean } from "yup";
 
 import { UpdateData } from "@/queries/UpdateData";
+import { DeleteData } from "@/queries/DeleteData";
 import { AddData } from "@/queries/AddData";
 import { EventType } from "@/types/EventTypes";
 import { FormProps } from "@/types/formProps";
@@ -14,6 +15,7 @@ import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { inputMessageHelper } from "../handlers/input-helper";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface EventFormValues {
     event_name: string;
@@ -23,6 +25,8 @@ interface EventFormValues {
     duracion_evento: number;
     horario_comienzo: string;
     horario_fin: string;
+    isVigente: boolean;
+    isImportant: boolean;
 }
 
 const schema: ObjectSchema<EventFormValues> = object({
@@ -47,9 +51,16 @@ const schema: ObjectSchema<EventFormValues> = object({
     horario_fin: string()
         .required("El horario del evento es obligatorio.")
         .defined(),
+    isVigente: boolean()
+        .required("Es necesario determinar la vigencia del evento.")
+        .defined(),
+    isImportant: boolean()
+        .required("Es necesario determinar la importancia del evento.")
+        .defined(),
 });
 
 export function EventForm({
+    updateID,
     formAction,
     formData,
     onSubmitSuccess,
@@ -58,6 +69,8 @@ export function EventForm({
     const {
         register,
         handleSubmit,
+        watch,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<EventFormValues>({
         defaultValues: {
@@ -68,6 +81,8 @@ export function EventForm({
             duracion_evento: formAction ? formData?.duracion_evento : 1,
             horario_comienzo: formAction ? formData?.horario_comienzo : "",
             horario_fin: formAction ? formData?.horario_fin : "",
+            isVigente: formAction ? formData?.isVigente : true,
+            isImportant: formAction ? formData?.isImportant : true,
         },
         resolver: yupResolver(schema),
         mode: "onChange",
@@ -77,15 +92,34 @@ export function EventForm({
     const onSubmit: SubmitHandler<EventFormValues> = async (
         data: EventFormValues
     ) => {
-
         try {
             if (formAction && formData) {
                 await UpdateData({ path: "events", data }, formData?._id);
                 console.log("Edit");
             } else {
-                await AddData({ path: "events", data });
+                await AddData({
+                    path: "events", data: {
+                        ...data,
+                        isVigente: true
+                    }
+                });
                 console.log("Add");
             }
+
+            if (data.isImportant) {
+                const currentYear = new Date().getFullYear();
+                await AddData({
+                    path: "Participaciones", data: {
+                        year: currentYear,
+                        event_name: data.event_name
+                    }
+                })
+            }
+
+            if (formAction && !data.isImportant) {
+                await DeleteData("participaciones", updateID!);
+            }
+
             onSubmitSuccess();
             handleCloseSheet();
             toast({
@@ -93,6 +127,7 @@ export function EventForm({
                 title: `¡Éxito!`,
                 description: `El evento "${data?.event_name}" fue ${formAction ? "editado" : "agregado"
                     } exitosamente.`,
+                duration: 1000
             });
         } catch (error) {
             console.log(error);
@@ -100,6 +135,7 @@ export function EventForm({
                 variant: "destructive",
                 title: "¡Ocurrió un error!",
                 description: `Algo salió mal durante el proceso. Por favor, intente nuevamente. (${error})`,
+                duration: 1000
             });
         }
     };
@@ -183,7 +219,7 @@ export function EventForm({
             </div>
             <div className="mb-4">
                 <label className="block text-gray-700">
-                    Fecha de Fin <span className="font-bold text-red-800">*</span>
+                    ¿Cuantos días dura? <span className="font-bold text-red-800">*</span>
                 </label>
                 <input
                     {...register("duracion_evento")}
@@ -192,7 +228,13 @@ export function EventForm({
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper(
-                    "Cantidad de dias del evento de que dure más de un día",
+                    formAction
+                        ? (
+                            <div>
+                                <p>Cantidad de dias del evento de que dure más de un día</p>
+                                <p>Advertencia: En Modo Edición esto modificara la cantidad de dias exactos, asegurarse de poner de nuevo los necesarios *</p>
+                            </div>
+                        ) : "Cantidad de dias del evento de que dure más de un día",
                     errors?.duracion_evento?.message!,
                     errors?.duracion_evento!
                 )}
@@ -229,6 +271,58 @@ export function EventForm({
                     errors?.horario_fin!
                 )}
             </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    ¿Es un evento importante? <span className="font-bold text-red-800">*</span>
+                </label>
+                <Select
+                    onValueChange={(value) =>
+                        setValue("isImportant", value === "true", { shouldValidate: true })
+                    }
+                    value={watch("isImportant") ? "true" : "false"}
+                    disabled={isSubmitting}
+                >
+                    <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                        <SelectValue placeholder="Selecciona una opción" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="true">Sí</SelectItem>
+                        <SelectItem value="false">No</SelectItem>
+                    </SelectContent>
+                </Select>
+                {inputMessageHelper(
+                    "Seleccionando Sí, este se agregará automáticamente a las participaciones destacadas de la SuSTI.",
+                    errors?.isImportant?.message!,
+                    errors?.isImportant!
+                )}
+            </div>
+            {formAction && (
+                <div className="mb-4">
+                    <label className="block text-gray-700">
+                        ¿Esta vigente el evento? <span className="font-bold text-red-800">*</span>
+                    </label>
+                    <Select
+                        onValueChange={(value) =>
+                            setValue("isVigente", value === "true", { shouldValidate: true })
+                        }
+                        value={watch("isVigente") ? "true" : "false"}
+                        disabled={isSubmitting}
+                    >
+                        <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                            <SelectValue placeholder="Selecciona una opción" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="true">Sí</SelectItem>
+                            <SelectItem value="false">No</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {inputMessageHelper(
+                        "Seleccionando Sí, este se agregará automáticamente a las participaciones destacadas de la SuSTI.",
+                        errors?.isVigente?.message!,
+                        errors?.isVigente!
+                    )}
+                </div>
+            )}
             <div className="col-span-2 flex justify-end">
                 <Button
                     type="submit"

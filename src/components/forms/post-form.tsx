@@ -163,8 +163,8 @@ export function PostForm({
             toast({
                 variant: "success",
                 title: `Éxito!`,
-                description: `El Post ${data?.titulo} fue ${formAction ? "editado" : "agregado"
-                    }`,
+                description: `El Post ${data?.titulo} fue ${formAction ? "editado" : "agregado"}`,
+                duration: 2000
             });
         } catch (error) {
             console.log(error);
@@ -172,6 +172,7 @@ export function PostForm({
                 variant: "destructive",
                 title: "Ocurrió un Error!",
                 description: `Fallo algo durante el proceso, pruebe de nuevo (${error})`,
+                duration: 2000
             });
         }
     };

@@ -38,7 +38,7 @@ export function LoginForm() {
             router.push('/');
         } catch (error: any) {
             console.error('Error during login:', error);
-            setLoginError('Credenciales incorrectas o hubo un problema con el servidor.');
+            setLoginError(`Error: ${error?.response?.data?.error}`);
             setLoading(false);
         }
     };
@@ -85,7 +85,7 @@ export function LoginForm() {
                         </div>
                         {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                     </div>
-                    {loginError && <p className="text-red-500 text-center">{loginError}</p>}
+                    {loginError && <p className="text-red-500 text-center font-semibold">{loginError}</p>}
                     <button type="submit" className='w-full bg-[#0a8537] rounded-md font-semibold text-white p-2'>
                         {loading 
                             ? <span className='flex justify-center items-center gap-2'>

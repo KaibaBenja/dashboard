@@ -199,6 +199,7 @@ export function MemberForm({
                     await AddData({ path: "members", data: formData });
                 }
 
+<<<<<<< HEAD
                 onSubmitSuccess();
                 handleCloseSheet();
                 toast({
@@ -210,12 +211,23 @@ export function MemberForm({
             } else {
                 throw new Error("Falta la imagen de perfil");
             }
+=======
+            onSubmitSuccess();
+            handleCloseSheet();
+            toast({
+                variant: "success",
+                title: `Éxito!`,
+                description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"}`,
+                duration: 2000
+            });
+>>>>>>> c06010bb4cce3e4e90037028a3a7701d099b095b
         } catch (error) {
             console.error(error);
             toast({
                 variant: "destructive",
                 title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
+                duration: 2000
             });
         }
     };
