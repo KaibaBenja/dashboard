@@ -11,7 +11,6 @@ import { FormProps } from "@/types/formProps";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
-import { FileUpload } from "../table-actions/custom-inputs/file-upload";
 import { inputMessageHelper } from "../handlers/input-helper";
 import {
     Select,
@@ -22,8 +21,7 @@ import {
 } from "../ui/select";
 import FileInput from "../table-actions/custom-inputs/profile-input";
 import ImageCropper from "../handlers/image-cropper";
-import { Dialog } from "@radix-ui/react-dialog";
-import { DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { DialogContent} from "../ui/dialog";
 
 interface MemberFormValues {
     name_surname: string;
@@ -129,7 +127,6 @@ export function MemberForm({
     });
 
     const { toast } = useToast();
-    const [fileURLs, setFileURLs] = useState<any[] | string>([]);
     const [profileImage, setProfileImage] = useState<any | string>('');
     const [currentPage, setCurrentPage] = useState("choose-img");
     const [imageAfterCrop, setImageAfterCrop] = useState('');
@@ -178,21 +175,6 @@ export function MemberForm({
         setProfileImage('');
     }
 
-    // const handleFilesSelected = (files: File[]) => {
-    //     if (files.length > 0) {
-    //         const newFileURLs = files.map((file) => URL.createObjectURL(file));
-    //         setFileURLs(newFileURLs);
-    //         setValue("profile_pic", files[0], {
-    //             shouldValidate: true,
-    //             shouldTouch: true,
-    //         });
-    //     }
-    // };
-
-    // const handleFileRemoved = () => {
-    //     setFileURLs([]);
-    //     setValue("profile_pic", "", { shouldValidate: true });
-    // };
 
     const onSubmit: SubmitHandler<MemberFormValues> = async (
         data: MemberFormValues
