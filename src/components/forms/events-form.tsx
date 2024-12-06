@@ -228,7 +228,13 @@ export function EventForm({
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper(
-                    "Cantidad de dias del evento de que dure más de un día",
+                    formAction
+                        ? (
+                            <div>
+                                <p>Cantidad de dias del evento de que dure más de un día</p>
+                                <p>Advertencia: En Modo Edición esto modificara la cantidad de dias exactos, asegurarse de poner de nuevo los necesarios *</p>
+                            </div>
+                        ) : "Cantidad de dias del evento de que dure más de un día",
                     errors?.duracion_evento?.message!,
                     errors?.duracion_evento!
                 )}
@@ -292,30 +298,30 @@ export function EventForm({
             </div>
             {formAction && (
                 <div className="mb-4">
-                <label className="block text-gray-700">
-                    ¿Esta vigente el evento? <span className="font-bold text-red-800">*</span>
-                </label>
-                <Select
-                    onValueChange={(value) =>
-                        setValue("isVigente", value === "true", { shouldValidate: true })
-                    }
-                    value={watch("isVigente") ? "true" : "false"}
-                    disabled={isSubmitting}
-                >
-                    <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
-                        <SelectValue placeholder="Selecciona una opción" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="true">Sí</SelectItem>
-                        <SelectItem value="false">No</SelectItem>
-                    </SelectContent>
-                </Select>
-                {inputMessageHelper(
-                    "Seleccionando Sí, este se agregará automáticamente a las participaciones destacadas de la SuSTI.",
-                    errors?.isVigente?.message!,
-                    errors?.isVigente!
-                )}
-            </div>
+                    <label className="block text-gray-700">
+                        ¿Esta vigente el evento? <span className="font-bold text-red-800">*</span>
+                    </label>
+                    <Select
+                        onValueChange={(value) =>
+                            setValue("isVigente", value === "true", { shouldValidate: true })
+                        }
+                        value={watch("isVigente") ? "true" : "false"}
+                        disabled={isSubmitting}
+                    >
+                        <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                            <SelectValue placeholder="Selecciona una opción" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="true">Sí</SelectItem>
+                            <SelectItem value="false">No</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    {inputMessageHelper(
+                        "Seleccionando Sí, este se agregará automáticamente a las participaciones destacadas de la SuSTI.",
+                        errors?.isVigente?.message!,
+                        errors?.isVigente!
+                    )}
+                </div>
             )}
             <div className="col-span-2 flex justify-end">
                 <Button
