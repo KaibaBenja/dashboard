@@ -20,7 +20,7 @@ import { useToast } from '@/components/ui/use-toast';
 
 import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaCalendarCheck, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
-import { MdOutlineTextFields, MdOutlineEventNote } from "react-icons/md";
+import { MdOutlineTextFields, MdOutlineEventNote, MdNotificationImportant } from "react-icons/md";
 import { HiIdentification } from "react-icons/hi";
 import { BiSolidCalendarExclamation } from 'react-icons/bi';
 
@@ -29,6 +29,7 @@ export function EventsTable() {
     const [events, setEvents] = useState<EventType[]>([]);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [warning, setWarning] = useState<boolean>(false);
+    const [participationId, setParticipationId] = useState<string>("");
     const [currentEventId, setCurrentEventId] = useState<string>("");
     const [currentEventName, setCurrentEventName] = useState<string>("");
     const [actionForm, setActionForm] = useState<boolean>(false);
@@ -41,20 +42,49 @@ export function EventsTable() {
     const isTableEmpty = Boolean(events.length > 0);
 
     useEffect(() => {
-        async function loadEvents() {
+        async function loadEventsAndParticipations() {
             setIsLoading(true);
             try {
-                const updateEvents = await FetchAllData("events");
-                setEvents(updateEvents);
+                const eventsData = await FetchAllData("events");
+                setEvents(eventsData);
+
             } catch (error) {
-                console.error('Failed to fetch posts:', error);
+                console.error('Error al cargar datos:', error);
             } finally {
                 setIsLoading(false);
             }
         }
 
-        loadEvents();
+        loadEventsAndParticipations();
     }, []);
+
+    async function fetchParticipationId(eventName: string) {
+        try {
+            const participations = await FetchAllData("participaciones");
+            const matchedParticipation = participations.find((p: any) =>
+                p.event_name === eventName
+            );
+
+            if (matchedParticipation) {
+                setParticipationId(matchedParticipation._id);
+            } else {
+                setParticipationId("");
+            }
+        } catch (error) {
+            console.error("Error al filtrar participaciones:", error);
+            setParticipationId("");
+        }
+        console.log(participationId)
+    }
+
+    async function getParticipaciones() {
+        try {
+            const participations = await FetchAllData("participaciones");
+            console.log(participations)
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
 
     function onAddClick() {
         setIsOpen(true);
@@ -62,15 +92,16 @@ export function EventsTable() {
         setCurrentEvent(null);
     }
 
-    function onEditClick(event: EventType) {
-        setIsOpen(true);
-        setActionForm(true);
-        setCurrentEvent(event);
-    }
-
     function onViewClick(event: EventType) {
         setCurrentEvent(event);
         setInfoDialogOpen(true);
+    }
+
+    async function onEditClick(event: EventType) {
+        setIsOpen(true);
+        setActionForm(true);
+        setCurrentEvent(event);
+        await fetchParticipationId(event.event_name);
     }
 
     function handleWarning() {
@@ -79,51 +110,53 @@ export function EventsTable() {
 
     function handleCloseForm() {
         setTimeout(() => {
-            setIsOpen(!isOpen);
+            setIsOpen(false);
             setInfoDialogOpen(false);
         }, 300);
     }
 
-    async function handleDelete(eventId: string) {
+    async function handleDeleteEventWithParticipation(eventName: string) {
+        setIsLoading(true);
         try {
-            await DeleteData("events", eventId);
-            setEvents(prevEvents => prevEvents.filter(event => event._id !== eventId));
+            const participationId = await getParticipationIdByEventName(eventName);
+            if (participationId) {
+                await DeleteData("participaciones", participationId);
+            }
+            await DeleteManyData("events/by-name", eventName);
+            setEvents((prevEvents) => prevEvents.filter((event) => event.event_name !== eventName));
+
             toast({
                 variant: "success",
-                title: `Exito!`,
-                description: `El evento ${eventId} fue eliminado`,
+                title: "¡Éxito!",
+                description: `El evento "${eventName}" y sus participaciones relacionadas han sido eliminados.`,
+                duration: 1000,
             });
+
+            setInfoDialogOpen(false);
         } catch (error) {
-            console.error('Failed to delete event:', error);
+            console.error("Error al eliminar el evento o participaciones:", error);
             toast({
                 variant: "destructive",
-                title: `Error!`,
-                description: `Ocurrio un error al intentar eliminar al elemento ${eventId} (${error})`,
+                title: "Error",
+                description: `Ocurrió un error al eliminar el evento "${eventName}". (${error})`,
+                duration: 1000,
             });
         } finally {
-            setInfoDialogOpen(false)
+            setIsLoading(false);
+            refreshPosts();
         }
     }
 
-    async function handleDeleteMany(eventName: string) {
+    async function getParticipationIdByEventName(eventName: string): Promise<string | null> {
         try {
-            await DeleteManyData("events/by-name", eventName);
-            setEvents(prevEvents => prevEvents.filter(event => event._id !== eventName));
-            toast({
-                variant: "success",
-                title: `Exito!`,
-                description: `Todos los elementos del evento ${eventName} fueron eliminado`,
-            });
+            const participations = await FetchAllData("participaciones");
+            const matchedParticipation = participations.find(
+                (p: any) => p.event_name === eventName
+            );
+            return matchedParticipation?._id || null;
         } catch (error) {
-            console.error('Failed to delete event:', error);
-            toast({
-                variant: "destructive",
-                title: `Error!`,
-                description: `Ocurrio un error al intentar eliminar al elemento ${eventName} (${error})`,
-            });
-        } finally {
-            setInfoDialogOpen(false)
-            refreshPosts()
+            console.error("Error al obtener participaciones:", error);
+            return null;
         }
     }
 
@@ -178,12 +211,14 @@ export function EventsTable() {
                                                 index={`Evento ${index + 1}`}
                                                 closeWarning={warning && currentEventId === event?._id}
                                                 handleCloseWarning={handleWarning}
-                                                takeCurrentId={() => {
+                                                takeCurrentId={async () => {
                                                     setCurrentEventId(event?._id)
                                                     setCurrentEventName(event?.event_name)
                                                 }}
                                                 currentId={currentEventId}
-                                                deleteActionCell={() => handleDeleteMany(currentEventName)}
+                                                deleteActionCell={async () => {
+                                                    await handleDeleteEventWithParticipation(currentEventName)
+                                                }}
                                                 editActionCell={onEditClick}
                                                 viewActionCell={onViewClick}
                                             />
@@ -218,6 +253,7 @@ export function EventsTable() {
                 handleOpen={handleCloseForm}
             >
                 <EventForm
+                    updateID={participationId}
                     formAction={actionForm}
                     formData={currentEvent}
                     handleCloseSheet={handleCloseForm}
@@ -232,7 +268,9 @@ export function EventsTable() {
                 data={currentEvent}
                 takeCurrentId={() => setCurrentEventId(currentEvent?._id!)}
                 currentId={currentEventId}
-                deleteActionCell={handleDelete}
+                deleteActionCell={async () => {
+                    await handleDeleteEventWithParticipation(currentEvent?.event_name!)
+                }}
                 editActionCell={onEditClick}
             >
                 <h1 className='text-start font-bold text-xl'>{currentEvent?.event_name}</h1>

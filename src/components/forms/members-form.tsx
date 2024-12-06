@@ -173,8 +173,8 @@ export function MemberForm({
             toast({
                 variant: "success",
                 title: `Éxito!`,
-                description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"
-                    }`,
+                description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"}`,
+                duration: 2000
             });
         } catch (error) {
             console.error(error);
@@ -182,6 +182,7 @@ export function MemberForm({
                 variant: "destructive",
                 title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
+                duration: 2000
             });
         }
     };

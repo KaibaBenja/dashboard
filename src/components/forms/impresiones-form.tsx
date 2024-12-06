@@ -136,8 +136,8 @@ export function ImpresionForm({
             toast({
                 variant: "success",
                 title: `Éxito!`,
-                description: `La Impresión ${data.titulo} fue ${formAction ? "editada" : "agregada"
-                    }`,
+                description: `La Impresión ${data.titulo} fue ${formAction ? "editada" : "agregada"}`,
+                duration: 2000
             });
         } catch (error) {
             console.error(error);
@@ -145,6 +145,7 @@ export function ImpresionForm({
                 variant: "destructive",
                 title: "Ocurrió un Error!",
                 description: `Fallo algo durante el proceso, pruebe de nuevo (${error})`,
+                duration: 2000
             });
         }
     };
