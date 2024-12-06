@@ -21,13 +21,8 @@ export default function RootLayout({
         <AppContextProvider>
             <html lang="en" className="scroll-smooth">
                 <head>
-                    <link rel="icon" href="/" sizes="any" />{" "}
-                    <link
-                        rel="icon"
-                        href="/images/logo-susti.png"
-                        type="image/<generated>"
-                        sizes="<generated>"
-                    />
+                    <link rel="icon" href="/" sizes="any" />
+                    <link rel="icon" href="/images/logo-susti.png" type="image/<generated>" sizes="<generated>"/>
                     <meta name="author" content="SusTi"></meta>
                     <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
                 </head>

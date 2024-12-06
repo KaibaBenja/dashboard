@@ -178,22 +178,6 @@ export function MemberForm({
         setProfileImage('');
     }
 
-    // const handleFilesSelected = (files: File[]) => {
-    //     if (files.length > 0) {
-    //         const newFileURLs = files.map((file) => URL.createObjectURL(file));
-    //         setFileURLs(newFileURLs);
-    //         setValue("profile_pic", files[0], {
-    //             shouldValidate: true,
-    //             shouldTouch: true,
-    //         });
-    //     }
-    // };
-
-    // const handleFileRemoved = () => {
-    //     setFileURLs([]);
-    //     setValue("profile_pic", "", { shouldValidate: true });
-    // };
-
     const onSubmit: SubmitHandler<MemberFormValues> = async (
         data: MemberFormValues
     ) => {
@@ -222,7 +206,8 @@ export function MemberForm({
                 toast({
                     variant: "success",
                     title: `Éxito!`,
-                    description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"
+                    description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado",
+                    duration: 2000,
                         }`,
                 });
             } else {
@@ -234,6 +219,7 @@ export function MemberForm({
                 variant: "destructive",
                 title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
+                duration:2000,
             });
         }
     };
