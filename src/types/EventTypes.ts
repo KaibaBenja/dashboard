@@ -7,4 +7,6 @@ export interface EventType {
     duracion_evento: number;
     horario_comienzo: string;
     horario_fin: string;
+    isVigente: boolean;
+    isImportant: boolean;
 }

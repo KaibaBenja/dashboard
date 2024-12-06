@@ -393,8 +393,8 @@ export function GameForm({
             toast({
                 variant: "success",
                 title: `Éxito!`,
-                description: `El Juego ${data.titulo} fue ${formAction ? "editado" : "agregado"
-                    }`,
+                description: `El Juego ${data.titulo} fue ${formAction ? "editado" : "agregado"}`,
+                duration: 2000
             });
         } catch (error) {
             console.error(error);
@@ -402,6 +402,7 @@ export function GameForm({
                 variant: "destructive",
                 title: "Error!",
                 description: "Fallo algo durante el proceso, prueba de nuevo",
+                duration: 2000
             });
         }
     };
