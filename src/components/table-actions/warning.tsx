@@ -19,14 +19,12 @@ export function DeleteWarning({ closeDialog, handleCloseDialog, currentId, delet
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <DialogClose>
-                        <Button
-                            className='bg-gray-400 mt-6 hover:bg-gray-500'
-                            onClick={() => handleCloseDialog(false)}
-                        >
-                            Cancelar
-                        </Button>
-                    </DialogClose>
+                    <Button
+                        className='bg-gray-400 mt-6 hover:bg-gray-500'
+                        onClick={() => handleCloseDialog(false)}
+                    >
+                        Cancelar
+                    </Button>
                     <Button
                         className='bg-red-800 mt-6 hover:bg-red-700'
                         onClick={() => deleteAction(currentId)}

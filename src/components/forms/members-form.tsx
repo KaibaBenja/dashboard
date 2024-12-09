@@ -319,7 +319,7 @@ export function MemberForm({
                         <FileInput onImageSelected={onImageSelected} />
                     ) : currentPage === 'crop-img' ? (
                         <DialogContent className="h-3/4">
-                            <DialogTitle>Foto de Perfil</DialogTitle>
+                            <DialogTitle />
                             <ImageCropper image={profileImage}
                                 onCropDone={onCropDone}
                                 onCropCancel={onCropCancel}

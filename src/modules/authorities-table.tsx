@@ -21,6 +21,7 @@ import { IoAddCircleSharp } from 'react-icons/io5';
 import { FaBriefcase } from 'react-icons/fa';
 import { HiIdentification } from "react-icons/hi";
 import { PiRankingFill } from "react-icons/pi";
+import { DialogTitle } from '@/components/ui/dialog';
 
 export function AuthoritiesTable() {
     const [authorities, setAuthorities] = useState<AuthorityType[]>([]);
@@ -206,13 +207,13 @@ export function AuthoritiesTable() {
             >
                 <div className='flex flex-col items-center justify-center'>
                     <Image
-                        src={currentAuthority?.profile_pic[0]!}
+                        src={currentAuthority?.profile_pic!}
                         alt="autoridad image"
                         width={150}
                         height={150}
                         className='rounded-full w-[150px] h-[150px] self-center my-4'
                     />
-                    <h1 className='text-start font-bold text-xl'>{currentAuthority?.name}</h1>
+                    <DialogTitle className='text-start font-bold text-xl'>{currentAuthority?.name}</DialogTitle>
                 </div>
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>
