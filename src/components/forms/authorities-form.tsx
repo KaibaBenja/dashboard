@@ -16,6 +16,9 @@ import { inputMessageHelper } from "../handlers/input-helper";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { DialogContent, DialogTitle } from "../ui/dialog";
+import ImageCropper from "../handlers/image-cropper";
+import FileInput from "../table-actions/custom-inputs/profile-input";
 
 interface AuthorityFormValues {
     name: string;
@@ -87,22 +90,55 @@ export function AuthorityForm({
 
     const { toast } = useToast();
     const [fileURLs, setFileURLs] = useState<any[] | string>([]);
+    const [profileImage, setProfileImage] = useState<any | string>('');
+    const [currentPage, setCurrentPage] = useState("choose-img");
+    const [imageAfterCrop, setImageAfterCrop] = useState('');
 
-    const handleFilesSelected = (files: File[]) => {
-        if (files.length > 0) {
-            const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setFileURLs(newFileURLs);
-            setValue("profile_pic", files[0], {
-                shouldValidate: true,
-                shouldTouch: true,
-            });
+    const onImageSelected = (selectedImg: any) => {
+        setProfileImage(selectedImg);
+        setCurrentPage('crop-img');
+        setValue("profile_pic", selectedImg, { shouldValidate: true });
+    }
+
+    const onCropDone = (imgCroppedArea: any) => {
+        const canvasEle = document.createElement("canvas");
+        canvasEle.width = imgCroppedArea.width;
+        canvasEle.height = imgCroppedArea.height;
+
+        const context = canvasEle.getContext('2d');
+
+        let imageObj1 = new Image();
+        imageObj1.src = profileImage;
+        imageObj1.onload = function () {
+            context?.drawImage(
+                imageObj1,
+                imgCroppedArea.x,
+                imgCroppedArea.y,
+                imgCroppedArea.width,
+                imgCroppedArea.height,
+                0,
+                0,
+                imgCroppedArea.width,
+                imgCroppedArea.height
+            );
+
+            canvasEle.toBlob((blob) => {
+                const croppedFile = new File([blob!], "croppedimage.jpg", {
+                    type: "image/jpeg",
+                });
+                setImageAfterCrop(URL.createObjectURL(croppedFile));
+                setCurrentPage('img-cropped');
+                setValue("profile_pic", croppedFile, { shouldValidate: true });
+            }, "image/jpeg");
         }
     };
 
-    const handleFileRemoved = () => {
-        setFileURLs([]);
-        setValue("profile_pic", "", { shouldValidate: true });
-    };
+    const onCropCancel = () => {
+        setCurrentPage('choose-img');
+        setProfileImage('');
+    }
+
+
 
     const onSubmit: SubmitHandler<AuthorityFormValues> = async (
         data: AuthorityFormValues
@@ -187,7 +223,7 @@ export function AuthorityForm({
                         <SelectItem value="Ministro de Hacienda y Finanzas">Ministro de Hacienda y Finanzas</SelectItem>
                         <SelectItem value="Subsecretario de Sistemas y Tecnologías de la información">Subsecretario de Sistemas y Tecnologías de la información</SelectItem>
                     </SelectContent>
-                </Select>   
+                </Select>
                 {inputMessageHelper("", errors?.puesto?.message!, errors?.puesto!)}
             </div>
             <div className="mb-4">
@@ -206,18 +242,49 @@ export function AuthorityForm({
                 <label className="block text-gray-700">
                     Foto de Perfil <span className="font-bold text-red-800">*</span>
                 </label>
-                <FileUpload
-                    {...register("profile_pic")}
-                    files={fileURLs}
-                    onFilesSelected={handleFilesSelected}
-                    onFileRemoved={handleFileRemoved}
-                    limit={1}
-                />
+                <div>
+                    {currentPage === 'choose-img' ? (
+                        <FileInput onImageSelected={onImageSelected} />
+                    ) : currentPage === 'crop-img' ? (
+                        <DialogContent className="h-3/4">
+                            <DialogTitle>Foto de Perfil</DialogTitle>
+                            <ImageCropper image={profileImage}
+                                onCropDone={onCropDone}
+                                onCropCancel={onCropCancel}
+                            />
+                        </DialogContent>
+                    ) : (
+                        <div className="mt-5 flex flex-col items-center justify-center gap-2">
+                            <div>
+                                <img src={imageAfterCrop} width={250} height={250} alt="profile-preview" />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Button className="text-white bg-green-800 hover:bg-green-700" onClick={() => {
+                                    setCurrentPage('crop-img');
+                                }}>
+                                    Editar
+                                </Button>
+
+                                <Button className="text-white bg-green-800 hover:bg-green-700" onClick={() => {
+                                    setCurrentPage('choose-img');
+                                    setProfileImage('');
+                                }}>
+                                    Nueva Imagen
+                                </Button>
+                            </div>
+                        </div>
+                    )
+
+                    }
+                </div>
+
+
                 {inputMessageHelper(
                     <div className="flex flex-col gap-2 mt-2">
                         ESPECIFICACIONES:
                         <p>
-                            1. La imagen no debe contener nombres con caracteres especiales (* -
+                            1. Las imagen no debe contener nombres con caracteres especiales (* -
                             _ / | # { } + = @ ¿ ? : % ! ¡). <br />
                         </p>
                         <p>
