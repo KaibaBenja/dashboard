@@ -21,7 +21,7 @@ import {
 } from "../ui/select";
 import FileInput from "../table-actions/custom-inputs/profile-input";
 import ImageCropper from "../handlers/image-cropper";
-import { DialogContent} from "../ui/dialog";
+import { DialogContent, DialogTitle } from "../ui/dialog";
 
 interface MemberFormValues {
     name_surname: string;
@@ -188,10 +188,8 @@ export function MemberForm({
                 "linkedIn",
                 data.linkedIn !== "null" ? data.linkedIn : "no_profile_existence"
             );
-            if (data.profile_pic instanceof File) {
-                formData.append("profile_pic", data.profile_pic);
-            }
-            console.log(data);
+            formData.append("profile_pic", data.profile_pic);
+
             if (data.profile_pic) {
                 if (formAction) {
                     await UpdateData({ path: "members", data: formData }, updateID!);
@@ -199,35 +197,24 @@ export function MemberForm({
                     await AddData({ path: "members", data: formData });
                 }
 
-<<<<<<< HEAD
                 onSubmitSuccess();
                 handleCloseSheet();
                 toast({
                     variant: "success",
                     title: `Éxito!`,
-                    description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"
-                        }`,
+                    description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"}`,
+                    duration: 2000,
                 });
             } else {
                 throw new Error("Falta la imagen de perfil");
             }
-=======
-            onSubmitSuccess();
-            handleCloseSheet();
-            toast({
-                variant: "success",
-                title: `Éxito!`,
-                description: `El miembro ${data.name_surname} fue ${formAction ? "editado" : "agregado"}`,
-                duration: 2000
-            });
->>>>>>> c06010bb4cce3e4e90037028a3a7701d099b095b
         } catch (error) {
             console.error(error);
             toast({
                 variant: "destructive",
                 title: "Ocurrió un Error!",
                 description: "Fallo algo durante el proceso, pruebe de nuevo",
-                duration: 2000
+                duration: 2000,
             });
         }
     };
@@ -332,6 +319,7 @@ export function MemberForm({
                         <FileInput onImageSelected={onImageSelected} />
                     ) : currentPage === 'crop-img' ? (
                         <DialogContent className="h-3/4">
+                            <DialogTitle>Foto de Perfil</DialogTitle>
                             <ImageCropper image={profileImage}
                                 onCropDone={onCropDone}
                                 onCropCancel={onCropCancel}

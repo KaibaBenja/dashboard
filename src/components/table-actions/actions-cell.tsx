@@ -31,7 +31,7 @@ export function ActionCell({
 }: ActionCellProps) {
     return (
         <TableCell className="flex items-center justify-between text-right md:text-left">
-            <TableCaption className="block md:hidden">{index}</TableCaption>
+            <h1 className="block md:hidden">{index}</h1>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
@@ -41,19 +41,19 @@ export function ActionCell({
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                         onClick={() => viewActionCell(data)}
                         className="flex items-center gap-2 text-start font-semibold text-gray-800"
                     >
                         <FaBookOpen className="h-4 w-4 text-green-800" /> Vista
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
-                        onClick={() => editActionCell(data)} 
+                    <DropdownMenuItem
+                        onClick={() => editActionCell(data)}
                         className="flex items-center gap-2 font-semibold text-gray-800"
                     >
                         <FaEdit className="h-4 w-4 text-green-800" /> Editar
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                         onClick={() => {
                             takeCurrentId();
                             handleCloseWarning(true);

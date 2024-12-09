@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Button } from '../../ui/button';
+import { CiImageOn } from "react-icons/ci";
 import { Dialog, DialogTrigger } from '@radix-ui/react-dialog';
 
 interface FileInputProps {
@@ -25,8 +25,9 @@ const FileInput = ({ onImageSelected }: FileInputProps) => {
 
     return (
         <Dialog>
-            <DialogTrigger>
-                <Button onClick={onChooseImg} type='button' className='mt-5 bg-green-800 hover:bg-green-700'>Elegir Imagen</Button>
+            <DialogTrigger onClick={onChooseImg} className='mt-4 flex justify-center gap-2 items-center p-2 border-2 border-dotted hover:border-solid border-[#3c3c3c] font-medium hover:text-white rounded-lg w-full bg-transparent  hover:bg-green-700'>
+                Elegir Imagen
+                <CiImageOn />
             </DialogTrigger>
             <input type="file" accept='image/*' ref={inputRef} onChange={handleOnChange} className='hidden' />
         </Dialog>
