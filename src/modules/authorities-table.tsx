@@ -128,7 +128,6 @@ export function AuthoritiesTable() {
                             <Table>
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
-                                        <TableHead className='table-cell'>ID</TableHead>
                                         <TableHead className="table-cell">Nombre</TableHead>
                                         <TableHead className="hidden md:table-cell">Puesto</TableHead>
                                     </TableRow>
@@ -136,9 +135,6 @@ export function AuthoritiesTable() {
                                 <TableBody>
                                     {currentAuthorites.map((authority: AuthorityType, index: number) => (
                                         <TableRow key={authority?._id} className='flex flex-col md:flex-row md:table-row'>
-                                            <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{authority?._id}
-                                            </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
                                                 <span className='block md:hidden'>Nombre: </span>{authority?.name}
                                             </TableCell>

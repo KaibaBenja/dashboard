@@ -177,11 +177,11 @@ export function ImpresionForm({
                 <label className="block text-gray-700">
                     Epígrafe <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
+                <textarea
+                    rows={6}
                     {...register("epigrafe")}
-                    type="text"
                     placeholder="Detalle de la impresión"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border resize-none rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("Escriba una breve descripción de la impresión", errors?.epigrafe?.message!, errors?.epigrafe!)}

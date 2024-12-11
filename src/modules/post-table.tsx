@@ -129,7 +129,6 @@ export function PostsTable() {
                             <Table>
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
-                                        <TableHead className='table-cell'>ID</TableHead>
                                         <TableHead className="table-cell">Título</TableHead>
                                         <TableHead className="hidden md:table-cell">Categoria</TableHead>
                                         <TableHead className="hidden md:table-cell">Fecha</TableHead>
@@ -138,9 +137,6 @@ export function PostsTable() {
                                 <TableBody>
                                     {currentPosts.map((post: PostType, index: number) => (
                                         <TableRow key={post?._id} className='flex flex-col md:flex-row md:table-row'>
-                                            <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{post?._id}
-                                            </TableCell>
                                             <TableCell className="flex md:table-cell md:items-center gap-2">
                                                 <span className='block md:hidden'>Título: </span>{post?.titulo}
                                             </TableCell>

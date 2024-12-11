@@ -16,6 +16,8 @@ import { Button } from "../ui/button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
 import { MultiInput } from "../table-actions/custom-inputs/multi-inputs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { watch } from "fs";
 
 interface GameFormValues {
     titulo: string;
@@ -122,6 +124,7 @@ export function GameForm({
         handleSubmit,
         setValue,
         control,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm<GameFormValues>({
         defaultValues: {
@@ -458,11 +461,11 @@ export function GameForm({
                 <label className="block text-gray-700">
                     Sinopsis: <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
+                <textarea
+                    rows={6}
                     {...register("sinopsis")}
-                    type="text"
                     placeholder="Describe brevemente el juego"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border resize-none rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper("Proporciona una descripción general del juego.", errors?.sinopsis?.message!)}
@@ -470,6 +473,7 @@ export function GameForm({
 
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Aporte al Turismo:"
                     values={aporte_turismo}
                     onChange={(val) => handleArrayChange("aporte_turismo", val)}
@@ -489,6 +493,7 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Aporte a la Cultura:"
                     values={aporte_cultura}
                     onChange={(val) => handleArrayChange("aporte_cultura", val)}
@@ -510,6 +515,7 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Aporte a la Juventud:"
                     values={aporte_juventud}
                     onChange={(val) => handleArrayChange("aporte_juventud", val)}
@@ -532,6 +538,7 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Aporte a la Educación:"
                     values={aporte_educacion}
                     onChange={(val) => handleArrayChange("aporte_educacion", val)}
@@ -556,10 +563,10 @@ export function GameForm({
                 <label className="block text-gray-700">
                     Objetivo: <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
+                <textarea
+                    rows={6}
                     {...register("objetivo")}
-                    type="text"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border resize-none rounded-lg focus:outline-green-800"
                     placeholder="¿Cuáles son los objetivos del juego?"
                     disabled={isSubmitting}
                 />
@@ -572,10 +579,10 @@ export function GameForm({
                 <label className="block text-gray-700">
                     Desarrollo: <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
+                <textarea
+                    rows={6}
                     {...register("desarrollo_juego")}
-                    type="text"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    className="w-full px-2 py-2 border resize-none rounded-lg focus:outline-green-800"
                     disabled={isSubmitting}
                 />
                 {inputMessageHelper(
@@ -585,6 +592,7 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Condiciones de Victoria:"
                     values={condiciones_juego}
                     onChange={(val) => handleArrayChange("condiciones_juego", val)}
@@ -607,6 +615,7 @@ export function GameForm({
             </div>
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Controles:"
                     values={controles}
                     onChange={(val) => handleArrayChange("controles", val)}
@@ -686,16 +695,25 @@ export function GameForm({
                 )}
             </div>
             <div className="mb-4">
-                <label className="block text-gray-700">
-                    Modo de ventana(vertical/horizontal):{" "}
+            <label className="block text-gray-700">
+                    Modo de ventana:
                     <span className="font-bold text-red-800">*</span>
                 </label>
-                <input
-                    {...register("game_window")}
-                    type="text"
-                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                <Select
+                    value={watch("game_window")}
+                    onValueChange={(value) =>
+                        setValue("game_window", value, { shouldValidate: true })
+                    }
                     disabled={isSubmitting}
-                />
+                >
+                    <SelectTrigger className="w-full px-2 py-2 border rounded-lg focus:outline-green-800">
+                        <SelectValue placeholder="Seleccionar una Dimensión" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="Horizontal">Horizontal</SelectItem>
+                        <SelectItem value="Vertical">Vertical</SelectItem>
+                    </SelectContent>
+                </Select>
                 {inputMessageHelper(
                     "Poner en que orientación se debe jugar (Horizontal | Vertical)",
                     errors?.game_window?.message!

@@ -266,6 +266,7 @@ export function PostForm({
             </div>
             <div className="mb-4">
                 <MultiInput
+                    type="textarea"
                     name="Párrafos de la Noticia:"
                     values={parrafos_noticia}
                     onChange={(val) => handleArrayChange("parrafos_noticia", val)}

@@ -185,7 +185,6 @@ export function EventsTable() {
                             <Table>
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
-                                        <TableHead className='table-cell'>ID</TableHead>
                                         <TableHead className="table-cell">Título</TableHead>
                                         <TableHead className="hidden md:table-cell">Dirección</TableHead>
                                         <TableHead className="hidden md:table-cell">Fecha</TableHead>
@@ -194,9 +193,6 @@ export function EventsTable() {
                                 <TableBody>
                                     {currentEvents.map((event: EventType, index: number) => (
                                         <TableRow key={event?._id} className='flex flex-col md:flex-row md:table-row'>
-                                            <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{event?._id}
-                                            </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
                                                 <span className='block md:hidden'>Título: </span>{event?.event_name}
                                             </TableCell>

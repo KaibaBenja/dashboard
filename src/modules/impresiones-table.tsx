@@ -127,7 +127,6 @@ export function ImpresionesTable() {
                             <Table>
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
-                                        <TableHead className='table-cell'>ID</TableHead>
                                         <TableHead className="table-cell">Nombre</TableHead>
                                         <TableHead className="hidden md:table-cell">Puesto</TableHead>
                                     </TableRow>
@@ -135,9 +134,6 @@ export function ImpresionesTable() {
                                 <TableBody>
                                     {currentImpresiones.map((Impresion: ImpresionType, index: number) => (
                                         <TableRow key={Impresion?._id} className='flex flex-col md:flex-row md:table-row'>
-                                            <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{Impresion?._id}
-                                            </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
                                                 <span className='block md:hidden'>Titulo: </span>{Impresion?.titulo}
                                             </TableCell>
