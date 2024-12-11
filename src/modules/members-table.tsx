@@ -128,7 +128,6 @@ export function MembersTable() {
                             <Table>
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
-                                        <TableHead className='table-cell'>ID</TableHead>
                                         <TableHead className="table-cell">Nombre</TableHead>
                                         <TableHead className="hidden md:table-cell">Equipo</TableHead>
                                         <TableHead className="hidden md:table-cell">Puesto</TableHead>
@@ -137,9 +136,6 @@ export function MembersTable() {
                                 <TableBody>
                                     {currentMembers.map((member: MemberType, index: number) => (
                                         <TableRow key={member?._id} className='flex flex-col md:flex-row md:table-row'>
-                                            <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                                <span className='block md:hidden'>Id: </span>{member?._id}
-                                            </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
                                                 <span className='block md:hidden'>Nombre: </span>{member?.name_surname}
                                             </TableCell>

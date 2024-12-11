@@ -129,18 +129,13 @@ export function GameTable() {
                         <Table>
                             <TableHeader className='border-b hidden md:table-header-group'>
                                 <TableRow>
-                                    <TableHead className='table-cell'>ID</TableHead>
                                     <TableHead className="table-cell">Título</TableHead>
                                     <TableHead className="hidden md:table-cell">Autor</TableHead>
-                                    <TableHead className="hidden md:table-cell">Tecnologías</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {currentGames.map((game: GameType, index: number) => (
                                     <TableRow key={game?._id} className='flex flex-col md:flex-row md:table-row'>
-                                        <TableCell className="flex md:table-cell items-center gap-2 font-medium">
-                                            <span className='block md:hidden'>Id: </span>{game?._id}
-                                        </TableCell>
                                         <TableCell className="flex md:table-cell items-center gap-2">
                                             <span className='block md:hidden'>Título: </span>{game?.titulo}
                                         </TableCell>
