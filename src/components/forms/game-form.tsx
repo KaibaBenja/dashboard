@@ -17,7 +17,6 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useToast } from "../ui/use-toast";
 import { MultiInput } from "../table-actions/custom-inputs/multi-inputs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { watch } from "fs";
 
 interface GameFormValues {
     titulo: string;
@@ -104,7 +103,6 @@ const schema: ObjectSchema<GameFormValues> = object({
                     (file) => file && /^[a-zA-Z0-9.]+$/.test(file.name)
                 )
         )
-        .min(1, "Debes subir al menos una imagen")
         .required("Este campo es obligatorio"),
     game_archive: mixed<File[]>().optional(),
     game_questions: mixed<File[]>().optional(),
@@ -153,8 +151,8 @@ export function GameForm({
         mode: "onChange",
     });
     const { toast } = useToast();
-    const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [imagesPreview, setImagesPreview] = useState<string[]>([]);
+    const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [archiveFiles, setArchiveFiles] = useState<File[]>([]);
     const [questionFile, setQuestionFile] = useState<File[]>([]);
     const [windowsEFile, setWindowsEFile] = useState<File[]>([]);
@@ -202,14 +200,22 @@ export function GameForm({
 
     const handleImageSelected = (files: File[]) => {
         if (files.length > 0) {
-            const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setImagesPreview((prevFiles: any) => [...prevFiles, ...newFileURLs]);
-            setImageFiles((prevFiles: any) => [...prevFiles, ...files]);
-            setValue("game_images", files, {
+            const filteredFiles = files.filter(
+                (file) => !imageFiles.some((existingFile) => existingFile.name === file.name)
+            );
+
+            const newFileURLs = filteredFiles.map((file) => URL.createObjectURL(file));
+
+            const updatedFiles = [...imageFiles, ...filteredFiles];
+            const updatedFileUrls = [...imagesPreview, ...newFileURLs];
+
+            setImageFiles(updatedFiles);
+            setImagesPreview(updatedFileUrls);
+
+            setValue("game_images", updatedFiles, {
                 shouldValidate: true,
                 shouldTouch: true,
             });
-            console.log(files);
         }
     };
 
@@ -272,20 +278,16 @@ export function GameForm({
     };
 
     const handleImageRemoved = (index: number) => {
-        setImageFiles((prevFiles: any) =>
-            prevFiles.filter((_: any, i: number) => i !== index)
-        );
-        setImagesPreview((prevFiles: any) =>
-            prevFiles.filter((_: any, i: number) => i !== index)
-        );
-        setValue(
-            "game_images",
-            imageFiles.filter((_: any, i: number) => i !== index),
-            {
-                shouldValidate: true,
-                shouldTouch: true,
-            }
-        );
+        const updatedFiles = imagesPreview.filter((_, i) => i !== index);
+        const updatedFileUrls = imageFiles.filter((_, i) => i !== index);
+
+        setImageFiles(updatedFileUrls);
+        setImagesPreview(updatedFiles);
+
+        setValue("game_images", updatedFiles, {
+            shouldValidate: true,
+            shouldTouch: true,
+        });
     };
 
     const handleQuestionRemoved = (index: number) => {
@@ -301,7 +303,7 @@ export function GameForm({
             }
         );
     };
-    
+
     const handleWindowsERemoved = (index: number) => {
         setWindowsEFile((prevFiles: any) =>
             prevFiles.filter((_: any, i: number) => i !== index)
@@ -695,7 +697,7 @@ export function GameForm({
                 )}
             </div>
             <div className="mb-4">
-            <label className="block text-gray-700">
+                <label className="block text-gray-700">
                     Modo de ventana:
                     <span className="font-bold text-red-800">*</span>
                 </label>
