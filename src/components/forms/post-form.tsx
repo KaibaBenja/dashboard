@@ -94,7 +94,8 @@ export function PostForm({
         mode: "onChange",
     });
     const { toast } = useToast();
-    const [fileUrls, setFileUrls] = useState<any[]>([]);
+    const [fileUrls, setFileUrls] = useState<string[]>([]);
+    const [allFiles, setAllFiles] = useState<File[]>([]);
     const parrafos_noticia = useWatch({
         control,
         name: "parrafos_noticia",
@@ -110,28 +111,46 @@ export function PostForm({
 
     const handleImageSelected = (files: File[]) => {
         if (files.length > 0) {
-            const newFileURLs = files.map((file) => URL.createObjectURL(file));
-            setFileUrls((prevFiles: any) => [...prevFiles, ...newFileURLs]);
-            setValue("blog_images", files, {
+            // Filtrar duplicados basados en el nombre del archivo
+            const filteredFiles = files.filter(
+                (file) => !allFiles.some((existingFile) => existingFile.name === file.name)
+            );
+    
+            // Generar URLs para los nuevos archivos
+            const newFileURLs = filteredFiles.map((file) => URL.createObjectURL(file));
+    
+            // Actualizar los estados acumulados
+            const updatedFiles = [...allFiles, ...filteredFiles];
+            const updatedFileUrls = [...fileUrls, ...newFileURLs];
+    
+            setAllFiles(updatedFiles);
+            setFileUrls(updatedFileUrls);
+    
+            // Pasar los archivos actualizados a `setValue`
+            setValue("blog_images", updatedFiles, {
                 shouldValidate: true,
                 shouldTouch: true,
             });
-            console.log(files);
+    
+            console.log(updatedFiles); // Confirmar el estado actualizado
         }
     };
 
     const handleImageRemoved = (index: number) => {
-        setFileUrls((prevFiles: any) =>
-            prevFiles.filter((_: any, i: number) => i !== index)
-        );
-        setValue(
-            "blog_images",
-            fileUrls.filter((_: any, i: number) => i !== index),
-            {
-                shouldValidate: true,
-                shouldTouch: true,
-            }
-        );
+        // Elimina el archivo correspondiente al índice
+        const updatedFiles = allFiles.filter((_, i) => i !== index);
+        const updatedFileUrls = fileUrls.filter((_, i) => i !== index);
+    
+        // Actualizar estados
+        setAllFiles(updatedFiles);
+        setFileUrls(updatedFileUrls);
+    
+        // Pasar los cambios al formulario
+        setValue("blog_images", updatedFiles, {
+            shouldValidate: true,
+            shouldTouch: true,
+        });
+
     };
 
     const onSubmit: SubmitHandler<PostFormValues> = async (
