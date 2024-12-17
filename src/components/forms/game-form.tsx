@@ -34,6 +34,7 @@ interface GameFormValues {
     estilo: string;
     genero: string[];
     game_window: string;
+    resoluciones: string;
     game_images: (File | string)[];
     game_archive?: (File | string)[];
     game_questions?: (File | string)[];
@@ -85,6 +86,9 @@ const schema: ObjectSchema<GameFormValues> = object({
         .min(1, "Se requiere al menos un género"),
     game_window: string().required(
         "Se requiere colocar la direccion del juego (Horizontal/Vertical)"
+    ),
+    resoluciones: string().required(
+        "Se requiere colocar las resoluciones correspondientes del juego"
     ),
     game_images: array()
         .of(
@@ -141,6 +145,7 @@ export function GameForm({
             estilo: formAction ? formData?.estilo : "",
             genero: formAction ? formData?.genero : [],
             game_window: formAction ? formData?.game_window : "",
+            resoluciones: formAction ? formData?.resoluciones : "",
             game_images: formAction ? formData?.game_images! : [],
             game_archive: formAction ? formData?.game_archive! : [],
             game_questions: formAction ? formData?.game_questions! : [],
@@ -368,7 +373,7 @@ export function GameForm({
                 formData.append("genero", genero);
             });
             formData.append("game_window", data.game_window);
-
+            formData.append("resoluciones", data.resoluciones);
             imageFiles.forEach((image: File) => {
                 formData.append("game_images", image);
             });
@@ -719,6 +724,23 @@ export function GameForm({
                 {inputMessageHelper(
                     "Poner en que orientación se debe jugar (Horizontal | Vertical)",
                     errors?.game_window?.message!
+                )}
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">
+                    Resoluciones: <span className="font-bold text-red-800">*</span>
+                </label>
+                <input
+                    {...register("resoluciones")}
+                    type="text"
+                    placeholder="Ej: 1080x1900"
+                    className="w-full px-2 py-2 border rounded-lg focus:outline-green-800"
+                    disabled={isSubmitting}
+                />
+                {inputMessageHelper(
+                    "Poner las resoluciones correspondientes",
+                    errors?.resoluciones?.message!,
+                    errors?.resoluciones
                 )}
             </div>
             <div className="mb-4">

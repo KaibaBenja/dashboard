@@ -15,6 +15,7 @@ export interface GameType {
   estilo: string;
   genero: string[];
   game_window: string;
+  resoluciones: string;
   game_images: string[];
   game_archive: string[];
   game_questions: string[];

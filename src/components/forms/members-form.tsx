@@ -330,14 +330,12 @@ export function MemberForm({
                             <div>
                                 <img src={imageAfterCrop} width={250} height={250} alt="profile-preview" />
                             </div>
-
                             <div className="flex items-center gap-2">
                                 <Button className="text-white bg-green-800 hover:bg-green-700" onClick={() => {
                                     setCurrentPage('crop-img');
                                 }}>
                                     Editar
                                 </Button>
-
                                 <Button className="text-white bg-green-800 hover:bg-green-700" onClick={() => {
                                     setCurrentPage('choose-img');
                                     setProfileImage('');
@@ -347,11 +345,8 @@ export function MemberForm({
                             </div>
                         </div>
                     )
-
                     }
                 </div>
-
-
                 {inputMessageHelper(
                     <div className="flex flex-col gap-2 mt-2">
                         ESPECIFICACIONES:

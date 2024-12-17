@@ -24,6 +24,7 @@ import { HiIdentification } from 'react-icons/hi';
 import { MdOutlineTextFields, MdStyle } from 'react-icons/md';
 import { GoGoal } from 'react-icons/go';
 import { TbFileArrowRight } from 'react-icons/tb';
+import { PiResizeBold } from 'react-icons/pi';
 
 export function GameTable() {
     const [games, setGames] = useState<GameType[]>([]);
@@ -291,6 +292,15 @@ export function GameTable() {
                         <span className='capitalize ml-2'>Genero del Juego:</span>
                     </div>
                     <span className='capitalize ml-2'>{currentGame?.genero}</span>
+                    <div className='flex items-center'>
+                        <PiResizeBold className='w-8 h-8 text-green-800' />
+                        <span className='capitalize ml-2'>Resoluciones:</span>
+                    </div>
+                    <span className='capitalize ml-2'>
+                        Ancho: {currentGame?.resoluciones.split("x")[0]}
+                        <br />
+                        Altura: {currentGame?.resoluciones.split("x")[1]}
+                    </span>
                 </div>
             </InfoDialog>
         </div>
