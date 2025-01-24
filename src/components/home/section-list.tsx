@@ -15,7 +15,7 @@ export function SectionViewsList({ views, alignItems = "justify-between" }: Sect
                 <Link
                     key={index}
                     href={`${data?.name}`}
-                    className="flex flex-col justify-center items-center w-full md:w-[300px] h-[300px] bg-green-200 shadow-md rounded-md hover:scale-105 transition-all ease-in-out duration-300"
+                    className="flex flex-col justify-center items-center w-full md:w-[250px] h-[250px] bg-green-200 shadow-md rounded-md hover:scale-105 transition-all ease-in-out duration-300"
                 >
                     {data.icon && (
                         <data.icon className="h-40 w-40 text-green-800" />

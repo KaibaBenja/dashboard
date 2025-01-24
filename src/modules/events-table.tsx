@@ -240,7 +240,7 @@ export function EventsTable() {
                 />
             )}
             <SheetForm
-                title='Formulario de Post'
+                title='Formulario de Eventos'
                 descripcion={actionForm
                     ? `Editar Post, cambiar los campos que se desea`
                     : "Agregar Nuevo Post, todos los campos son obligatorios"
