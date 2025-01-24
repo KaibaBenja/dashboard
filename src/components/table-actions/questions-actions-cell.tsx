@@ -18,7 +18,7 @@ interface ActionCellProps {
     deleteActionCell: (id: string) => Promise<void>;
 }
 
-export function ActionCell({
+export function QuestionsActionCell({
     data,
     index,
     closeWarning,
