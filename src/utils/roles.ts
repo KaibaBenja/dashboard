@@ -19,7 +19,7 @@ export const adminViews: ViewsTypes[] = [
 
 export const devView: ViewsTypes[] = [
   { name: "juegos", icon: LuGamepad },
-  { name: "Preguntas", icon: TbPencilQuestion },
+  { name: "preguntas", icon: TbPencilQuestion },
 ];
 export const impresionView: ViewsTypes[] = [
   { name: "impresiones", icon: BsBadge3D },
