@@ -85,21 +85,21 @@ export function QuestionsTable() {
         }, 300);
     }
 
-    async function handleDelete(authorityId: string) {
+    async function handleDelete(questionId: string) {
         try {
-            await DeleteData("questions", authorityId);
-            setQuestions(prevAuthority => prevAuthority.filter(authority => authority.id !== authorityId));
+            await DeleteData("questions", questionId);
+            setQuestions(prevQuestion => prevQuestion.filter(question => question.id !== questionId));
             toast({
                 variant: "success",
                 title: `Exito!`,
-                description: `La autoridad ${authorityId} fue eliminada`,
+                description: `La Pregunta ${questionId} fue eliminada`,
             });
         } catch (error) {
-            console.error('Failed to delete authority:', error);
+            console.error('Failed to delete question:', error);
             toast({
                 variant: "destructive",
                 title: `Error!`,
-                description: `Ocurrio un error al intentar eliminar al elemento ${authorityId} (${error})`,
+                description: `Ocurrio un error al intentar eliminar al elemento ${questionId} (${error})`,
             });
         } finally {
             setInfoDialogOpen(false)
@@ -131,25 +131,25 @@ export function QuestionsTable() {
                             <Table>
                                 <TableHeader className='border-b hidden md:table-header-group'>
                                     <TableRow>
-                                        <TableHead className="table-cell">Nombre</TableHead>
-                                        <TableHead className="hidden md:table-cell">Puesto</TableHead>
+                                        <TableHead className="table-cell">Pregunta</TableHead>
+                                        <TableHead className="hidden md:table-cell">Categoría</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {currentQuestions.map((authority: QuestionType, index: number) => (
-                                        <TableRow key={authority?.id} className='flex flex-col md:flex-row md:table-row'>
+                                    {currentQuestions.map((question: QuestionType, index: number) => (
+                                        <TableRow key={question?.id} className='flex flex-col md:flex-row md:table-row'>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Nombre: </span>{authority?.question}
+                                                <span className='block md:hidden'>Pregunta: </span>{question?.question}
                                             </TableCell>
                                             <TableCell className="flex md:table-cell items-center gap-2">
-                                                <span className='block md:hidden'>Puesto: </span>{authority?.catName}
+                                                <span className='block md:hidden'>Categoría: </span>{question?.catName}
                                             </TableCell>
                                             <QuestionsActionCell
-                                                data={authority}
-                                                index={`Autoridad ${index + 1}`}
-                                                closeWarning={warning && currentQuestionId === authority?.id}
+                                                data={question}
+                                                index={`Nueva Pregunta ${index + 1}`}
+                                                closeWarning={warning && currentQuestionId === question?.id}
                                                 handleCloseWarning={handleWarning}
-                                                takeCurrentId={() => setCurrentQuestionId(authority?.id)}
+                                                takeCurrentId={() => setCurrentQuestionId(question?.id)}
                                                 currentId={currentQuestionId}
                                                 deleteActionCell={handleDelete}
                                                 editActionCell={onEditClick}
@@ -163,7 +163,7 @@ export function QuestionsTable() {
                     </div>
                 ) : (
                     <EmptyTable
-                        tableName='Autoridades'
+                        tableName='Preguntas'
                         Icon={HiIdentification}
                         handleClick={onAddClick}
                     />
@@ -177,10 +177,10 @@ export function QuestionsTable() {
                 />
             )}
             <SheetForm
-                title='Formulario de Autoridades'
+                title='Formulario de Preguntas'
                 descripcion={actionForm
-                    ? `Editar Autoridad, cambiar los campos que se desea`
-                    : "Agregar Nueva Autoridad, todos los campos son obligatorios"
+                    ? `Editar Pregunta, cambiar los campos que se desea`
+                    : "Agregar Nueva Pregunta, todos los campos son obligatorios"
                 }
                 isOpen={isOpen}
                 handleOpen={handleCloseForm}
@@ -207,15 +207,26 @@ export function QuestionsTable() {
                 <div className='bg-gray-100 rounded-md p-2 mt-4 flex flex-col justify-center font-semibold'>
                     <div className='flex items-center gap-2 mt-2'>
                         <HiIdentification className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentQuestion?.id}</span>
+                        <span className='capitalize'>Id:{currentQuestion?.id}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
                         <FaBriefcase className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentQuestion?.question}</span>
+                        <span className='capitalize'>Pregunta: {currentQuestion?.question}</span>
                     </div>
                     <div className='flex items-center gap-2 mt-2'>
+                        <FaBriefcase className='w-5 h-5 text-green-800' />
+                        <span className='capitalize'>Categoría: {currentQuestion?.catName}</span>
+                    </div>
+                    {currentQuestion?.answers.map((answer, index) => (
+                        <div key={index} className='flex items-center gap-2 mt-2'>
+                            <FaBriefcase className='w-5 h-5 text-green-800' />
+                            <span className='capitalize'>Respuesta {index + 1}: {answer}</span>
+                        </div>
+                    ))}
+
+                    <div className='flex items-center gap-2 mt-2'>
                         <PiRankingFill className='w-5 h-5 text-green-800' />
-                        <span className='capitalize'>{currentQuestion?.answers[currentQuestion.correctAnswerIndex]}</span>
+                        <span className='capitalize'>Respuesta Correcta: {currentQuestion?.answers[currentQuestion.correctAnswerIndex]}</span>
                     </div>
                 </div>
             </InfoDialog>
